@@ -1,4 +1,5 @@
 import './Header.css';
+import Navbar from '../Navbar/Navbar';
 
 export default function Header(){
     return(
@@ -17,7 +18,7 @@ export default function Header(){
                     </div>
                 </div>
                 <div className='row'>
-                {/* Chứa navbar */}
+                    <Navbar/>
                 </div>
             </div>
             <div className="container">
