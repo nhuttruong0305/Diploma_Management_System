@@ -1,0 +1,28 @@
+#background-header{
+    background-color: #0b619d;
+    padding: 10px 20px 0px 20px;
+    border-radius:  5px 5px 0px 0px;
+}
+
+#logo-header{
+    width: 60px;
+}
+
+#btn-login-header{
+    margin-top: 15px;
+    display: block;
+    float: right;
+    background-color: #094e7e;
+    border: 0px;
+    font-weight: bold;
+}
+
+#title-header{
+    background-color: #297fbb;
+    text-align: center;
+    color: #fdffd0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 14px;
+    /* margin: 10px 0px 0px 0px; */
+}
