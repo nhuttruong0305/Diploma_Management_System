@@ -1,0 +1,16 @@
+/* #active-item-navbar{
+    color: white!important;
+} */
+
+.nav-item-navbar{
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.nav-link-navbar{
+    color:rgb(55, 55, 55)!important;
+}
+
+.nav-link-navbar:hover {
+    color: black!important;
+}

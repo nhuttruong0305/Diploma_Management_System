@@ -17,7 +17,7 @@ export default function Header(){
                         <button id='btn-login-header' className='btn btn-primary'>Đăng nhập</button>
                     </div>
                 </div>
-                <div className='row'>
+                <div className='row pb-2'>
                     <Navbar/>
                 </div>
             </div>

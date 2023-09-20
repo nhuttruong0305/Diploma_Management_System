@@ -1,0 +1,15 @@
+#body-useraccountmanagement{
+    padding-top: 10px;
+    padding-bottom: 20px;
+    border: 1px solid rgb(184, 184, 184);
+    background-color: #e5e5e5;
+}
+
+#add-user-account-useraccountmanagement{
+    display: block;
+    background-color: #0b619d;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding: 5px 8px;
+}

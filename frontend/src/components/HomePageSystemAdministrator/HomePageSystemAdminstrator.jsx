@@ -4,7 +4,10 @@ import Header from '../Header/Header';
 export default function HomePageSystemAdminstrator(){
     return(
         <>
-            <Header></Header>    
+            <Header></Header>
+            <div className="container" id='body-homepagesystemadminstrator'>
+                
+            </div>
         </>
     );
 }
