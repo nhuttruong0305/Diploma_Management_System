@@ -17,6 +17,37 @@
     background-color: #094e7e;
     border: 0px;
     font-weight: bold;
+    font-size: 13px;
+}
+
+#btn-userinfor-login-header{
+    margin-top: 15px;
+    font-size: 13px;
+    width: 100%;
+    display: block;
+    float: right;
+    background-color: #094e7e;
+    border: 0px;
+    font-weight: bold;
+    border-radius: 5px 0px 0px 5px;
+}
+
+#btn-show-logout{
+    margin-top: 15px;
+    display: block;
+    border-radius: 0px 5px 5px 0px;
+    background-color: #095082;
+    border: none;
+}
+
+#btn-logout-header{
+    margin-top: 5px;
+    display: none;
+    width: 100%;
+    background-color: white;
+    color: black;
+    border: none;
+    font-size: 13px;
 }
 
 #title-header{

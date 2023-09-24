@@ -3,6 +3,8 @@ import axios from 'axios';
 
 import './UserAccountManagement.css';
 import Header from '../Header/Header';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserAccountManagement() {
     const [fullname, setFullname] = useState(''); //state đại diện cho họ và tên
@@ -25,6 +27,18 @@ export default function UserAccountManagement() {
     const [faculty, setFaculty] = useState([]); //state đại diện cho danh sách các khoa dc lấy từ DB
     const [managementUnit, setManagementUnit] = useState([]); //state đại diện cho các đơn vị quản lý dc lấy từ DB
     const [majors, setMajors] = useState([]); //state đại diện cho danh sách các ngành được lấy từ DB đựa vào khoa được chọn
+    const [allUserAccount, setAllUserAccount] = useState(); //state đại diện cho all user account trong DB
+    
+
+    const user = useSelector((state) => state.auth.login?.currentUser);
+    const navigate = useNavigate();
+
+    useEffect(()=>{
+        if(!user){
+            navigate("/");
+        }
+
+    },[])
 
     //Hàm xử lý chỉ cho nhập số trong textbox khóa
     const handleIsNumber = (eventObject, type) => {
@@ -91,22 +105,38 @@ export default function UserAccountManagement() {
             }
         }
     }
-   
-    //Gọi useEffect để lấy danh sách các ngành dựa theo khoa
-    useEffect(() => {
-        getMajorsBasedOnFaculty();
-    }, [choose_faculty])
 
+    //Hàm gọi api lấy all user trong DB
+    const getAllUserAccount = async () => {
+        try{
+            const res = await axios.get("http://localhost:8000/v1/user_account/get_all_useraccount");
+            setAllUserAccount(res.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+   
     //Gọi useEffect để lấy về danh sách khoa
     useEffect(() => {
         const allFaculty = getAllFculty();
     }, [])
 
-    //Gọi useEffect để lấy về danh sách đơn vị quản lý
+    // //Gọi useEffect để lấy về danh sách đơn vị quản lý
     useEffect(() => {
         const allManagementUnit = getAllManagementUnit();
     }, [])
 
+    // //Gọi useEffect để lấy về danh sách tất cả user account trong DB
+    useEffect(()=> {
+        getAllUserAccount();
+    }, [])
+
+    //Gọi useEffect để lấy danh sách các ngành dựa theo khoa
+    useEffect(() => {
+        getMajorsBasedOnFaculty();
+    }, [choose_faculty])
+
+    console.log("All user account: ", allUserAccount);
     //Hàm xử lý submit form
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -128,7 +158,7 @@ export default function UserAccountManagement() {
                 majors: choose_majors,
                 course: course,
                 management_unit: "",
-                role: ""
+                role: []
             }
         }else{
             newUserAccount = {
@@ -145,12 +175,12 @@ export default function UserAccountManagement() {
                 class: "",
                 faculty: "",
                 majors: "",
-                course: "",
+                course: null,
                 management_unit: choose_managementUnit,
                 role: role
             }
         }
-        console.log("Object: ", newUserAccount);
+        // console.log("Object: ", newUserAccount);
     }
 
     return (
@@ -186,7 +216,7 @@ export default function UserAccountManagement() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        {/* <tr>
                                             <th scope="row">1</th>
                                             <td>Mark</td>
                                             <td>Otto</td>
@@ -205,7 +235,19 @@ export default function UserAccountManagement() {
                                             <td colSpan="2">Larry the Bird</td>
                                             <td>@twitter</td>
                                             <td><i className="fa-solid fa-eye"></i></td>
-                                        </tr>
+                                        </tr> */}
+                                        {
+                                            allUserAccount?.map((currentValue, index) => {
+                                                return(
+                                                    <tr key={index}>
+                                                        <th scope="row">{index + 1}</th>
+                                                        <td colSpan="2">{currentValue.fullname}</td>
+                                                        <td>{currentValue.mssv_cb}</td>
+                                                        <td><i className="fa-solid fa-eye"></i></td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
                                     </tbody>
                                 </table>
 

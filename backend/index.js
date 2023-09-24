@@ -7,6 +7,7 @@ const authRoute = require("./routes/auth");
 const facultyRoute = require("./routes/faculty");
 const majorsRoute = require("./routes/majors")
 const managementUnitRoute = require("./routes/management_unit");
+const userAccountRoute = require("./routes/user_account");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/v1/auth", authRoute);
 app.use("/v1/faculty", facultyRoute);   
 app.use("/v1/majors", majorsRoute);
 app.use("/v1/management_unit", managementUnitRoute);
+app.use("/v1/user_account", userAccountRoute);
 
 app.listen(process.env.PORT, ()=>{
     console.log(`Server is running...`);
