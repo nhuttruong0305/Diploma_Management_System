@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 
 import './UserAccountManagement.css';
 import Header from '../Header/Header';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../../redux/apiRequest';
+import Toast from '../Toast/Toast';
 
 export default function UserAccountManagement() {
     const [fullname, setFullname] = useState(''); //state đại diện cho họ và tên
@@ -32,6 +34,10 @@ export default function UserAccountManagement() {
 
     const user = useSelector((state) => state.auth.login?.currentUser);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const noti = useRef();
+    const msg = useSelector((state) => state.auth?.msg);
+    const isError = useSelector((state) => state.auth.register?.error);
 
     useEffect(()=>{
         if(!user){
@@ -137,8 +143,9 @@ export default function UserAccountManagement() {
     }, [choose_faculty])
 
     console.log("All user account: ", allUserAccount);
+    
     //Hàm xử lý submit form
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         let newUserAccount;
         if(position == "Student"){
@@ -159,7 +166,7 @@ export default function UserAccountManagement() {
                 course: course,
                 management_unit: "",
                 role: []
-            }
+            }//done
         }else{
             newUserAccount = {
                 fullname: fullname,
@@ -178,9 +185,16 @@ export default function UserAccountManagement() {
                 course: null,
                 management_unit: choose_managementUnit,
                 role: role
-            }
+            }//done
         }
-        // console.log("Object: ", newUserAccount);
+
+        await registerUser(newUserAccount, dispatch, user.accessToken);
+        if(msg=="Thêm tài khoản người dùng thành công"){  
+            noti.current.showToast();
+        }else{
+            noti.current.showToast();  
+        }   
+        
     }
 
     return (
@@ -694,6 +708,15 @@ export default function UserAccountManagement() {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div id='notification'>
+                <Toast
+                    message={msg}
+                    type={
+                        isError ? "error" : "success"
+                    }
+                    ref={noti}
+                />
             </div>
         </>
     );

@@ -28,6 +28,18 @@ export const LoginUser = async(user, dispatch, navigate) => {
     }
 }
 
+export const registerUser = async (userInfor, dispatch, accessToken) => {
+    dispatch(registerStart());
+    try{
+        const result = await axios.post("http://localhost:8000/v1/auth/register", userInfor, {
+            headers: {token: `Bearer ${accessToken}`} //cách đưa token vào headers
+        });
+        dispatch(registerSuccess());
+    }catch(err){
+        dispatch(registerFailed(err.response.data))
+    }
+}
+
 export const logoutUser = (dispatch, navigate) => {
     dispatch(logoutStart());
     try{
