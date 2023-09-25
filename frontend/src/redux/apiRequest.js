@@ -11,7 +11,7 @@ import {
     logoutFailed
 } from './authSlice';
 
-export const loginUser = async(user, dispatch, navigate) => {
+export const LoginUser = async(user, dispatch, navigate) => {
     //tham số đầu tiên user là 1 object chứa thông tin gồm: mssv_cb, password
     dispatch(loginStart());
     try{

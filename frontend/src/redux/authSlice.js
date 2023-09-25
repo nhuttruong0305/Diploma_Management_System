@@ -22,9 +22,9 @@ const authSlice = createSlice({
         loginSuccess: (state, action) => {
             state.login.isFetching = false;
             state.login.currentUser = action.payload; 
-            state.login.error = false
+            state.login.error = false;
 
-            // state.msg = "Đăng nhập thành công"
+            state.msg = ''
         },
         loginFailed: (state, action) => {
             state.login.isFetching = false;

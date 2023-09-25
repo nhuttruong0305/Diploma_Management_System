@@ -1,19 +1,21 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import Header from "../Header/Header";
 import './Login.css';
-import {loginUser} from "../../redux/apiRequest";
-
+import {LoginUser} from "../../redux/apiRequest";
+import Toast from '../Toast/Toast';
 
 export default function Login(){
     const [mssv_cb, setMssv_cb] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const noti = useRef();
+    const msg = useSelector((state) => state.auth?.msg);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         //lấy thông tin đăng nhập đưa vào object
@@ -21,7 +23,10 @@ export default function Login(){
             mssv_cb: mssv_cb,
             password: password
         };
-        loginUser(loginInfor, dispatch, navigate);
+        await LoginUser(loginInfor, dispatch, navigate);
+        if(msg!=""){
+            noti.current.showToast();
+        }
     }
 
     return(
@@ -69,6 +74,11 @@ export default function Login(){
                     </div>
                 </div>
             </div>
+            <Toast
+                message={msg}
+                type="error"
+                ref={noti}
+            />
         </>
     );
 }
