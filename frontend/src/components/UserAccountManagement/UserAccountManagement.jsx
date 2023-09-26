@@ -1,6 +1,13 @@
 import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 
+//Các import bên dưới là để validate form
+import React from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup'; // Sử dụng nếu bạn muốn sử dụng Yup để validate
+import * as Yup from 'yup';
+
+
 import './UserAccountManagement.css';
 import Header from '../Header/Header';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,15 +16,15 @@ import { registerUser } from '../../redux/apiRequest';
 import Toast from '../Toast/Toast';
 
 export default function UserAccountManagement() {
-    const [fullname, setFullname] = useState(''); //state đại diện cho họ và tên
-    const [MSSV_CB, setMSSV_CB] = useState(''); //state đại diện cho MSSV/CB
-    const [email, setEmail] = useState('') //state đại diện cho email
-    const [password, setPassword] = useState('') //state đại diện cho password
-    const [dateofbirth, setDateofbirth] = useState('') //state đại diện cho ngày sinh
-    const [address, setAddress] = useState(''); //state đại diện cho địa chỉ
-    const [CCCD, setCCCD] = useState(''); //state đại diện cho CCCD
+    // const [fullname, setFullname] = useState(''); //state đại diện cho họ và tên
+    // const [MSSV_CB, setMSSV_CB] = useState(''); //state đại diện cho MSSV/CB
+    // const [email, setEmail] = useState('') //state đại diện cho email
+    // const [password, setPassword] = useState('') //state đại diện cho password
+    // const [dateofbirth, setDateofbirth] = useState('') //state đại diện cho ngày sinh
+    // const [address, setAddress] = useState(''); //state đại diện cho địa chỉ
+    // const [CCCD, setCCCD] = useState(''); //state đại diện cho CCCD
     const [sex, setSex] = useState(true); //state đại diện cho giới tính
-    const [phonenumber, setPhonenumber] = useState(''); //state đại diện cho sdt
+    // const [phonenumber, setPhonenumber] = useState(''); //state đại diện cho sdt
     const [position, setPosition] = useState('Student'); //state đại diện cho chức vụ
     const [classID, setClassID] = useState(''); //state đại diện cho mã lớp
     const [choose_faculty, setChooseFaculty] = useState(''); //state đại diện cho khoa được chọn để cấp tài khoản cho sinh viên
@@ -47,20 +54,24 @@ export default function UserAccountManagement() {
     },[])
 
     //Hàm xử lý chỉ cho nhập số trong textbox khóa
-    const handleIsNumber = (eventObject, type) => {
+    const handleIsNumber = (eventObject) => {
         const value = eventObject.target.value;
-
-        // type = 1 là textbox khóa, type=2 là textbox sdt
         // Kiểm tra xem giá trị nhập vào có phải là số
-        if(type==1){
-            if (/^[0-9]*$/.test(value)) {
-                setCourse(value);
-            }
+        if (/^[1-9][0-9]*$/.test(value)) {
+            setCourse(value);
+            
         }
-        if(type==2){
-            if (/^[0-9]*$/.test(value)) {
-                setPhonenumber(value);
-            }
+    }
+
+    //Hàm xử lý chỉ nhập số với CCCD
+    const inputOnlyNumber = (eventObject) => {
+        if(eventObject.keyCode == 46 || eventObject.keyCode == 8){
+            return true;
+        }
+        else if(eventObject.keyCode<48 || eventObject.keyCode>57){
+            eventObject.preventDefault();
+        }else{
+            return true;
         }
     }
 
@@ -142,23 +153,69 @@ export default function UserAccountManagement() {
         getMajorsBasedOnFaculty();
     }, [choose_faculty])
 
-    console.log("All user account: ", allUserAccount);
     
     //Hàm xử lý submit form
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+       
+        
+    // }
+
+
+    //Tạo schema validation bằng Yup 
+    const validationSchema = Yup.object().shape({
+        fullname: Yup.string()
+            .max(50, 'Tên không được dài hơn 50 ký tự')
+            .required('Tên không được để trống'),
+        MSSV_CB_useraccount_mamagement: Yup.string()
+            .required('MSSV/CB không được trống')
+            .min(6, 'MSSV/CB có tối thiểu 6 ký tự')
+            .max(12, 'MSSV/CB có tối đa 12 ký tự'),
+        email_useraccount_mamagement: Yup.string()
+            .email("Email không hợp lệ")
+            .required("Email không được để trống"),
+        password_useraccount_mamagement: Yup.string()
+            .required("Mật khẩu không được trống")
+            .min(6, 'Mật khẩu có tối thiểu 6 ký tự'),
+        dateofbirth_useraccount_mamagement: Yup.string()
+            .required('Vui lòng nhập ngày sinh')
+            .max(new Date(), 'Ngày sinh không được lớn hơn ngày hiện tại'),
+        address_useraccount_useraccountmanagement: Yup.string()
+            .required('Vui lòng nhập địa chỉ')
+            .min(30, 'Mô tả địa chỉ tối thiểu 30 ký tự'),
+        cccd_useraccount_mamagement: Yup.string()
+            .required("Vui lòng nhập CCCD")
+            .min(12, 'Vui lòng nhập đủ 12 số'),
+        phonenumber_useraccount_mamagement: Yup.string()
+            .matches(
+                /((09|03|07|08|05)+([0-9]{8})\b)/g,
+                "Số điện thoại không hợp lệ."
+            ),  
+        
+      });
+      
+    const {
+        handleSubmit,
+        control,
+        formState: { errors }
+    } = useForm({
+        resolver: yupResolver(validationSchema) // Sử dụng Yup để validate
+    });
+
+    const onSubmit = async (data) => {
+    // Xử lý logic khi form được submit        
         let newUserAccount;
         if(position == "Student"){
             newUserAccount = {
-                fullname: fullname,
-                mssv_cb: MSSV_CB,
-                email: email,
-                password: password,
-                dateofbirth: dateofbirth,
-                address: address,
-                cccd: CCCD,
+                fullname: data.fullname,
+                mssv_cb: data.MSSV_CB_useraccount_mamagement,
+                email: data.email_useraccount_mamagement,
+                password: data.password_useraccount_mamagement,
+                dateofbirth: data.dateofbirth_useraccount_mamagement,
+                address: data.address_useraccount_useraccountmanagement,
+                cccd: data.cccd_useraccount_mamagement,
                 sex: sex,
-                phonenumber: phonenumber,
+                phonenumber: data.phonenumber_useraccount_mamagement,
                 position: position,
                 class: classID,
                 faculty: choose_faculty,
@@ -169,15 +226,15 @@ export default function UserAccountManagement() {
             }//done
         }else{
             newUserAccount = {
-                fullname: fullname,
-                mssv_cb: MSSV_CB,
-                email: email,
-                password: password,
-                dateofbirth: dateofbirth,
-                address: address,
-                cccd: CCCD,
+                fullname: data.fullname,
+                mssv_cb: data.MSSV_CB_useraccount_mamagement,
+                email: data.email_useraccount_mamagement, 
+                password: data.password_useraccount_mamagement,
+                dateofbirth: data.dateofbirth_useraccount_mamagement, 
+                address: data.address_useraccount_useraccountmanagement,
+                cccd: data.cccd_useraccount_mamagement,
                 sex: sex,
-                phonenumber: phonenumber,
+                phonenumber: data.phonenumber_useraccount_mamagement,
                 position: position,
                 class: "",
                 faculty: "",
@@ -193,9 +250,8 @@ export default function UserAccountManagement() {
             noti.current.showToast();
         }else{
             noti.current.showToast();  
-        }   
-        
-    }
+        }    
+    };
 
     return (
         <>
@@ -230,26 +286,6 @@ export default function UserAccountManagement() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* <tr>
-                                            <th scope="row">1</th>
-                                            <td>Mark</td>
-                                            <td>Otto</td>
-                                            <td>@mdo</td>
-                                            <td><i className="fa-solid fa-eye"></i></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">2</th>
-                                            <td>Jacob</td>
-                                            <td>Thornton</td>
-                                            <td>@fat</td>
-                                            <td><i className="fa-solid fa-eye"></i></td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">3</th>
-                                            <td colSpan="2">Larry the Bird</td>
-                                            <td>@twitter</td>
-                                            <td><i className="fa-solid fa-eye"></i></td>
-                                        </tr> */}
                                         {
                                             allUserAccount?.map((currentValue, index) => {
                                                 return(
@@ -273,139 +309,221 @@ export default function UserAccountManagement() {
                                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div className="modal-body">
-                                                <form onSubmit={(e) => {handleSubmit(e)}} id='form-add-useraccount-useraccountmanagement'>
+                                                <form onSubmit={handleSubmit(onSubmit)} id='form-add-useraccount-useraccountmanagement'>
                                                     <div className="row">
                                                         <div className="col-2">
                                                             <label
-                                                                htmlFor="fullname-useraccount-useraccountmanagement"
+                                                                htmlFor="fullname"
                                                                 className="col-form-label text-end d-block"
                                                                 style={{ fontSize: '12px', fontStyle: 'italic' }}
                                                             >Họ và tên</label>
                                                         </div>
                                                         <div className="col-10">
-                                                            <input
+
+                                                        <Controller
+                                                            name="fullname"
+                                                            control={control}
+                                                            defaultValue=""
+                                                            render={({ field }) => <input
+                                                                                        {...field}
+                                                                                        type="text"
+                                                                                        id="fullname"
+                                                                                        className="form-control" />}
+                                                                                    />
+                                                        <p style={{ color: "red" }}>{errors.fullname?.message}</p>
+
+                                                            {/* <input
                                                                 type="text"
                                                                 value={fullname}
                                                                 onChange={(e)=>{
                                                                     setFullname(e.target.value);
                                                                 }}
                                                                 id="fullname-useraccount-useraccountmanagement"
-                                                                className="form-control" />
+                                                                className="form-control" /> */}
                                                         </div>
                                                     </div>
 
                                                     <div className="row mt-3">
                                                         <div className="col-2">
                                                             <label
-                                                                htmlFor="MSSV/CB-useraccount-mamagement"
+                                                                htmlFor="MSSV_CB_useraccount_mamagement"
                                                                 className="col-form-label text-end d-block"
                                                                 style={{ fontSize: '12px', fontStyle: 'italic' }}>MSSV/CB</label>
                                                         </div>
                                                         <div className="col-10">
-                                                            <input
-                                                                type="text"
-                                                                value={MSSV_CB}
-                                                                onChange={(e)=>{
-                                                                    setMSSV_CB(e.target.value);
-                                                                }}
-                                                                className="form-control"
-                                                                id='MSSV/CB-useraccount-mamagement' />
+
+                                                        <Controller
+                                                            name="MSSV_CB_useraccount_mamagement"
+                                                            control={control}
+                                                            defaultValue=""
+                                                            render={({ field }) => <input
+                                                                                        {...field}
+                                                                                        type="text"
+                                                                                        className="form-control"
+                                                                                        id='MSSV_CB_useraccount_mamagement' 
+                                                            />}
+                                                        />
+                                                        <p style={{ color: "red" }}>{errors.MSSV_CB_useraccount_mamagement?.message}</p>
+
+                                                            
                                                         </div>
                                                     </div>
 
                                                     <div className="row mt-3">
                                                         <div className="col-2">
                                                             <label
-                                                                htmlFor="email-useraccount-mamagement"
+                                                                htmlFor="email_useraccount_mamagement"
                                                                 className="col-form-label text-end d-block"
                                                                 style={{ fontSize: '12px', fontStyle: 'italic' }}>Email</label>
                                                         </div>
                                                         <div className="col-10">
-                                                            <input
-                                                                value={email}
-                                                                onChange={(e)=>{
-                                                                    setEmail(e.target.value);
-                                                                }}
-                                                                type="email"
-                                                                className="form-control"
-                                                                id='email-useraccount-mamagement' />
+                                                            <Controller
+                                                                name="email_useraccount_mamagement"
+                                                                control={control}
+                                                                defaultValue=""
+                                                                render={({ field }) => <input
+                                                                                            {...field}
+                                                                                            type="text"
+                                                                                            className="form-control"
+                                                                                            id='email_useraccount_mamagement' 
+                                                                />}
+                                                            />
+                                                            <p style={{ color: "red" }}>{errors.email_useraccount_mamagement?.message}</p>                         
                                                         </div>
                                                     </div>
 
                                                     <div className="row mt-3">
                                                         <div className="col-2">
                                                             <label
-                                                                htmlFor="password-useraccount-mamagement"
+                                                                htmlFor="password_useraccount_mamagement"
                                                                 className="col-form-label text-end d-block"
                                                                 style={{ fontSize: '12px', fontStyle: 'italic' }}>Password</label>
                                                         </div>
                                                         <div className="col-10">
-                                                            <input
+                                                            <Controller
+                                                                name="password_useraccount_mamagement"
+                                                                control={control}
+                                                                defaultValue=""
+                                                                render={({ field }) =>  <input
+                                                                                            {...field}                                                                     
+                                                                                            type="password"
+                                                                                            className="form-control"
+                                                                                            id='password_useraccount_mamagement' />}
+                                                            />
+                                                            <p style={{ color: "red" }}>{errors.password_useraccount_mamagement?.message}</p>  
+
+
+                                                            {/* <input
                                                                 value={password}
                                                                 onChange={(e)=>{
                                                                     setPassword(e.target.value);
                                                                 }}                                                                      
                                                                 type="password"
                                                                 className="form-control"
-                                                                id='password-useraccount-mamagement' />
+                                                                id='password-useraccount-mamagement' /> */}
                                                         </div>
                                                     </div>
 
                                                     <div className="row mt-3">
                                                         <div className="col-2">
                                                             <label
-                                                                htmlFor="dateofbirth-useraccount-mamagement"
+                                                                htmlFor="dateofbirth_useraccount_mamagement"
                                                                 className="col-form-label text-end d-block"
                                                                 style={{ fontSize: '12px', fontStyle: 'italic' }}>Ngày sinh</label>
                                                         </div>
                                                         <div className="col-10">
-                                                            <input
+                                                            <Controller
+                                                                name="dateofbirth_useraccount_mamagement"
+                                                                control={control}
+                                                                defaultValue=""
+                                                                render={({ field }) => (
+                                                                    <input
+                                                                    {...field}
+                                                                    type="date"
+                                                                    className="form-control"
+                                                                    id="dateofbirth_useraccount_mamagement"
+                                                                    />
+                                                                )}
+                                                                />
+                                                            <p style={{ color: "red" }}>{errors.dateofbirth_useraccount_mamagement?.message}</p>
+
+                                                            {/* <input
                                                                 value={dateofbirth}
                                                                 onChange={(e)=>{
                                                                     setDateofbirth(e.target.value);
                                                                 }}
                                                                 type="date"
                                                                 className="form-control"
-                                                                id='dateofbirth-useraccount-mamagement' />
+                                                                id='dateofbirth_useraccount_mamagement' /> */}
                                                         </div>
                                                     </div>
 
                                                     <div className="row mt-3">
                                                         <div className="col-2">
                                                             <label
-                                                                htmlFor="address-useraccount-useraccountmanagement"
+                                                                htmlFor="address_useraccount_useraccountmanagement"
                                                                 className="col-form-label text-end d-block"
                                                                 style={{ fontSize: '12px', fontStyle: 'italic' }}
                                                             >Địa chỉ</label>
                                                         </div>
                                                         <div className="col-10">
-                                                            <input
+                                                            <Controller
+                                                                name="address_useraccount_useraccountmanagement"
+                                                                control={control}
+                                                                defaultValue=""
+                                                                render={({ field }) => <input
+                                                                                            {...field}
+                                                                                            type="text"
+                                                                                            className="form-control"
+                                                                                            id='address_useraccount_useraccountmanagement' 
+                                                                />}
+                                                            />
+                                                            <p style={{ color: "red" }}>{errors.address_useraccount_useraccountmanagement?.message}</p> 
+
+                                                            {/* <input
                                                                 value={address}
                                                                 onChange={(e)=>{
                                                                     setAddress(e.target.value);
                                                                 }}
                                                                 type="text"
                                                                 id="address-useraccount-useraccountmanagement"
-                                                                className="form-control" />
+                                                                className="form-control" /> */}
                                                         </div>
                                                     </div>
 
                                                     <div className="row mt-3">
                                                         <div className="col-2">
                                                             <label
-                                                                htmlFor="cccd-useraccount-mamagement"
+                                                                htmlFor="cccd_useraccount_mamagement"
                                                                 className="col-form-label text-end d-block"
                                                                 style={{ fontSize: '12px', fontStyle: 'italic' }}>CCCD</label>
                                                         </div>
                                                         <div className="col-10">
-                                                            <input
+                                                            <Controller
+                                                                name="cccd_useraccount_mamagement"
+                                                                control={control}
+                                                                defaultValue=""
+                                                                render={({ field }) => <input
+                                                                                            {...field}
+                                                                                            type="text"
+                                                                                            className="form-control"
+                                                                                            onKeyDown={(e)=>{
+                                                                                                inputOnlyNumber(e);
+                                                                                            }}
+                                                                                            id='cccd_useraccount_mamagement' 
+                                                                />}
+                                                                />
+                                                            <p style={{ color: "red" }}>{errors.cccd_useraccount_mamagement?.message}</p> 
+
+
+                                                            {/* <input
                                                                 value={CCCD}
                                                                 onChange={(e)=>{
                                                                     setCCCD(e.target.value);
                                                                 }}
                                                                 type="text"
                                                                 className="form-control"
-                                                                id='cccd-useraccount-mamagement' />
+                                                                id='cccd-useraccount-mamagement' /> */}
                                                         </div>
                                                     </div>
 
@@ -449,19 +567,33 @@ export default function UserAccountManagement() {
                                                     <div className="row mt-3">
                                                         <div className="col-2">
                                                             <label
-                                                                htmlFor="phonenumber-useraccount-mamagement"
+                                                                htmlFor="phonenumber_useraccount_mamagement"
                                                                 className="col-form-label text-end d-block"
                                                                 style={{ fontSize: '12px', fontStyle: 'italic' }}>Số điện thoại</label>
                                                         </div>
                                                         <div className="col-10">
-                                                            <input
+                                                            <Controller
+                                                                name="phonenumber_useraccount_mamagement"
+                                                                control={control}
+                                                                defaultValue=""
+                                                                render={({ field }) => <input
+                                                                                            {...field}
+                                                                                            type="text"
+                                                                                            className="form-control"
+                                                                                            id='phonenumber_useraccount_mamagement' 
+                                                                />}
+                                                                />
+                                                            <p style={{ color: "red" }}>{errors.phonenumber_useraccount_mamagement?.message}</p> 
+
+
+                                                            {/* <input
                                                                 value={phonenumber}
                                                                 onChange={(e)=>{
                                                                     handleIsNumber(e,2);
                                                                 }}
                                                                 type="text"
                                                                 className="form-control"
-                                                                id='phonenumber-useraccount-mamagement' />
+                                                                id='phonenumber-useraccount-mamagement' /> */}
                                                         </div>
                                                     </div>
 
@@ -615,7 +747,7 @@ export default function UserAccountManagement() {
                                                                     <input
                                                                         value={course}
                                                                         onChange={(e)=>{
-                                                                            handleIsNumber(e,1);
+                                                                            handleIsNumber(e);
                                                                         }}
                                                                         
                                                                         type="text"
@@ -643,9 +775,6 @@ export default function UserAccountManagement() {
                                                                         }}
                                                                     >
                                                                         <option value="">-- Đơn vị quản lý --</option>
-                                                                        {/* <option value="1">Trường Công nghệ Thông tin &Truyền thông </option>
-                                                                        <option value="2">Trung tâm Điện tử Tin học</option>
-                                                                        <option value="3">Phòng Đào tạo</option> */}
                                                                         {
                                                                             managementUnit?.map((currentValue, index) => {
                                                                                 return(
