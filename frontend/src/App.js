@@ -2,10 +2,9 @@ import { useRoutes } from 'react-router-dom';
 
 import './App.css';
 import HomePage from './components/HomePage/HomePage';
-import HomePageSystemAdminstrator from './components/HomePageSystemAdministrator/HomePageSystemAdminstrator';
 import Login from './components/Login/Login';
 import UserAccountManagement from './components/UserAccountManagement/UserAccountManagement';
-
+import DiplomaType from './components/DiplomaType/DiplomaType';
 
 function App() {
   function Routes(){
@@ -13,6 +12,7 @@ function App() {
       { path: "/", element: <HomePage/> },
       { path: '/login', element: <Login/>},
       { path: '/user-account-management', element: <UserAccountManagement/>},
+      { path: '/diploma-type', element: <DiplomaType/>}
     ])
     return element;
   }

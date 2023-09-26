@@ -24,7 +24,7 @@ const middlewareController = {
             if(req.user.role[0] == "System administrator"){
                 next();
             }else{
-                return res.status(403).json("You are not allowed to delete other");
+                return res.status(403).json("You are not authorized");
             }
         })
     },

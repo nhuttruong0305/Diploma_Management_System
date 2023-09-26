@@ -1,4 +1,4 @@
-#body-useraccountmanagement{
+#body-diplomatype{
     padding-top: 10px;
     padding-bottom: 20px;
     border: 1px solid rgb(184, 184, 184);
@@ -6,15 +6,15 @@
     border-radius: 0px 0px 5px 5px;
 }
 
-#add-user-account-useraccountmanagement{
+#active-diplomatype{
+    background-color: #0b619d;
+}
+
+#add-diploma-type{
     display: block;
     background-color: #0b619d;
     color: white;
     border-radius: 5px;
     border: none;
     padding: 5px 8px;
-}
-
-#active-useraccount-management{
-    background-color: #0b619d;
 }

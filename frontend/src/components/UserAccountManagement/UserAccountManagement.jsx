@@ -247,7 +247,7 @@ export default function UserAccountManagement() {
                                     <i className="fa-solid fa-sliders"></i>
                                 </div>
                                 <ul className="list-group list-group-flush">
-                                    <li className="list-group-item">Thêm tài khoản</li>
+                                    <li id='active-useraccount-management' className="list-group-item">Thêm tài khoản</li>
                                     <li className="list-group-item">Phân quyền người dùng quản lý</li>
                                 </ul>
                             </div>
@@ -273,8 +273,9 @@ export default function UserAccountManagement() {
                                                 return(
                                                     <tr key={index}>
                                                         <th scope="row">{index + 1}</th>
-                                                        <td colSpan="2">{currentValue.fullname}</td>
+                                                        <td>{currentValue.fullname}</td>
                                                         <td>{currentValue.mssv_cb}</td>
+                                                        <td>{currentValue.position}</td>
                                                         <td><i className="fa-solid fa-eye"></i></td>
                                                     </tr>
                                                 )

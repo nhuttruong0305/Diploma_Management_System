@@ -11,6 +11,12 @@ import {
     logoutFailed
 } from './authSlice';
 
+import {
+    getAllDiplomaTypeStart,
+    getAllDiplomaTypeSuccess,
+    getAllDiplomaTypeFailed
+} from './diplomaSlice';
+
 export const LoginUser = async(user, dispatch, navigate) => {
     //tham số đầu tiên user là 1 object chứa thông tin gồm: mssv_cb, password
     dispatch(loginStart());
@@ -47,5 +53,17 @@ export const logoutUser = (dispatch, navigate) => {
         navigate("/");
     }catch(err){
         dispatch(logoutFailed());
+    }
+}
+
+//Request for DiplomaType API
+
+export const getAllDiplomaType = async (dispatch) => {
+    dispatch(getAllDiplomaTypeStart());
+    try{
+        const result = await axios.get("http://localhost:8000/v1/diploma_type/get_all_diploma_type");
+        dispatch(getAllDiplomaTypeSuccess(result.data));
+    }catch(err){
+        dispatch(getAllDiplomaTypeFailed());
     }
 }
