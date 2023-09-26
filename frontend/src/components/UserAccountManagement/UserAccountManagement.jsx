@@ -16,20 +16,13 @@ import { registerUser } from '../../redux/apiRequest';
 import Toast from '../Toast/Toast';
 
 export default function UserAccountManagement() {
-    // const [fullname, setFullname] = useState(''); //state đại diện cho họ và tên
-    // const [MSSV_CB, setMSSV_CB] = useState(''); //state đại diện cho MSSV/CB
-    // const [email, setEmail] = useState('') //state đại diện cho email
-    // const [password, setPassword] = useState('') //state đại diện cho password
-    // const [dateofbirth, setDateofbirth] = useState('') //state đại diện cho ngày sinh
-    // const [address, setAddress] = useState(''); //state đại diện cho địa chỉ
-    // const [CCCD, setCCCD] = useState(''); //state đại diện cho CCCD
     const [sex, setSex] = useState(true); //state đại diện cho giới tính
     // const [phonenumber, setPhonenumber] = useState(''); //state đại diện cho sdt
     const [position, setPosition] = useState('Student'); //state đại diện cho chức vụ
     const [classID, setClassID] = useState(''); //state đại diện cho mã lớp
     const [choose_faculty, setChooseFaculty] = useState(''); //state đại diện cho khoa được chọn để cấp tài khoản cho sinh viên
     const [choose_majors, setChooseMajors] = useState(''); //state đại diện cho chuyên ngành được chọn để cấp tài khoản cho sinh viên
-    const [course, setCourse] = useState(""); //state đại diện cho khóa được nhập để cấp tài khoản cho sinh viên
+    // const [course, setCourse] = useState(""); //state đại diện cho khóa được nhập để cấp tài khoản cho sinh viên
     const [choose_managementUnit, setChooseManagementUnit] = useState('') //state đại diện cho đơn vị quản lý được chọn
     const [role, setRole] = useState('') //state đại diện cho các quyền của tài khoản, hiện chỉ xử lý theo cách 1 tài khoản có 1 quyền (chọn với input type = radio), có thể đổi sang cách xử lý để 1 tài khoản có nhiều quyền(chọn với input type = checkbox)
 
@@ -54,26 +47,14 @@ export default function UserAccountManagement() {
     },[])
 
     //Hàm xử lý chỉ cho nhập số trong textbox khóa
-    const handleIsNumber = (eventObject) => {
-        const value = eventObject.target.value;
-        // Kiểm tra xem giá trị nhập vào có phải là số
-        if (/^[1-9][0-9]*$/.test(value)) {
-            setCourse(value);
+    // const handleIsNumber = (eventObject) => {
+    //     const value = eventObject.target.value;
+    //     // Kiểm tra xem giá trị nhập vào có phải là số
+    //     if (/^[1-9][0-9]*$/.test(value)) {
+    //         setCourse(value);
             
-        }
-    }
-
-    //Hàm xử lý chỉ nhập số với CCCD
-    const inputOnlyNumber = (eventObject) => {
-        if(eventObject.keyCode == 46 || eventObject.keyCode == 8){
-            return true;
-        }
-        else if(eventObject.keyCode<48 || eventObject.keyCode>57){
-            eventObject.preventDefault();
-        }else{
-            return true;
-        }
-    }
+    //     }
+    // }
 
     //Hàm xử lý khi click chọn chức vụ
     const handlePosition = (position) => {
@@ -153,15 +134,7 @@ export default function UserAccountManagement() {
         getMajorsBasedOnFaculty();
     }, [choose_faculty])
 
-    
-    //Hàm xử lý submit form
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-       
-        
-    // }
-
-
+    //Validate form
     //Tạo schema validation bằng Yup 
     const validationSchema = Yup.object().shape({
         fullname: Yup.string()
@@ -184,13 +157,21 @@ export default function UserAccountManagement() {
             .required('Vui lòng nhập địa chỉ')
             .min(30, 'Mô tả địa chỉ tối thiểu 30 ký tự'),
         cccd_useraccount_mamagement: Yup.string()
-            .required("Vui lòng nhập CCCD")
-            .min(12, 'Vui lòng nhập đủ 12 số'),
+            .matches(
+                /([0-9]{12})\b/g,
+                "Số CCCD không hợp lệ."
+            ),
         phonenumber_useraccount_mamagement: Yup.string()
             .matches(
                 /((09|03|07|08|05)+([0-9]{8})\b)/g,
                 "Số điện thoại không hợp lệ."
-            ),  
+            ), 
+        course_useraccount_mamagement: Yup.string()
+            .matches(/^[0-9]*$/, 'Chỉ cho phép nhập số vào trường này')
+            .when('numericField', {
+            is: (value) => value && value.trim() !== '', // Kiểm tra xem trường có giá trị không trống
+            then: Yup.string().required('Trường này không được để trống'),
+            }),
         
       });
       
@@ -220,7 +201,7 @@ export default function UserAccountManagement() {
                 class: classID,
                 faculty: choose_faculty,
                 majors: choose_majors,
-                course: course,
+                course: parseInt(data.course_useraccount_mamagement),
                 management_unit: "",
                 role: []
             }//done
@@ -250,7 +231,8 @@ export default function UserAccountManagement() {
             noti.current.showToast();
         }else{
             noti.current.showToast();  
-        }    
+        }   
+        await getAllUserAccount(); 
     };
 
     return (
@@ -507,9 +489,6 @@ export default function UserAccountManagement() {
                                                                                             {...field}
                                                                                             type="text"
                                                                                             className="form-control"
-                                                                                            onKeyDown={(e)=>{
-                                                                                                inputOnlyNumber(e);
-                                                                                            }}
                                                                                             id='cccd_useraccount_mamagement' 
                                                                 />}
                                                                 />
@@ -739,12 +718,26 @@ export default function UserAccountManagement() {
                                                             <div className="row mt-3">
                                                                 <div className="col-2">
                                                                     <label
-                                                                        htmlFor="course-useraccount-mamagement"
+                                                                        htmlFor="course_useraccount_mamagement"
                                                                         className="col-form-label text-end d-block"
                                                                         style={{ fontSize: '12px', fontStyle: 'italic' }}>Khóa</label>
                                                                 </div>
                                                                 <div className="col-10">
-                                                                    <input
+
+                                                                    <Controller
+                                                                        name="course_useraccount_mamagement"
+                                                                        control={control}
+                                                                        defaultValue=""
+                                                                        render={({ field }) => <input
+                                                                                                    {...field}
+                                                                                                    type="text"
+                                                                                                    className="form-control"
+                                                                                                    id='course_useraccount_mamagement' 
+                                                                        />}
+                                                                        />
+                                                                    <p style={{ color: "red" }}>{errors.course_useraccount_mamagement?.message}</p>
+
+                                                                    {/* <input
                                                                         value={course}
                                                                         onChange={(e)=>{
                                                                             handleIsNumber(e);
@@ -752,7 +745,7 @@ export default function UserAccountManagement() {
                                                                         
                                                                         type="text"
                                                                         className="form-control"
-                                                                        id='course-useraccount-mamagement' />
+                                                                        id='course-useraccount-mamagement' /> */}
                                                                 </div>
                                                             </div>
                                                         </>
