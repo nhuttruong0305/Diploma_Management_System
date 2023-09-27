@@ -63,11 +63,11 @@ const userSchema = new mongoose.Schema(
             required: false
         },
         faculty:{ //đại diện cho Khoa, nếu là tài khoản sinh viên thì sử dụng trường này
-            type: String,
+            type: Number,
             required: false
         },
         majors:{ //chuyên ngành
-            type: String,
+            type: Number,
             required: false
         },
         course:{ //khóa
@@ -75,7 +75,7 @@ const userSchema = new mongoose.Schema(
             required: false
         },
         management_unit:{ //đại diện cho đơn vị quản lý, nếu tài khoản có quyền khác sinh viên thì dùng trường này
-            type: String,
+            type: Number,
             required: false
         },        
         role:{ 

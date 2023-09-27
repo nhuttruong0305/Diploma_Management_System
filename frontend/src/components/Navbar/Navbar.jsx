@@ -66,13 +66,6 @@ export default function Navbar() {
                             </ul>
                         )}
                     </div>
-
-                    {/* {user
-
-                    }
-                    <div>
-                        Test
-                    </div> */}
                 </div>
             </nav>
         </>

@@ -17,19 +17,17 @@ import Toast from '../Toast/Toast';
 
 export default function UserAccountManagement() {
     const [sex, setSex] = useState(true); //state đại diện cho giới tính
-    // const [phonenumber, setPhonenumber] = useState(''); //state đại diện cho sdt
     const [position, setPosition] = useState('Student'); //state đại diện cho chức vụ
     const [classID, setClassID] = useState(''); //state đại diện cho mã lớp
-    const [choose_faculty, setChooseFaculty] = useState(''); //state đại diện cho khoa được chọn để cấp tài khoản cho sinh viên
-    const [choose_majors, setChooseMajors] = useState(''); //state đại diện cho chuyên ngành được chọn để cấp tài khoản cho sinh viên
-    // const [course, setCourse] = useState(""); //state đại diện cho khóa được nhập để cấp tài khoản cho sinh viên
-    const [choose_managementUnit, setChooseManagementUnit] = useState('') //state đại diện cho đơn vị quản lý được chọn
+    const [choose_faculty, setChooseFaculty] = useState(); //state đại diện cho khoa được chọn để cấp tài khoản cho sinh viên
+    const [choose_majors, setChooseMajors] = useState(); //state đại diện cho chuyên ngành được chọn để cấp tài khoản cho sinh viên
+    const [choose_managementUnit, setChooseManagementUnit] = useState() //state đại diện cho đơn vị quản lý được chọn
     const [role, setRole] = useState('') //state đại diện cho các quyền của tài khoản, hiện chỉ xử lý theo cách 1 tài khoản có 1 quyền (chọn với input type = radio), có thể đổi sang cách xử lý để 1 tài khoản có nhiều quyền(chọn với input type = checkbox)
 
     const [faculty, setFaculty] = useState([]); //state đại diện cho danh sách các khoa dc lấy từ DB
     const [managementUnit, setManagementUnit] = useState([]); //state đại diện cho các đơn vị quản lý dc lấy từ DB
     const [majors, setMajors] = useState([]); //state đại diện cho danh sách các ngành được lấy từ DB đựa vào khoa được chọn
-    const [allUserAccount, setAllUserAccount] = useState(); //state đại diện cho all user account trong DB
+    const [allUserAccount, setAllUserAccount] = useState([]); //state đại diện cho all user account trong DB
     
 
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -39,22 +37,14 @@ export default function UserAccountManagement() {
     const msg = useSelector((state) => state.auth?.msg);
     const isError = useSelector((state) => state.auth.register?.error);
 
+    
+    //Nếu chưa đăng nhập thì trở về homepage
     useEffect(()=>{
         if(!user){
             navigate("/");
         }
 
     },[])
-
-    //Hàm xử lý chỉ cho nhập số trong textbox khóa
-    // const handleIsNumber = (eventObject) => {
-    //     const value = eventObject.target.value;
-    //     // Kiểm tra xem giá trị nhập vào có phải là số
-    //     if (/^[1-9][0-9]*$/.test(value)) {
-    //         setCourse(value);
-            
-    //     }
-    // }
 
     //Hàm xử lý khi click chọn chức vụ
     const handlePosition = (position) => {
@@ -86,14 +76,15 @@ export default function UserAccountManagement() {
     //Hàm call api lấy danh sách các ngành dựa theo khoa được chọn
     const getMajorsBasedOnFaculty = async () => {
         let faculty_id;
-        if(choose_faculty != "" && faculty.length != 0){
+        if(choose_faculty != undefined && faculty.length != 0){
             //Lấy ra faculty_id trước
-            faculty.forEach((currentValue, index) => {
-                if(currentValue.faculty_name == choose_faculty){
-                    faculty_id = currentValue.faculty_id;    
-                }
-            });
-            
+            // faculty.forEach((currentValue, index) => {
+            //     if(currentValue.faculty_name == choose_faculty){
+            //         faculty_id = currentValue.faculty_id;    
+            //     }
+            // });
+            faculty_id = choose_faculty;
+            console.log("Choose faculty: ", choose_faculty);
             try{
                 const res = await axios.get(`http://localhost:8000/v1/majors/get_majors/${faculty_id}`);
                 setMajors(res.data);
@@ -202,7 +193,7 @@ export default function UserAccountManagement() {
                 faculty: choose_faculty,
                 majors: choose_majors,
                 course: parseInt(data.course_useraccount_mamagement),
-                management_unit: "",
+                management_unit: null,
                 role: []
             }//done
         }else{
@@ -218,8 +209,8 @@ export default function UserAccountManagement() {
                 phonenumber: data.phonenumber_useraccount_mamagement,
                 position: position,
                 class: "",
-                faculty: "",
-                majors: "",
+                faculty: null,
+                majors: null,
                 course: null,
                 management_unit: choose_managementUnit,
                 role: role
@@ -676,7 +667,7 @@ export default function UserAccountManagement() {
                                                                                 return(
                                                                                     <option 
                                                                                         key={index} 
-                                                                                        value={currentValue.faculty_name}
+                                                                                        value={currentValue.faculty_id}
                                                                                     >{currentValue.faculty_name}</option>
                                                                                 );
                                                                             })
@@ -707,7 +698,7 @@ export default function UserAccountManagement() {
                                                                                 return(
                                                                                     <option 
                                                                                         key={index}
-                                                                                        value={currentValue.majors_name}
+                                                                                        value={currentValue.majors_id}
                                                                                     >{currentValue.majors_name}</option>
                                                                                 )
                                                                             })
@@ -772,7 +763,10 @@ export default function UserAccountManagement() {
                                                                         {
                                                                             managementUnit?.map((currentValue, index) => {
                                                                                 return(
-                                                                                    <option key={index} value={currentValue.management_unit_name}>{currentValue.management_unit_name}</option>
+                                                                                    <option 
+                                                                                        key={index} 
+                                                                                        value={currentValue.management_unit_id}
+                                                                                    >{currentValue.management_unit_name}</option>
                                                                                 )
                                                                             })
                                                                         }
