@@ -38,6 +38,21 @@ const diplomaTypeSlice = createSlice({
             state.diplomaTypes.isFetching = false;
             state.diplomaTypes.error = true;
             state.msg = action.payload;
+        },
+        editDiplomaTypeStart: (state) => {
+            state.diplomaTypes.isFetching = true;
+            state.diplomaTypes.error = false;
+            state.msg = '';
+        },
+        editDiplomaTypeSuccess: (state) => {
+            state.diplomaTypes.error = false;
+            state.diplomaTypes.isFetching = false;
+            state.msg = 'Cập nhật tên loại văn bản thành công';
+        },
+        editDiplomaTypeFailed: (state, action) => {
+            state.diplomaTypes.isFetching = false;
+            state.diplomaTypes.error = true;
+            state.msg = action.payload;
         }
     }
 })
@@ -48,7 +63,10 @@ export const {
     getAllDiplomaTypeFailed,
     addDiplomaTypeStart,
     addDiplomaTypeSuccess,
-    addDiplomaTypeFailed
+    addDiplomaTypeFailed,
+    editDiplomaTypeStart,
+    editDiplomaTypeSuccess,
+    editDiplomaTypeFailed
 } = diplomaTypeSlice.actions;
 
 export default diplomaTypeSlice.reducer;

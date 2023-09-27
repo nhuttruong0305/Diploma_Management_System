@@ -34,6 +34,31 @@ const diplomaTypeControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    editDiplomaType: async (req, res) => {
+        try{
+
+            const allDiplomaType = await DiplomaTypeModel.find();
+            let isFault = false;
+            allDiplomaType.forEach((currentValue) => {
+                if(currentValue.diploma_type_name == req.body.diploma_type_name){
+                    isFault = true;
+                }
+            })
+
+            if(isFault){
+                return res.status(400).json("Loại văn bằng này đã tồn tại, hãy nhập tên mới");
+            }
+            
+            const options = {returnDocument: "after"};
+            const updateDoc = {
+                diploma_type_name: req.body.diploma_type_name
+            }
+            const diplomaTypeUpdate = await DiplomaTypeModel.findByIdAndUpdate(req.params.id, updateDoc, options);
+            return res.status(200).json(diplomaTypeUpdate);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 
