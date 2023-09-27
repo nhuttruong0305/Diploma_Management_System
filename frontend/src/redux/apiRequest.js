@@ -14,7 +14,10 @@ import {
 import {
     getAllDiplomaTypeStart,
     getAllDiplomaTypeSuccess,
-    getAllDiplomaTypeFailed
+    getAllDiplomaTypeFailed,
+    addDiplomaTypeStart,
+    addDiplomaTypeSuccess,
+    addDiplomaTypeFailed
 } from './diplomaSlice';
 
 export const LoginUser = async(user, dispatch, navigate) => {
@@ -65,5 +68,17 @@ export const getAllDiplomaType = async (dispatch) => {
         dispatch(getAllDiplomaTypeSuccess(result.data));
     }catch(err){
         dispatch(getAllDiplomaTypeFailed());
+    }
+}
+
+export const addDiplomaType = async (DiplomaTypeInfor, dispatch, accessToken) => {
+    dispatch(addDiplomaTypeStart());
+    try{
+        const res = await axios.post("http://localhost:8000/v1/diploma_type/add_diploma_type", DiplomaTypeInfor, {
+            headers: {token: `Bearer ${accessToken}`}
+        });
+        dispatch(addDiplomaTypeSuccess());
+    }catch(error){
+        dispatch(addDiplomaTypeFailed(error.response.data));
     }
 }

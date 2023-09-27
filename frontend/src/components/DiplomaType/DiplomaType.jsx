@@ -1,19 +1,37 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import './DiplomaType.css';
 import Header from '../Header/Header';
-import {getAllDiplomaType} from '../../redux/apiRequest';
+import {getAllDiplomaType, addDiplomaType} from '../../redux/apiRequest';
 import { useDispatch, useSelector } from 'react-redux';
+import Toast from '../Toast/Toast';
 
 export default function DiplomaType(){
     const dispatch = useDispatch();
     const allDiplomaType = useSelector((state) => state.diplomaType.diplomaTypes?.allDiplomaType);
+    const [diplomaName, setDiplomaName] = useState('');
+    const user = useSelector((state) => state.auth.login?.currentUser);
+    const msg = useSelector((state) => state.diplomaType?.msg);
+    const noti = useRef();
+    const isError = useSelector((state) => state.diplomaType.diplomaTypes?.error);
 
     //Gọi useEffect để lấy tất cả Diploma type
     useEffect(()=>{
         getAllDiplomaType(dispatch);
     }, []);
 
+    //Hàm submit thêm loại văn bằng 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const newDiploma = {
+            diploma_type_name: diplomaName
+        }
+        
+        await addDiplomaType(newDiploma , dispatch, user.accessToken);
+        noti.current.showToast();
+        await getAllDiplomaType(dispatch);
+    }
+ 
     return(
         <>
             <Header/>
@@ -69,7 +87,11 @@ export default function DiplomaType(){
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div className="modal-body">
-                                            <form id='form-add-diplomatype'>
+                                            <form 
+                                                id='form-add-diplomatype'
+                                                onSubmit={(e)=>{
+                                                    handleSubmit(e);
+                                                }}>
                                                 <div className="row">
                                                     <div className='col-2'>
                                                         <label
@@ -84,6 +106,10 @@ export default function DiplomaType(){
                                                         <input
                                                             type='text'
                                                             className='form-control'
+                                                            value={diplomaName}
+                                                            onChange={(e) => {
+                                                                setDiplomaName(e.target.value)
+                                                            }}
                                                         />
                                                     </div>
                                                 </div>
@@ -92,7 +118,8 @@ export default function DiplomaType(){
                                         <div className="modal-footer">
                                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                                             <button 
-                                                type="button" 
+                                                type="submit"
+                                                form='form-add-diplomatype' 
                                                 className="btn btn-primary"
                                             >Thêm</button>
                                         </div>
@@ -104,6 +131,11 @@ export default function DiplomaType(){
                     </div>  
                 </div>
             </div>
+            <Toast
+                message={msg}
+                type={isError ? "error" : "success"}
+                ref={noti}
+            />
         </>
     )
 }

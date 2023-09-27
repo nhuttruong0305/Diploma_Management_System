@@ -11,7 +11,24 @@ const diplomaTypeControllers = {
     },
     addDiplomaType: async (req, res) => {
         try{
-            const newDiplomaType = new DiplomaTypeModel(req.body);
+            const lastedDiplomaType = await DiplomaTypeModel.findOne({}, {}, { sort: { 'createdAt': -1 } });
+            const allDiplomaType = await DiplomaTypeModel.find();
+            let isFault = false;
+            allDiplomaType.forEach((currentValue) => {
+                if(currentValue.diploma_type_name == req.body.diploma_type_name){
+                    isFault = true;
+                }
+            })
+
+            if(isFault){
+                return res.status(400).json("Loại văn bằng này đã tồn tại, hãy nhập tên mới");
+            }
+
+            const newDiplomaType = new DiplomaTypeModel({
+                diploma_type_id: lastedDiplomaType.diploma_type_id+1,
+                diploma_type_name: req.body.diploma_type_name
+            });
+
             const diplomaTypeSaved = await newDiplomaType.save();
             return res.status(200).json(diplomaTypeSaved);
         }catch(error){
