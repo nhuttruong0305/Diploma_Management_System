@@ -23,6 +23,15 @@ import {
     editDiplomaTypeFailed
 } from './diplomaSlice';
 
+import {
+    getAllDiplomaNameStart,
+    getAllDiplomaNameSuccess,
+    getAllDiplomaNameFailed,
+    addDiplomaNameStart,
+    addDiplomaNameSuccess,
+    addDiplomaNameFailed
+} from './diplomaNameSlice';
+
 export const LoginUser = async(user, dispatch, navigate) => {
     //tham số đầu tiên user là 1 object chứa thông tin gồm: mssv_cb, password
     dispatch(loginStart());
@@ -95,5 +104,28 @@ export const editDiplomaType = async (DiplomaTypeInfor, dispatch, accessToken, _
         dispatch(editDiplomaTypeSuccess());
     }catch(error){
         dispatch(editDiplomaTypeFailed(error.response.data));
+    }
+}
+
+//Request for DiplomaName API
+export const getAllDiplomaName = async (dispatch) => {
+    dispatch(getAllDiplomaNameStart());
+    try{
+        const res = await axios.get("http://localhost:8000/v1/diploma_name/get_all_diploma_name");
+        dispatch(getAllDiplomaNameSuccess(res.data));
+    }catch(error){
+        dispatch(getAllDiplomaNameFailed());
+    }
+}
+
+export const addDiplomaName = async (DiplomaNameInfor, dispatch, accessToken) => {
+    dispatch(addDiplomaNameStart());
+    try{
+        const res = await axios.post("http://localhost:8000/v1/diploma_name/add_diploma_name", DiplomaNameInfor, {
+            headers: {token: `Bearer ${accessToken}`}
+        });
+        dispatch(addDiplomaNameSuccess());
+    }catch(error){
+        dispatch(addDiplomaNameFailed(error.response.data));
     }
 }

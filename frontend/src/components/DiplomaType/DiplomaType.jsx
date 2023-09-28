@@ -1,3 +1,4 @@
+//Quản lý danh mục loại văn bằng
 import { useEffect, useState, useRef } from 'react';
 
 import './DiplomaType.css';
