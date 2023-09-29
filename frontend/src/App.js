@@ -1,4 +1,5 @@
-import { useRoutes } from 'react-router-dom';
+import { useRoutes, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import './App.css';
 import HomePage from './components/HomePage/HomePage';
@@ -7,14 +8,68 @@ import UserAccountManagement from './components/UserAccountManagement/UserAccoun
 import DiplomaType from './components/DiplomaType/DiplomaType';
 import DiplomaName from './components/DiplomaName/DiplomaName';
 
+//Bảo vệ route của System administrator
+const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
+  return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
+};
+
+//Bảo vệ route của Diploma importer
+const ProtectedRouteDiplomaImporter = ({ isAuthenticated, role, children }) => {
+  return isAuthenticated && role == 'Diploma importer' ? children : <Navigate to="/"/>;
+}
+
+//Bảo vệ route của Diploma reviewer
+const ProtectedRouteDiplomaReviewer = ({ isAuthenticated, role, children }) => {
+  return isAuthenticated && role == 'Diploma reviewer' ? children : <Navigate to="/"/>;
+}
+
+
 function App() {
+  //Lấy thông tin user 
+  const user = useSelector((state) => state.auth.login?.currentUser);
+
   function Routes(){
     const element = useRoutes([
       { path: "/", element: <HomePage/> },
       { path: '/login', element: <Login/>},
-      { path: '/user-account-management', element: <UserAccountManagement/>},
-      { path: '/diploma-type', element: <DiplomaType/>},
-      { path: '/diploma-name', element: <DiplomaName/>}
+      { 
+        path: '/user-account-management', 
+        element: (
+          <ProtectedRouteSystemAdministrator
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <UserAccountManagement/>
+          </ProtectedRouteSystemAdministrator>
+        )
+      },
+      
+      // { path: '/diploma-type', element: <DiplomaType/>},
+      // { path: '/diploma-name', element: <DiplomaName/>}
+      { 
+        path: '/diploma-type', 
+        element: (
+          <ProtectedRouteSystemAdministrator
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <DiplomaType/>
+          </ProtectedRouteSystemAdministrator>
+        )
+      },
+      { 
+        path: '/diploma-name', 
+        element: (
+          <ProtectedRouteSystemAdministrator
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <DiplomaName/>
+          </ProtectedRouteSystemAdministrator>
+        )
+      },
+
+
     ])
     return element;
   }

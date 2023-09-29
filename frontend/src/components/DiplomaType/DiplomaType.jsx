@@ -1,5 +1,6 @@
 //Quản lý danh mục loại văn bằng
 import { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
 import './DiplomaType.css';
 import Header from '../Header/Header';
@@ -60,7 +61,7 @@ export default function DiplomaType(){
                                 <ul className="list-group list-group-flush">
                                     <li id='active-diplomatype' className="list-group-item">Danh mục loại văn bằng</li>
                                     <li className="list-group-item">Phân quyền quản lý văn bằng</li>
-                                    <li className="list-group-item">Danh mục tên văn bằng</li>
+                                    <Link style={{textDecoration: 'none'}} to='/diploma-name'><li className="list-group-item">Danh mục tên văn bằng</li></Link>
                                     <li className="list-group-item">Lịch sử quản lý tên văn bằng</li>
                                 </ul>
                             </div>

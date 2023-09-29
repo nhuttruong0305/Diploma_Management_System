@@ -1,5 +1,6 @@
 //Quản lý danh mục tên văn bằng
 import './DiplomaName.css';
+import { Link } from 'react-router-dom';
 import Header from '../Header/Header';
 import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -109,7 +110,7 @@ export default function DiplomaName(){
                                     <i className="fa-solid fa-sliders"></i>
                                 </div>
                                 <ul className="list-group list-group-flush">
-                                    <li className="list-group-item">Danh mục loại văn bằng</li>
+                                    <Link style={{textDecoration: 'none'}} to='/diploma-type'><li className="list-group-item">Danh mục loại văn bằng</li></Link>
                                     <li className="list-group-item">Phân quyền quản lý văn bằng</li>
                                     <li id='active-diplomaname' className="list-group-item">Danh mục tên văn bằng</li>
                                     <li className="list-group-item">Lịch sử quản lý tên văn bằng</li>

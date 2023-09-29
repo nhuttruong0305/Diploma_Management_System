@@ -25,7 +25,7 @@ export default function Navbar() {
                                     <Link className="nav-link nav-link-navbar" to="/">Tra cứu</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
-                                    <a className="nav-link nav-link-navbar" href="#">Quản lý văn bằng</a>
+                                    <Link className="nav-link nav-link-navbar" to="/diploma-type">Quản lý văn bằng</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/user-account-management">Quản lý người dùng</Link>
