@@ -88,6 +88,7 @@ export default function DiplomaType(){
                                                             <td>
                                                                 <i onClick={(e) => {
                                                                     set_IddiplomaNameEdit(currentValue._id);
+                                                                    setDiplomaNameEdit(currentValue.diploma_type_name);
                                                                 }} 
                                                                     type='button' 
                                                                     data-bs-toggle="modal" 

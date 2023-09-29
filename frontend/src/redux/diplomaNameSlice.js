@@ -38,6 +38,21 @@ const diplomaNameSlice = createSlice({
             state.diplomaNames.isFetching = false;
             state.diplomaNames.error = true;
             state.msg = action.payload;
+        },
+        editDiplomaNameStart: (state) => {
+            state.diplomaNames.isFetching = true;
+            state.diplomaNames.error = false;
+            state.msg = '';
+        },
+        editDiplomaNameSuccess: (state) => {
+            state.diplomaNames.isFetching = false;
+            state.diplomaNames.error = false;
+            state.msg = 'Cập nhật tên văn bằng thành công'
+        },
+        editDiplomaNameFailed: (state, action) => {
+            state.diplomaNames.isFetching = false;
+            state.diplomaNames.error = true;
+            state.msg = action.payload;
         }
     }
 })  
@@ -48,7 +63,10 @@ export const {
     getAllDiplomaNameFailed,
     addDiplomaNameStart,
     addDiplomaNameSuccess,
-    addDiplomaNameFailed
+    addDiplomaNameFailed,
+    editDiplomaNameStart,
+    editDiplomaNameSuccess,
+    editDiplomaNameFailed
 } = diplomaNameSlice.actions;
 
 export default diplomaNameSlice.reducer;
