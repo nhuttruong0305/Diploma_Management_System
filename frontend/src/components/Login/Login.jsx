@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -14,6 +14,7 @@ export default function Login(){
     const navigate = useNavigate();
     const noti = useRef();
     const msg = useSelector((state) => state.auth?.msg);
+    const [reset, setReset] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,10 +25,12 @@ export default function Login(){
             password: password
         };
         await LoginUser(loginInfor, dispatch, navigate);
+    }
+    useEffect(()=>{
         if(msg!=""){
             noti.current.showToast();
         }
-    }
+    }, [msg])
 
     return(
         <>
@@ -39,6 +42,7 @@ export default function Login(){
                         <div className="col-lg"></div>
                         <div className="col">
                             <form id="form-login" onSubmit={(e)=>{
+                                // setReset(!reset);
                                 handleSubmit(e);
                             }}>
                                 <div className="mb-3">

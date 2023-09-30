@@ -60,7 +60,7 @@ export default function DiplomaType(){
                                 </div>
                                 <ul className="list-group list-group-flush">
                                     <li id='active-diplomatype' className="list-group-item">Danh mục loại văn bằng</li>
-                                    <li className="list-group-item">Phân quyền quản lý văn bằng</li>
+                                    <Link style={{textDecoration: 'none'}} to='/decentralize-diploma-management'><li className="list-group-item">Phân quyền quản lý văn bằng</li></Link>
                                     <Link style={{textDecoration: 'none'}} to='/diploma-name'><li className="list-group-item">Danh mục tên văn bằng</li></Link>
                                     <li className="list-group-item">Lịch sử quản lý tên văn bằng</li>
                                 </ul>

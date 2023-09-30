@@ -130,7 +130,18 @@ const diplomaNameControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
-    } 
+    },
+    //Tìm kiếm tên văn bằng theo keyword
+    //Hàm này nếu nhập keyword rỗng thì sẽ trả về all diploma
+    searchDiplomaName: async (req, res) => {
+        try{
+            const keyword = req.query.keyword;
+            const listOfDiplomaName = await DiplomaNameModel.find({diploma_name_name:{ $regex: `${keyword}`, $options: 'i'}});
+            return res.status(200).json(listOfDiplomaName);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    }
 }
 
 module.exports = diplomaNameControllers;

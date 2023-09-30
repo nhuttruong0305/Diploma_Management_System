@@ -41,12 +41,6 @@ export const LoginUser = async(user, dispatch, navigate) => {
     try{
         const res = await axios.post("http://localhost:8000/v1/auth/login", user);
         dispatch(loginSuccess(res.data));
-        // if(res.data.role[0] == "System administrator"){
-        //     navigate("/user-account-management");
-        // }
-        // if(res.data.role.length == 0){
-        //     navigate("/");
-        // }
         navigate("/");
     }catch(err){
         dispatch(loginFailed(err.response.data));

@@ -40,7 +40,6 @@ export default function DiplomaName(){
         getAllDiplomaName(dispatch);
         getAllDiplomaType(dispatch);
     }, []);    
-    
     //Hàm submit thêm tên văn bằng mới
     const handleSubmitAddDiplomaName = async (e) => {
         e.preventDefault();
@@ -85,9 +84,8 @@ export default function DiplomaName(){
             diplomaTypeIdSelectEdit.current.focus();
             return;
         }
-        // console.log("NAme: ", diplomaNameEditInput);
-        // console.log("Type: ", choose_diplomaTypeIdEdit);
-        // console.log("diploma_name_id: ", DiplomaNameIdEdit);
+        
+        
         const DiplomaNameEditInfor = {
             diploma_name_name: diplomaNameEditInput,
             diploma_type_id: choose_diplomaTypeIdEdit 
@@ -95,6 +93,7 @@ export default function DiplomaName(){
 
         await editDiplomaName(DiplomaNameEditInfor, dispatch, user.accessToken, DiplomaNameIdEdit);
         noti.current.showToast();  
+        console.log("msg: ", msg);
         await getAllDiplomaName(dispatch);
     }
     
@@ -111,7 +110,9 @@ export default function DiplomaName(){
                                 </div>
                                 <ul className="list-group list-group-flush">
                                     <Link style={{textDecoration: 'none'}} to='/diploma-type'><li className="list-group-item">Danh mục loại văn bằng</li></Link>
-                                    <li className="list-group-item">Phân quyền quản lý văn bằng</li>
+                                    <Link style={{textDecoration: 'none'}} to='/decentralize-diploma-management'>
+                                        <li className="list-group-item">Phân quyền quản lý văn bằng</li>
+                                    </Link>
                                     <li id='active-diplomaname' className="list-group-item">Danh mục tên văn bằng</li>
                                     <li className="list-group-item">Lịch sử quản lý tên văn bằng</li>
                                 </ul>
