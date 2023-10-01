@@ -136,12 +136,48 @@ const diplomaNameControllers = {
     searchDiplomaName: async (req, res) => {
         try{
             const keyword = req.query.keyword;
-            const listOfDiplomaName = await DiplomaNameModel.find({diploma_name_name:{ $regex: `${keyword}`, $options: 'i'}});
+            const listOfDiplomaName = await DiplomaNameModel.find({diploma_name_name:{ $regex: `${keyword}`, $options: 'i'}, to: ""});
             return res.status(200).json(listOfDiplomaName);
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    
+    decentralizationDiplomaName: async (req, res) => {
+        try{
+            const updateDoc = {
+                management_unit_id: req.body.management_unit_id,
+                isEffective: true,
+                from: req.body.from
+            }
+            const filter = {diploma_name_id: parseInt(req.params.diploma_name_id)};
+
+            const diplomaNameUpdate = await DiplomaNameModel.updateMany(filter, updateDoc);
+            return res.status(200).json(diplomaNameUpdate);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    transferDiplomaName: async (req, res) => {
+        try{
+            const currentDate = new Date();
+            const day = currentDate.getDate(); // Lấy ngày
+            const month = currentDate.getMonth() + 1; // Lấy tháng (chú ý: tháng bắt đầu từ 0)
+            const year = currentDate.getFullYear(); // Lấy năm
+            
+            const updateDoc = {
+                isEffective: false,
+                to: `${year}-${month}-${day}`
+            }
+            const filter = {diploma_name_id: parseInt(req.params.diploma_name_id)};
+            
+            const diplomaNameUpdate = await DiplomaNameModel.updateMany(filter, updateDoc);
+            return res.status(200).json(diplomaNameUpdate);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
+    
 }
 
 module.exports = diplomaNameControllers;

@@ -1,39 +1,21 @@
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Header from '../Header/Header';
 import './DecentralizeDiplomaManagement.css';
 import TableShowDiplomaName from './TableShowDiplomaName';
 import { useEffect, useState } from 'react';
+import {searchDiplomaName} from '../../redux/apiRequest';
 
 export default function DecentralizeDiplomaManagement(){
-    const [allDiplomaName, setAllDiplomaName] = useState([]) //state lấy ra all diploma name
+    // const [allDiplomaName, setAllDiplomaName] = useState([]) //state lấy ra all diploma name
+    const allDiplomaName = useSelector((state) => state.diplomaName.diplomaNames?.allDiplomaName); //state lấy ra all diploma name
     const [inputSearchDDM, setInputSearchDDM] = useState(''); //state đại diện cho input nhập để tìm kiếm tên văn bằng
     const [chooseDiplomaStatusDDM, setChooseDiplomaStatusDDM] = useState('');
-
-    const searchDiplomaName = async (keyword) => {
-        try{
-            const result = await axios.get(`http://localhost:8000/v1/diploma_name/search_diplomaName/bykeyword?keyword=${keyword}`);
-            // setAllDiplomaName(result.data);
-            if(chooseDiplomaStatusDDM != ""){
-                let res = [];
-                result.data.forEach((currentValue) => {
-                    if(currentValue.isEffective == JSON.parse(chooseDiplomaStatusDDM)){
-                        res.push(currentValue);
-                    }
-                })
-                setAllDiplomaName(res);
-            }else{
-                setAllDiplomaName(result.data);
-            }
-        }catch(error){
-            console.log(error);
-        }
-    }
+    const dispatch = useDispatch();
 
     useEffect(()=>{
-        searchDiplomaName(inputSearchDDM);
+        searchDiplomaName(dispatch, inputSearchDDM, chooseDiplomaStatusDDM);
     }, [inputSearchDDM, chooseDiplomaStatusDDM]);
 
     return(
@@ -93,15 +75,17 @@ export default function DecentralizeDiplomaManagement(){
                                                     >Chưa phân quyền</option>
                                                 </select>
                                             </div>    
-                                            <div className="col-4">
+                                            {/* <div className="col-4">
                                                 <button className='btn' style={{backgroundColor:'#0b619d', color: 'white'}}><i className="fa-solid fa-filter"></i></button>
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </form>
                                 </div>
 
                                 <TableShowDiplomaName
                                     data={allDiplomaName}
+                                    inputSearch={inputSearchDDM}
+                                    status={chooseDiplomaStatusDDM}
                                 ></TableShowDiplomaName>
                                 
                             </div>

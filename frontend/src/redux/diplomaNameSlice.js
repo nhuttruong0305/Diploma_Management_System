@@ -8,7 +8,8 @@ const diplomaNameSlice = createSlice({
             isFetching: false,
             error: false
         },
-        msg:''
+        msg:'', //msg này để thông báo cho component DiplomaName.jsx
+        msgForDDM: '' //msg này để thông báo cho component DecentralizeDiplomaManagement.jsx và component TableShowDiplomaName.jsx
     },
     reducers:{
         getAllDiplomaNameStart: (state) => { //lấy để hiện ra màn hình
@@ -53,6 +54,48 @@ const diplomaNameSlice = createSlice({
             state.diplomaNames.isFetching = false;
             state.diplomaNames.error = true;
             state.msg = action.payload;
+        },
+        searchDiplomaNameStart: (state) => {
+            state.diplomaNames.isFetching = true;
+            state.diplomaNames.error = false;
+            state.msgForDDM = '';
+        },
+        searchDiplomaNameSuccess: (state, action) => {
+            state.diplomaNames.isFetching = false;
+            state.diplomaNames.error = false;
+            state.diplomaNames.allDiplomaName = action.payload;
+        },
+        searchDiplomaNameFailed: (state) => {
+            state.diplomaNames.isFetching = false;
+            state.diplomaNames.error = true;
+        },
+        decentralizationDiolomaNameStart: (state) => {
+            state.diplomaNames.isFetching = true;
+            state.diplomaNames.error = false;
+            state.msgForDDM = '';
+        },
+        decentralizationDiolomaNameSuccess: (state) => {
+            state.diplomaNames.error = false;
+            state.diplomaNames.isFetching = false;
+            state.msgForDDM = 'Phân quyền thành công';
+        },
+        decentralizationDiolomaNameFailed: (state) => {
+            state.diplomaNames.error = true;
+            state.diplomaNames.isFetching = false;
+        },
+        transferDiolomaNameStart: (state) => {
+            state.diplomaNames.isFetching = true;
+            state.diplomaNames.error = false;
+            state.msgForDDM = '';
+        },
+        transferDiplomaNameSuccess: (state) => {
+            state.diplomaNames.isFetching = false;
+            state.diplomaNames.error = false;
+            state.msgForDDM = 'Đã chuyển vào lịch sử quản lý tên văn bằng';
+        },
+        transferDiplomaNameFailed: (state) => {
+            state.diplomaNames.isFetching = false;
+            state.diplomaNames.error = true;
         }
     }
 })  
@@ -66,7 +109,16 @@ export const {
     addDiplomaNameFailed,
     editDiplomaNameStart,
     editDiplomaNameSuccess,
-    editDiplomaNameFailed
+    editDiplomaNameFailed,
+    searchDiplomaNameStart,
+    searchDiplomaNameSuccess,
+    searchDiplomaNameFailed,
+    decentralizationDiolomaNameStart,
+    decentralizationDiolomaNameSuccess,
+    decentralizationDiolomaNameFailed,
+    transferDiolomaNameStart,
+    transferDiplomaNameSuccess,
+    transferDiplomaNameFailed
 } = diplomaNameSlice.actions;
 
 export default diplomaNameSlice.reducer;

@@ -32,7 +32,16 @@ import {
     addDiplomaNameFailed,
     editDiplomaNameStart,
     editDiplomaNameSuccess,
-    editDiplomaNameFailed
+    editDiplomaNameFailed,
+    searchDiplomaNameStart,
+    searchDiplomaNameSuccess,
+    searchDiplomaNameFailed,
+    decentralizationDiolomaNameStart,
+    decentralizationDiolomaNameSuccess,
+    decentralizationDiolomaNameFailed,
+    transferDiolomaNameStart,
+    transferDiplomaNameSuccess,
+    transferDiplomaNameFailed
 } from './diplomaNameSlice';
 
 export const LoginUser = async(user, dispatch, navigate) => {
@@ -137,5 +146,49 @@ export const editDiplomaName = async (DiplomaNameEditInfor, dispatch, accessToke
         dispatch(editDiplomaNameSuccess());
     }catch(error){
         dispatch(editDiplomaNameFailed(error.response.data));
+    }
+}
+
+export const searchDiplomaName = async (dispatch, keyword, status) => {
+    dispatch(searchDiplomaNameStart());
+    try{    
+        const result = await axios.get(`http://localhost:8000/v1/diploma_name/search_diplomaName/bykeyword?keyword=${keyword}`);
+        if(status != ""){
+            let res = [];
+            result.data.forEach((currentValue) => {
+                if(currentValue.isEffective == JSON.parse(status)){
+                    res.push(currentValue);
+                }
+            })
+            dispatch(searchDiplomaNameSuccess(res));
+        }else{
+            dispatch(searchDiplomaNameSuccess(result.data));
+        }
+    }catch(error){
+        dispatch(searchDiplomaNameFailed())
+    }
+}
+
+export const decentralizationDiplomaName = async (data, dispatch, accessToken, diploma_name_id) => {
+    dispatch(decentralizationDiolomaNameStart());
+    try{    
+        const res = await axios.put(`http://localhost:8000/v1/diploma_name/decentralization/${diploma_name_id}`, data, {
+            headers: {token: `Bearer ${accessToken}`}
+        });
+        dispatch(decentralizationDiolomaNameSuccess());
+    }catch(error){
+        dispatch(decentralizationDiolomaNameFailed())
+    }
+}
+
+export const transferDiplomaName = async (dispatch, accessToken, diploma_name_id) => {
+    dispatch(transferDiolomaNameStart());
+    try{
+        const res = await axios.put(`http://localhost:8000/v1/diploma_name/transfer/${diploma_name_id}`, diploma_name_id, {
+            headers: {token: `Bearer ${accessToken}`}
+        });
+        dispatch(transferDiplomaNameSuccess());
+    }catch(error){
+        dispatch(transferDiplomaNameFailed());
     }
 }
