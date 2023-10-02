@@ -13,7 +13,7 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
     const [inputChooseMUTableShowDiplomaName, setInputChooseMUTableShowDiplomaName] = useState(); //state đại diện cho đơn vị quản lý của diploma name
     const [dateFrom, setDateFrom] = useState(''); //state đại diện cho ngày bắt đầu 
     const [readOnlyState, setReadOnlyState] = useState(false); //state đại diện cho
-    const [idDiplomaName, setIdDiplomaName] = useState(); //state đại diện cho id được lấy ra để cập nhật
+    const [idDiplomaName, setIdDiplomaName] = useState(); //state đại diện cho id được lấy ra để cập nhật (id được lấy là trường _id trong mongo) 
     const [showDec, setShowDec] = useState(false); //satate đại diện cho việc show form phân quyền hay form chuyển: true là show form phân quyền, false là form chuyển
 
     const noti = useRef();
@@ -59,13 +59,13 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
             return;
         }
 
-        if(getDate[0]>=year && getDate[1]<month){
+        if(getDate[0]==year && getDate[1]<month){
             noti4.current.showToast();
             date1.current.focus();
             return;
         }
         
-        if(getDate[0]>=year && getDate[1]>=month && getDate[2]<day){
+        if(getDate[0]==year && getDate[1]==month && getDate[2]<day){
             noti4.current.showToast();
             date1.current.focus();
             return;
@@ -145,7 +145,7 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
                                             data-bs-target="#modalShow_MU_OfDiplomaName"
                                             onClick={()=>{
                                                 setInputShowDiplomaName(dataValue.diploma_name_name);
-                                                setIdDiplomaName(dataValue.diploma_name_id);
+                                                setIdDiplomaName(dataValue._id);
                                                 if(dataValue.management_unit_id == null){
                                                     setInputChooseMUTableShowDiplomaName(""); 
                                                     setDateFrom("");

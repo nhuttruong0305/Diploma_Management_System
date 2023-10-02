@@ -150,9 +150,12 @@ const diplomaNameControllers = {
                 isEffective: true,
                 from: req.body.from
             }
-            const filter = {diploma_name_id: parseInt(req.params.diploma_name_id)};
+            // const filter = {diploma_name_id: parseInt(req.params.diploma_name_id)};
 
-            const diplomaNameUpdate = await DiplomaNameModel.updateMany(filter, updateDoc);
+            // const diplomaNameUpdate = await DiplomaNameModel.updateMany(filter, updateDoc);
+            const options = {returnDocument: "after"};
+
+            const diplomaNameUpdate = await DiplomaNameModel.findByIdAndUpdate(req.params.diploma_name_id, updateDoc, options);
             return res.status(200).json(diplomaNameUpdate);
         }catch(error){
             return res.status(500).json(error);
@@ -161,17 +164,28 @@ const diplomaNameControllers = {
     transferDiplomaName: async (req, res) => {
         try{
             const currentDate = new Date();
-            const day = currentDate.getDate(); // Lấy ngày
-            const month = currentDate.getMonth() + 1; // Lấy tháng (chú ý: tháng bắt đầu từ 0)
+            let day = currentDate.getDate(); // Lấy ngày
+            let month = currentDate.getMonth() + 1; // Lấy tháng (chú ý: tháng bắt đầu từ 0)
             const year = currentDate.getFullYear(); // Lấy năm
             
+            if(day<10){
+                day = `0${day}`;
+            }
+
+            if(month<10){
+                month = `0${month}`;
+            }
+
             const updateDoc = {
                 isEffective: false,
                 to: `${year}-${month}-${day}`
             }
-            const filter = {diploma_name_id: parseInt(req.params.diploma_name_id)};
+            // const filter = {diploma_name_id: parseInt(req.params.diploma_name_id)};
             
-            const diplomaNameUpdate = await DiplomaNameModel.updateMany(filter, updateDoc);
+            // const diplomaNameUpdate = await DiplomaNameModel.updateMany(filter, updateDoc);
+
+            const options = {returnDocument: "after"};
+            const diplomaNameUpdate = await DiplomaNameModel.findByIdAndUpdate(req.params.diploma_name_id, updateDoc, options);
             return res.status(200).json(diplomaNameUpdate);
         }catch(error){
             return res.status(500).json(error);
