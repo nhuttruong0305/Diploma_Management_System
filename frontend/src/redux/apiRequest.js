@@ -44,7 +44,10 @@ import {
     decentralizationDiolomaNameFailed,
     transferDiolomaNameStart,
     transferDiplomaNameSuccess,
-    transferDiplomaNameFailed
+    transferDiplomaNameFailed,
+    searchDiplomaNameForDNMHStart,
+    searchDiplomaNameForDNMHSuccess,
+    searchDiplomaNameForDNMHFailed
 } from './diplomaNameSlice';
 
 export const LoginUser = async(user, dispatch, navigate) => {
@@ -203,5 +206,28 @@ export const transferDiplomaName = async (dispatch, accessToken, diploma_name_id
         dispatch(transferDiplomaNameSuccess());
     }catch(error){
         dispatch(transferDiplomaNameFailed());
+    }
+}
+
+//Request for DNMH API
+export const searchDiplomaNameForDNMH = async (dispatch, keyword, idMU) =>{
+    dispatch(searchDiplomaNameForDNMHStart());
+    try{
+        const result = await axios.get(`http://localhost:8000/v1/diploma_name/search_diplomaNameForDNMH?keyword=${keyword}`);
+        if(parseInt(idMU)>0){
+            let res = [];
+            result.data.forEach((currentValue)=>{
+                if(currentValue.management_unit_id == parseInt(idMU)){
+                    res.push(currentValue);
+                }   
+            })
+            console.log(res);
+            console.log(result.data);
+            dispatch(searchDiplomaNameForDNMHSuccess(res));
+        }else{
+            dispatch(searchDiplomaNameForDNMHSuccess(result.data));
+        }   
+    }catch(error){
+        dispatch(searchDiplomaNameForDNMHFailed())
     }
 }

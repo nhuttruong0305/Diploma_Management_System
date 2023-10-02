@@ -96,6 +96,19 @@ const diplomaNameSlice = createSlice({
         transferDiplomaNameFailed: (state) => {
             state.diplomaNames.isFetching = false;
             state.diplomaNames.error = true;
+        },
+        searchDiplomaNameForDNMHStart: (state) => {
+            state.diplomaNames.isFetching = true;
+            state.diplomaNames.error = false;
+        },
+        searchDiplomaNameForDNMHSuccess: (state, action) => {
+            state.diplomaNames.isFetching = false;
+            state.diplomaNames.error = false;
+            state.diplomaNames.allDiplomaName = action.payload;
+        },
+        searchDiplomaNameForDNMHFailed: (state) => {
+            state.diplomaNames.isFetching = false;
+            state.diplomaNames.error = true;
         }
     }
 })  
@@ -118,7 +131,10 @@ export const {
     decentralizationDiolomaNameFailed,
     transferDiolomaNameStart,
     transferDiplomaNameSuccess,
-    transferDiplomaNameFailed
+    transferDiplomaNameFailed,
+    searchDiplomaNameForDNMHStart,
+    searchDiplomaNameForDNMHSuccess,
+    searchDiplomaNameForDNMHFailed
 } = diplomaNameSlice.actions;
 
 export default diplomaNameSlice.reducer;

@@ -8,4 +8,5 @@ router.put("/edit_diploma_name/:diploma_name_id", middlewareController.verifyTok
 router.get("/search_diplomaName/bykeyword", diplomaNameControllers.searchDiplomaName);
 router.put("/decentralization/:diploma_name_id", middlewareController.verifyTokenAndSystemAdministratorRole, diplomaNameControllers.decentralizationDiplomaName);
 router.put("/transfer/:diploma_name_id", middlewareController.verifyTokenAndSystemAdministratorRole, diplomaNameControllers.transferDiplomaName);
+router.get("/search_diplomaNameForDNMH", diplomaNameControllers.searchDiplomaNameForDNMH);
 module.exports = router;

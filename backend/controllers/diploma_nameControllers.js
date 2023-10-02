@@ -190,6 +190,15 @@ const diplomaNameControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    searchDiplomaNameForDNMH: async (req,res) => {
+        try{
+            const keyword = req.query.keyword;
+            const listOfDiplomaName = await DiplomaNameModel.find({diploma_name_name:{ $regex: `${keyword}`, $options: 'i'}, to: { $ne: null, $ne: '' }});
+            return res.status(200).json(listOfDiplomaName);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
     
 }

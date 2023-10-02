@@ -126,7 +126,9 @@ export default function DiplomaName(){
                                         <li className="list-group-item">Phân quyền quản lý văn bằng</li>
                                     </Link>
                                     <li id='active-diplomaname' className="list-group-item">Danh mục tên văn bằng</li>
-                                    <li className="list-group-item">Lịch sử quản lý tên văn bằng</li>
+                                    <Link style={{textDecoration: 'none'}} to='/diploma-name-management-history'>
+                                        <li className="list-group-item">Lịch sử quản lý tên văn bằng</li>
+                                    </Link>
                                 </ul>
                             </div>
                         </div>
