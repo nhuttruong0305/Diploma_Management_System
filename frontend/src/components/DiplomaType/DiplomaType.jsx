@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import './DiplomaType.css';
 import Header from '../Header/Header';
-import {getAllDiplomaType, addDiplomaType, editDiplomaType} from '../../redux/apiRequest';
+import {getAllDiplomaType, addDiplomaType, editDiplomaType, searchDiplomaType} from '../../redux/apiRequest';
 import { useDispatch, useSelector } from 'react-redux';
 import Toast from '../Toast/Toast';
 
@@ -15,15 +15,22 @@ export default function DiplomaType(){
     const [diplomaNameEdit, setDiplomaNameEdit] = useState(''); //state đại diện cho input để chỉnh sửa loại văn bằng
     const [_iddiplomaNameEdit, set_IddiplomaNameEdit] = useState(''); //state đại diện cho _id để cập nhật
 
+    const [inputSearch, setInputSearch] = useState(''); //state đại diện để tìm kiếm tên của loại văn bằng
+
     const user = useSelector((state) => state.auth.login?.currentUser);
     const msg = useSelector((state) => state.diplomaType?.msg);
     const noti = useRef();
     const isError = useSelector((state) => state.diplomaType.diplomaTypes?.error);
 
     //Gọi useEffect để lấy tất cả Diploma type
+    // useEffect(()=>{
+    //     getAllDiplomaType(dispatch);
+    // }, []);
+
+    //Gọi useEffect để tìm kiếm tên văn bằng
     useEffect(()=>{
-        getAllDiplomaType(dispatch);
-    }, []);
+        searchDiplomaType(dispatch, inputSearch);
+    }, [inputSearch]);
 
     //Hàm submit thêm loại văn bằng 
     const handleSubmit = async (e) => {
@@ -34,7 +41,8 @@ export default function DiplomaType(){
         
         await addDiplomaType(newDiploma , dispatch, user.accessToken);
         noti.current.showToast();
-        await getAllDiplomaType(dispatch);
+        // await getAllDiplomaType(dispatch);
+        searchDiplomaType(dispatch, inputSearch);
     }
     
     //Hàm submit để edit thông tin loại văn bằng
@@ -44,7 +52,8 @@ export default function DiplomaType(){
             diploma_type_name: diplomaNameEdit
         }, dispatch, user.accessToken, _iddiplomaNameEdit);
         noti.current.showToast();
-        await getAllDiplomaType(dispatch);
+        // await getAllDiplomaType(dispatch);
+        searchDiplomaType(dispatch, inputSearch);
     }
 
     return(
@@ -71,7 +80,22 @@ export default function DiplomaType(){
                                 <div>
                                     <button type='button' id='add-diploma-type' data-bs-toggle="modal" data-bs-target="#modalAddDiplomaType"><i className="fa-sharp fa-solid fa-plus"></i> Thêm</button>
                                 </div>
-                                <table className='table'>
+
+                                <div className="row mt-3">
+                                    <div className="col-4">
+                                    <input 
+                                        type="text" 
+                                        value={inputSearch}
+                                        onChange={(e) => {
+                                            setInputSearch(e.target.value);
+                                        }}
+                                        className='form-control'
+                                        placeholder='Nhập tên loại văn bằng muốn tìm kiếm'
+                                        />
+                                    </div>
+                                </div>
+
+                                <table className='table mt-3'>
                                     <thead>
                                         <tr>
                                             <th scope="col"></th>

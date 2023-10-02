@@ -53,6 +53,19 @@ const diplomaTypeSlice = createSlice({
             state.diplomaTypes.isFetching = false;
             state.diplomaTypes.error = true;
             state.msg = action.payload;
+        },
+        searchDiplomaTypeStart: (state) => {
+            state.diplomaTypes.isFetching = true;
+            state.diplomaTypes.error = false;
+        },
+        searchDiplomaTypeSuccess: (state, action) => {
+            state.diplomaTypes.isFetching = false;
+            state.diplomaTypes.error = false;
+            state.diplomaTypes.allDiplomaType = action.payload;
+        },
+        searchDiplomaTypeFailed: (state) => {
+            state.diplomaTypes.isFetching = false;
+            state.diplomaTypes.error = true;
         }
     }
 })
@@ -66,7 +79,10 @@ export const {
     addDiplomaTypeFailed,
     editDiplomaTypeStart,
     editDiplomaTypeSuccess,
-    editDiplomaTypeFailed
+    editDiplomaTypeFailed,
+    searchDiplomaTypeStart,
+    searchDiplomaTypeSuccess,
+    searchDiplomaTypeFailed
 } = diplomaTypeSlice.actions;
 
 export default diplomaTypeSlice.reducer;

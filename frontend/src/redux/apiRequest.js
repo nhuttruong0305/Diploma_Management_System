@@ -20,7 +20,10 @@ import {
     addDiplomaTypeFailed,
     editDiplomaTypeStart,
     editDiplomaTypeSuccess,
-    editDiplomaTypeFailed
+    editDiplomaTypeFailed,
+    searchDiplomaTypeStart,
+    searchDiplomaTypeSuccess,
+    searchDiplomaTypeFailed
 } from './diplomaSlice';
 
 import {
@@ -111,6 +114,16 @@ export const editDiplomaType = async (DiplomaTypeInfor, dispatch, accessToken, _
         dispatch(editDiplomaTypeSuccess());
     }catch(error){
         dispatch(editDiplomaTypeFailed(error.response.data));
+    }
+}
+
+export const searchDiplomaType = async (dispatch, keyword) => {
+    dispatch(searchDiplomaTypeStart());
+    try{
+        const result = await axios.get(`http://localhost:8000/v1/diploma_type/search_diploma_type?keyword=${keyword}`);
+        dispatch(searchDiplomaTypeSuccess(result.data));
+    }catch(error){
+        dispatch(searchDiplomaTypeFailed());
     }
 }
 

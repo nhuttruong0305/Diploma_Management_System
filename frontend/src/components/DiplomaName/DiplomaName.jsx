@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Header from '../Header/Header';
 import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllDiplomaName, getAllDiplomaType, addDiplomaName, editDiplomaName } from '../../redux/apiRequest';
+import { searchDiplomaName, getAllDiplomaName, getAllDiplomaType, addDiplomaName, editDiplomaName } from '../../redux/apiRequest';
 import Toast from '../Toast/Toast';
 
 export default function DiplomaName(){
@@ -18,6 +18,8 @@ export default function DiplomaName(){
     const [diplomaNameEditInput, setDiplomaNameEditInput] = useState(''); //state đại diện cho diploma name input trong form chỉnh sửa thông tin tên văn bằng
     const [choose_diplomaTypeIdEdit, setChoose_diplomaTypeIdEdit] = useState(); //state đại diện cho id diploma type trong form chỉnh sửa thông tin tên văn bằng
     const [DiplomaNameIdEdit, setDiplomaNameIdEdit] = useState('') // state đại diện cho _id dùng để truyền vào api để cập nhật
+
+    const [inputSearch, setInputSearch] = useState(''); //state dùng để search tên văn bằng
 
     const user = useSelector((state) => state.auth.login?.currentUser); // lấy thông tin user để lấy accessToken
     const noti = useRef();
@@ -37,9 +39,17 @@ export default function DiplomaName(){
 
     //Gọi useEffect để lấy tất cả DiplomaName
     useEffect(() => {
-        getAllDiplomaName(dispatch);
+        // getAllDiplomaName(dispatch);
         getAllDiplomaType(dispatch);
     }, []);    
+
+    //Gọi useEffect để tìm kiếm tên văn bằng
+    useEffect(() => {
+        searchDiplomaName(dispatch, inputSearch, "");
+    }, [inputSearch]);
+
+    console.log("TEST", allDiplomaName);
+
     //Hàm submit thêm tên văn bằng mới
     const handleSubmitAddDiplomaName = async (e) => {
         e.preventDefault();
@@ -65,7 +75,8 @@ export default function DiplomaName(){
 
         await addDiplomaName(DiplomaNameInfor, dispatch, user.accessToken);
         noti.current.showToast();  
-        await getAllDiplomaName(dispatch);      
+        // await getAllDiplomaName(dispatch);    
+        searchDiplomaName(dispatch, inputSearch, "");  
     }
 
     //Hàm submit để chỉnh sửa thông tin tên văn bằng
@@ -94,7 +105,8 @@ export default function DiplomaName(){
         await editDiplomaName(DiplomaNameEditInfor, dispatch, user.accessToken, DiplomaNameIdEdit);
         noti.current.showToast();  
         console.log("msg: ", msg);
-        await getAllDiplomaName(dispatch);
+        // await getAllDiplomaName(dispatch);
+        searchDiplomaName(dispatch, inputSearch, "");  
     }
     
     return(
@@ -129,12 +141,26 @@ export default function DiplomaName(){
                                         data-bs-target="#modalAddDiplomaName"
                                     ><i className="fa-sharp fa-solid fa-plus"></i> Thêm</button>
                                 </div>
-                                <table className='table'>
+                                <div className='row mt-3'>
+                                    <div className="col-4">
+                                        <input 
+                                            type="text" 
+                                            value={inputSearch}
+                                            onChange={(e) => {
+                                                setInputSearch(e.target.value);
+                                            }}
+                                            className='form-control'
+                                            placeholder='Nhập tên văn bằng muốn tìm kiếm'
+                                        />
+                                    </div>
+                                </div>
+                                <table className='table mt-3'>
                                     <thead>
                                         <tr>
                                             <th scope="col"></th>
                                             <th scope="col">Tên văn bằng</th>
                                             <th scope="col">Loại văn bằng</th>
+                                            <th scope="col"></th>
                                             <th scope="col"></th>
                                         </tr>
                                     </thead>
@@ -164,6 +190,9 @@ export default function DiplomaName(){
                                                                 data-bs-target="#modalEditDiplomaName"
                                                                 className="fa-solid fa-eye"
                                                             ></i>
+                                                        </td>
+                                                        <td>
+                                                            <button className='btn btn-danger'>Xóa</button>
                                                         </td>
                                                     </tr>
                                                 )

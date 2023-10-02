@@ -59,6 +59,15 @@ const diplomaTypeControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    searchDiplomaType: async (req, res) => {
+        try{
+            const keyword = req.query.keyword;
+            const listOfDiplomaType = await DiplomaTypeModel.find({diploma_type_name:{ $regex: `${keyword}`, $options: 'i'}});
+            return res.status(200).json(listOfDiplomaType);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 
