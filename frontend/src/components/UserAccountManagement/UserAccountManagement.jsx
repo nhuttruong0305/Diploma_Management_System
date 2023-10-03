@@ -11,7 +11,7 @@ import * as Yup from 'yup';
 import './UserAccountManagement.css';
 import Header from '../Header/Header';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../../redux/apiRequest';
 import Toast from '../Toast/Toast';
 
@@ -252,7 +252,8 @@ export default function UserAccountManagement() {
         // }else{
             noti.current.showToast();  
         // }   
-        await getAllUserAccount(); 
+        // await getAllUserAccount(); 
+        await searchUserAccountByName(inputSearch, inputMSSV_CB, inputPosition);
     };
 
     return (
@@ -268,7 +269,9 @@ export default function UserAccountManagement() {
                                 </div>
                                 <ul className="list-group list-group-flush">
                                     <li id='active-useraccount-management' className="list-group-item">Thêm tài khoản</li>
-                                    <li className="list-group-item">Phân quyền người dùng quản lý</li>
+                                    <Link style={{textDecoration: 'none'}} to='/manage-user-permission'>
+                                        <li className="list-group-item">Phân quyền người dùng quản lý</li>
+                                    </Link>
                                 </ul>
                             </div>
                         </div>
