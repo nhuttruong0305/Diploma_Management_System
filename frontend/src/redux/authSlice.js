@@ -13,7 +13,8 @@ const authSlice = createSlice({
             error: false,
             success: false
         },
-        msg: ''
+        msg: '',
+        msgForRegister: ''
     },
     reducers:{
         loginStart: (state) => {
@@ -36,21 +37,21 @@ const authSlice = createSlice({
         },
         registerStart: (state) => {
             state.register.isFetching = true;
-            state.msg = '';
+            state.msgForRegister = '';
         },
         registerSuccess: (state) =>{
             state.register.isFetching = false;
             state.register.error = false;
             state.register.success = true;
 
-            state.msg = "Thêm tài khoản người dùng thành công";
+            state.msgForRegister = "Thêm tài khoản người dùng thành công";
         },
         registerFailed: (state, action) => {
             state.register.isFetching = false;
             state.register.error = true;
             state.register.success = false;
 
-            state.msg = action.payload; // hiển thị lỗi khi thêm tài khoản không thành công
+            state.msgForRegister = action.payload; // hiển thị lỗi khi thêm tài khoản không thành công
         },
         logoutStart: (state) => {
             state.login.isFetching = true;

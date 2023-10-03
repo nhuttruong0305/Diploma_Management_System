@@ -24,6 +24,10 @@ export default function UserAccountManagement() {
     const [choose_managementUnit, setChooseManagementUnit] = useState() //state đại diện cho đơn vị quản lý được chọn
     const [role, setRole] = useState('') //state đại diện cho các quyền của tài khoản, hiện chỉ xử lý theo cách 1 tài khoản có 1 quyền (chọn với input type = radio), có thể đổi sang cách xử lý để 1 tài khoản có nhiều quyền(chọn với input type = checkbox)
 
+    const [inputSearch, setInputSearch] = useState(''); //state dùng để tìm kiếm user account theo tên
+    const [inputMSSV_CB, setInputMSSV_CB] = useState(''); //state dùng để tìm kiếm user account theo MSSV_CB
+    const [inputPosition, setInputPosition] = useState(''); //state dùng để lọc ra user account là Sinh viên hay Cán bộ
+
     const [faculty, setFaculty] = useState([]); //state đại diện cho danh sách các khoa dc lấy từ DB
     const [managementUnit, setManagementUnit] = useState([]); //state đại diện cho các đơn vị quản lý dc lấy từ DB
     const [majors, setMajors] = useState([]); //state đại diện cho danh sách các ngành được lấy từ DB đựa vào khoa được chọn
@@ -34,7 +38,7 @@ export default function UserAccountManagement() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const noti = useRef();
-    const msg = useSelector((state) => state.auth?.msg);
+    const msg = useSelector((state) => state.auth?.msgForRegister);
     const isError = useSelector((state) => state.auth.register?.error);
 
     
@@ -104,6 +108,31 @@ export default function UserAccountManagement() {
             console.log(error);
         }
     }
+
+    //Hàm gọi api để tìm user account theo tên
+    const searchUserAccountByName = async (inputName, inputMSSV_CB, position) => {
+        try{
+            const res = await axios.get(`http://localhost:8000/v1/user_account/search_useraccount_byname?keyword=${inputName}&mssv_cb=${inputMSSV_CB}`);
+            if(position!=""){
+                let result = [];
+                res.data.forEach((currentValue)=>{
+                    if(currentValue.position == position){
+                        result = [...result, currentValue];
+                    }
+                })                
+                setAllUserAccount(result);
+            }else{
+                setAllUserAccount(res.data);
+            }
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    //Gọi useEffect để lấy all user khi tìm kiếm theo tên
+    useEffect(()=>{
+        searchUserAccountByName(inputSearch, inputMSSV_CB, inputPosition);
+    }, [inputSearch, inputMSSV_CB, inputPosition])
    
     //Gọi useEffect để lấy về danh sách khoa
     useEffect(() => {
@@ -116,9 +145,9 @@ export default function UserAccountManagement() {
     }, [])
 
     // //Gọi useEffect để lấy về danh sách tất cả user account trong DB
-    useEffect(()=> {
-        getAllUserAccount();
-    }, [])
+    // useEffect(()=> {
+    //     getAllUserAccount();
+    // }, [])
 
     //Gọi useEffect để lấy danh sách các ngành dựa theo khoa
     useEffect(() => {
@@ -218,11 +247,11 @@ export default function UserAccountManagement() {
         }
 
         await registerUser(newUserAccount, dispatch, user.accessToken);
-        if(msg=="Thêm tài khoản người dùng thành công"){  
-            noti.current.showToast();
-        }else{
+        // if(msg=="Thêm tài khoản người dùng thành công"){  
+        //     noti.current.showToast();
+        // }else{
             noti.current.showToast();  
-        }   
+        // }   
         await getAllUserAccount(); 
     };
 
@@ -248,7 +277,46 @@ export default function UserAccountManagement() {
                                 <div>
                                     <button type="button" id='add-user-account-useraccountmanagement' data-bs-toggle="modal" data-bs-target="#exampleModalAddUserAccount">Thêm mới tài khoản</button>
                                 </div>
-                                <table className='table'>
+                                <div className='mt-3'>
+                                    <div className="row">
+                                        <div className="col-4">
+                                            <input 
+                                                type="text" 
+                                                className='form-control'
+                                                placeholder='Tìm kiếm theo tên'
+                                                value={inputSearch}
+                                                onChange={(e)=>{
+                                                    setInputSearch(e.target.value);
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="col-4">
+                                            <input 
+                                                type="text" 
+                                                className='form-control'
+                                                placeholder='Tìm kiếm theo MSSV/CB'
+                                                value={inputMSSV_CB}
+                                                onChange={(e)=>{
+                                                    setInputMSSV_CB(e.target.value);
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="col-4">
+                                            <select
+                                                className='form-select'
+                                                value={inputPosition}
+                                                onChange={(e)=>{
+                                                    setInputPosition(e.target.value);
+                                                }}
+                                            >
+                                                <option value="">Lọc theo chức vụ</option>
+                                                <option value="Student">Sinh viên</option>
+                                                <option value="Officer">Cán bộ</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table className='table mt-3'>
                                     <thead>
                                         <tr>
                                             <th scope="col"></th>

@@ -48,8 +48,6 @@ export default function DiplomaName(){
         searchDiplomaName(dispatch, inputSearch, "");
     }, [inputSearch]);
 
-    console.log("TEST", allDiplomaName);
-
     //Hàm submit thêm tên văn bằng mới
     const handleSubmitAddDiplomaName = async (e) => {
         e.preventDefault();
