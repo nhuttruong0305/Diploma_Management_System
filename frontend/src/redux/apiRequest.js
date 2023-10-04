@@ -50,6 +50,12 @@ import {
     searchDiplomaNameForDNMHFailed
 } from './diplomaNameSlice';
 
+import {
+    getAllDiplomaIssuanceByMUStart,
+    getAllDiplomaIssuanceByMUSuccess,
+    getAllDiplomaIssuanceByMUFailed
+} from './diplomaIssuanceSlice';
+
 export const LoginUser = async(user, dispatch, navigate) => {
     //tham số đầu tiên user là 1 object chứa thông tin gồm: mssv_cb, password
     dispatch(loginStart());
@@ -229,5 +235,16 @@ export const searchDiplomaNameForDNMH = async (dispatch, keyword, idMU) =>{
         }   
     }catch(error){
         dispatch(searchDiplomaNameForDNMHFailed())
+    }
+}
+
+//Request for DiplomaIssuance
+export const getAllDiplomaIssuanceByMU = async (dispatch, management_unit_id) => {
+    dispatch(getAllDiplomaIssuanceByMUStart());
+    try{
+        const result = await axios.get(`http://localhost:8000/v1/diploma_issuance/get_all_diploma_issuance/${management_unit_id}`);
+        dispatch(getAllDiplomaIssuanceByMUSuccess(result.data));
+    }catch(error){
+        dispatch(getAllDiplomaIssuanceByMUFailed())
     }
 }

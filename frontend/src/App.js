@@ -10,6 +10,7 @@ import DiplomaName from './components/DiplomaName/DiplomaName';
 import DecentralizeDiplomaManagement from './components/DecentralizeDiplomaManagement/DecentralizeDiplomaManagement';
 import DiplomaNameManagementHistory from './components/DiplomaNameManagementHistory/DiplomaNameManagementHistory';
 import ManageUserPermission from './components/ManageUserPermission/ManageUserPermission';
+import DiplomaIssuance from './components/DiplomaIssuance/DiplomaIssuance';
 
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
@@ -99,6 +100,17 @@ function App() {
           >
             <ManageUserPermission/>
           </ProtectedRouteSystemAdministrator>
+        )
+      },
+      {
+        path: '/diploma-issuance',
+        element: (
+          <ProtectedRouteDiplomaImporter
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <DiplomaIssuance/>
+          </ProtectedRouteDiplomaImporter>
         )
       }
     ])

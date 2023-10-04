@@ -1,0 +1,12 @@
+#body-DI{
+    padding-top: 10px;
+    padding-bottom: 20px;
+    border: 1px solid rgb(184, 184, 184);
+    background-color: #e5e5e5;
+    border-radius: 0px 0px 5px 5px;
+}
+
+#add-diploma-issuance-DI{
+    background-color: #0b619d;
+    color: white;
+}

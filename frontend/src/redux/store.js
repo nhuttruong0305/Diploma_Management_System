@@ -13,18 +13,20 @@ import {configureStore, combineReducers} from '@reduxjs/toolkit'
 import authReducer from './authSlice';
 import diplomaTypeReducer from './diplomaSlice';
 import diplomaNameReducer from './diplomaNameSlice';
+import diplomaIssuanceSliceReducer from './diplomaIssuanceSlice';
 
 const persistConfig = {
     key: 'root',
     version: 1,
     storage,
-    blacklist: ['diplomaType', 'diplomaName']
+    blacklist: ['diplomaType', 'diplomaName', 'diplomaIssuance']
 }
 
 const rootReducer =  combineReducers({
     auth: authReducer,
     diplomaType: diplomaTypeReducer,
-    diplomaName: diplomaNameReducer
+    diplomaName: diplomaNameReducer,
+    diplomaIssuance: diplomaIssuanceSliceReducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

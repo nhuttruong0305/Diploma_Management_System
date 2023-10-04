@@ -199,8 +199,15 @@ const diplomaNameControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    getAllDiplomaNameByMU: async (req, res) => {
+        try{
+            const result = await DiplomaNameModel.find({management_unit_id: parseInt(req.params.management_unit_id), isEffective: true});
+            return res.status(200).json(result);
+        }catch(error){  
+            return res.status(500).json(error);
+        }
     }
-    
 }
 
 module.exports = diplomaNameControllers;

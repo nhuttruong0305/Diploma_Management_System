@@ -28,6 +28,16 @@ const middlewareController = {
             }
         })
     },
+
+    verifyTokenAndDiplomaImporter: (req, res, next) => {
+        middlewareController.verifyToken(req, res, () => {
+            if(req.user.role[0] == 'Diploma importer'){
+                next();
+            }else{
+                return res.status(403).json("You are not authorized");
+            }
+        })
+    }
 }
 
 module.exports = middlewareController;

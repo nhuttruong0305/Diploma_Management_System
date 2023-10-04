@@ -88,7 +88,7 @@ export default function UserAccountManagement() {
             //     }
             // });
             faculty_id = choose_faculty;
-            console.log("Choose faculty: ", choose_faculty);
+        
             try{
                 const res = await axios.get(`http://localhost:8000/v1/majors/get_majors/${faculty_id}`);
                 setMajors(res.data);
