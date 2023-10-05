@@ -53,7 +53,10 @@ import {
 import {
     getAllDiplomaIssuanceByMUStart,
     getAllDiplomaIssuanceByMUSuccess,
-    getAllDiplomaIssuanceByMUFailed
+    getAllDiplomaIssuanceByMUFailed,
+    addDiplomaIssuanceByMUStart,
+    addDiplomaIssuanceByMUSuccess,
+    addDiplomaIssuanceByMUFailed
 } from './diplomaIssuanceSlice';
 
 export const LoginUser = async(user, dispatch, navigate) => {
@@ -246,5 +249,17 @@ export const getAllDiplomaIssuanceByMU = async (dispatch, management_unit_id) =>
         dispatch(getAllDiplomaIssuanceByMUSuccess(result.data));
     }catch(error){
         dispatch(getAllDiplomaIssuanceByMUFailed())
+    }
+}
+
+export const addDiplomaIssuanceByMU = async (dispatch, accessToken, DiplomaIssuanceInfor) => {
+    dispatch(addDiplomaIssuanceByMUStart());
+    try{
+        const result = await axios.post("http://localhost:8000/v1/diploma_issuance/add_diploma_issuance", DiplomaIssuanceInfor, {
+            headers: {token: `Bearer ${accessToken}`}
+        });
+        dispatch(addDiplomaIssuanceByMUSuccess());
+    }catch(error){
+        dispatch(addDiplomaIssuanceByMUFailed(error.response.data));
     }
 }
