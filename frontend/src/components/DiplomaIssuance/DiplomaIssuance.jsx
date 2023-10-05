@@ -1,7 +1,7 @@
 import Header from '../Header/Header';
 import axios from 'axios';
 import './DiplomaIssuance.css';
-import {getAllDiplomaIssuanceByMU, getAllDiplomaName, addDiplomaIssuanceByMU } from '../../redux/apiRequest';
+import {getAllDiplomaIssuanceByMU, getAllDiplomaName, addDiplomaIssuanceByMU, editDiplomaIssuanceByMU } from '../../redux/apiRequest';
 import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from "react-select";
@@ -22,15 +22,24 @@ export default function DiplomaIssuance(){
     //Thông báo và focus vào trường nhập tên
     const noti2 = useRef();
     const inputAddDiplomaIssuanceNameOfFormRef = useRef();
+    const inputDiplomaIssuanceNameRef = useRef();
 
-    //Thông báo khi thêm thành công đợt cấp văn bằng
+    //Thông báo khi thêm thành công hoặc lỗi khi thêm đợt cấp văn bằng
     const noti3 = useRef();
     const msg = useSelector((state) => state.diplomaIssuance?.msg);
     const isError = useSelector((state) => state.diplomaIssuance.diplomaIssuances?.error);
 
+    const noti4 = useRef();
+
+    //msgEdit
+    const msgEdit = useSelector((state) => state.diplomaIssuance?.msgForEdit);
+    const isErrorEdit = useSelector((state) => state.diplomaIssuance.diplomaIssuances?.error);
+
     //2 state này dùng để hiện thông tin ở phần thông tin chung
     const [inputSelectDiplomaName, setInputSelectDiplomaIssuanceName] = useState(null); //state này đại diện cho select được chọn của tên văn bằng (selectOption.value)
     const [inputDiplomaIssuanceName, setInputDiplomaIssuanceName] = useState('');
+    const [_idOfDiplomaIssuance, set_idOfDiplomaIssuance] = useState(''); //State này dùng để lấy _id để cập nhật
+    const [diplomaNameId, setDiplomaNameId] = useState(null); //state này để lấy diploma_name_id dùng để cập nhật đợt cấp văn bằng
 
     //2 state này dùng để lấy giá trị dùng cho việc thêm đợt cấp văn bằng mới
     const [inputAddDiplomaNameOfForm, setInputAddDiplomaNameOfForm] = useState(null);
@@ -99,10 +108,29 @@ export default function DiplomaIssuance(){
         noti3.current.showToast();  
         await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
     }
- 
-    // console.log("select form add: ", inputAddDiplomaNameOfForm);
-    // console.log("name: ", inputAddDiplomaIssuanceNameOfForm);
 
+    //Hàm submit form để cập nhật tên đợt cấp văn bằng
+    const handleSubmitEditDiplomaIssuance = async (e) => {
+        e.preventDefault();
+        if(inputDiplomaIssuanceName == ""){
+            noti2.current.showToast();
+            inputDiplomaIssuanceNameRef.current.focus();
+            return;
+        }
+
+        const DiplomaIssuanceInfor = {
+            diploma_issuance_name: inputDiplomaIssuanceName,
+            diploma_name_id: diplomaNameId
+        }
+
+        await editDiplomaIssuanceByMU(dispatch, user.accessToken, DiplomaIssuanceInfor, _idOfDiplomaIssuance);
+        noti4.current.showToast();  
+        await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
+        // console.log("_Id: ",_idOfDiplomaIssuance);
+        // console.log("tên đợt cấp văn bằng: ",inputDiplomaIssuanceName);
+        // console.log("diploma_name_id: ", diplomaNameId);
+    }
+ 
     return(
         <>
             <Header/>
@@ -120,12 +148,15 @@ export default function DiplomaIssuance(){
                                 ><i className="fa-sharp fa-solid fa-plus"></i> Thêm</button>
                             </div>
                             <div className="row" style={{padding: '5px 28px 5px 28px'}}>
-                                <table className="table table-bordered">
+                                <table 
+                                    // className="table table-bordered"
+                                    id='table-showDI'
+                                >
                                     <thead>
                                         <tr>
-                                        <th scope="col"></th>
-                                        <th scope="col">Tên đợt cấp văn bằng</th>
-                                        <th scope="col">Tên văn bằng</th>
+                                            <th style={{padding: '10px'}}></th>
+                                            <th style={{padding: '10px'}}>Tên đợt cấp văn bằng</th>
+                                            <th style={{padding: '10px'}}>Tên văn bằng</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -142,15 +173,21 @@ export default function DiplomaIssuance(){
                                                         key={index}
                                                         onClick={(e)=>{
                                                             setInputDiplomaIssuanceName(currentValue.diploma_issuance_name);
+                                                            set_idOfDiplomaIssuance(currentValue._id);
+                                                            setDiplomaNameId(currentValue.diploma_name_id);
                                                             options.forEach((option)=>{
                                                                 if(option.value == currentValue.diploma_name_id){
                                                                     setInputSelectDiplomaIssuanceName(option);
                                                                 }
                                                             })
-
+                                                            const currentElement = document.querySelector(".item-selected-DI");
+                                                            if (currentElement) {
+                                                                currentElement.classList.remove("item-selected-DI");
+                                                            }
+                                                            e.target.parentNode.classList.add("item-selected-DI");
                                                         }}
                                                     >
-                                                        <th scope="row">{index + 1}</th>
+                                                        <th style={{width: '50px', textAlign: 'center'}}>{index + 1}</th>
                                                         <td>{currentValue.diploma_issuance_name}</td>
                                                         <td>{nameOfDiplomaName}</td>
                                                     </tr>
@@ -165,51 +202,65 @@ export default function DiplomaIssuance(){
                                     style={{color: '#297fbb', fontWeight: 'bold', marginLeft:'10px', paddingLeft: '0px'}}
                                 >Thông tin chung</p>                                
                             </div>
-                            <div className='row mt-2'>
-                                <div className="col-md-2">
-                                    <label 
-                                        className='col-form-label text-end d-block'>
-                                        Tên văn bằng
-                                    </label>
+                            <form
+                                id='form-edit-diploma-issuance'
+                                onSubmit={(e) => {
+                                    handleSubmitEditDiplomaIssuance(e);
+                                }}
+                            >
+                                <div className='row mt-2'>
+                                    <div className="col-md-2">
+                                        <label 
+                                            className='col-form-label text-end d-block'>
+                                            Tên văn bằng
+                                        </label>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <Select
+                                            isDisabled={true}
+                                            value={inputSelectDiplomaName}
+                                            options={options}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="col-md-4">
-                                    <Select
-                                        isDisabled={true}
-                                        value={inputSelectDiplomaName}
-                                        options={options}
-                                        onChange={handleChange}
-                                    />
+                                <div className="row mt-2">
+                                    <div className="col-md-2">
+                                        <label 
+                                            htmlFor="nameOfDiplomaIssuance"
+                                            className='col-form-label text-end d-block'
+                                        >
+                                            Tên đợt cấp văn bằng
+                                        </label>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <input 
+                                            type="text"
+                                            value={inputDiplomaIssuanceName}
+                                            ref={inputDiplomaIssuanceNameRef}
+                                            onChange={(e)=>{
+                                                setInputDiplomaIssuanceName(e.target.value);
+                                            }}
+                                            className='form-control'
+                                            id='nameOfDiplomaIssuance'
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="row mt-2">
-                                <div className="col-md-2">
-                                    <label 
-                                        htmlFor="nameOfDiplomaIssuance"
-                                        className='col-form-label text-end d-block'
-                                    >
-                                        Tên đợt cấp văn bằng
-                                    </label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input 
-                                        type="text"
-                                        value={inputDiplomaIssuanceName}
-                                        onChange={(e)=>{
-                                            setInputDiplomaIssuanceName(e.target.value);
-                                        }}
-                                        className='form-control'
-                                        id='nameOfDiplomaIssuance'
-                                    />
-                                </div>
-                            </div>
+                            </form>
+                            
                             <div className="row mt-2">
                                 <div className='d-flex justify-content-end'>
                                     <div className='mx-2'>
-                                        <button className='btn' style={{backgroundColor: '#0b619d', width:'110px'}}>Lưu</button>
+                                        <button 
+                                            className='btn' 
+                                            type='submit'
+                                            form='form-edit-diploma-issuance'
+                                            style={{backgroundColor: '#0b619d', width:'110px'}}
+                                        >Lưu</button>
                                     </div>
-                                    <div className='mx-2'>
+                                    {/* <div className='mx-2'>
                                         <button className='btn btn-danger' style={{ width:'110px'}}>Xóa</button>
-                                    </div>
+                                    </div> */}
                                     <div className='mx-2'>
                                         <button className='btn' style={{border: '1px solid black', width:'110px'}}>Hủy bỏ</button>
                                     </div>
@@ -309,6 +360,12 @@ export default function DiplomaIssuance(){
                 type={isError ? "error" : "success"}
                 ref={noti3}
             />
+            <Toast
+                message={msgEdit}
+                type={isErrorEdit ? "error" : "success"}
+                ref={noti4}
+            />
+
         </>
     )
 }

@@ -10,3 +10,26 @@
     background-color: #0b619d;
     color: white;
 }
+
+/* class để làm nổi bật mục đang được chọn */
+.item-selected-DI{ 
+    background-color: #0b619d !important;
+    color: white !important;
+}
+
+#table-showDI{
+    border: 1px solid gainsboro;
+}
+
+#table-showDI tr{
+    height: 50px;
+    border: 1px solid gainsboro;
+}
+
+#table-showDI td, #table-showDI th{
+    border: 1px solid gainsboro;
+}
+
+#table-showDI td{
+    padding: 10px;
+}

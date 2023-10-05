@@ -57,6 +57,36 @@ const diplomaIssuanceController = {
             return res.status(500).json(error);
         }
     },  
+    editDiplomaIssuanceByMU: async (req, res) => {
+        try{
+            //Đầu tiên lấy thông tin về các đợt cấp văn bằng của tên(loại văn bằng) ra trước
+            const allDiplomaIssuanceOfDiplomaName = await DiplomaIssuanceModel.find({diploma_name_id: req.body.diploma_name_id});
+
+            //Chạy vòng lặp để kiểm tra xem tên đợt cấp văn bằng muốn chỉnh sửa (dành cho tên(loại) văn bằng) có trùng với các tên đợt cấp 
+            //văn bằng đã được thêm hay chưa
+            let isDuplicate = false;
+
+            allDiplomaIssuanceOfDiplomaName.forEach((currentValue)=>{
+                if(currentValue.diploma_issuance_name == req.body.diploma_issuance_name){
+                    isDuplicate = true;
+                }
+            })
+            if(isDuplicate){
+                return res.status(400).json("Tên đợt cấp văn bằng đã tồn tại, vui lòng nhập tên khác");
+            }
+
+            //Cập nhật bằng hàm findByIdAndUpdate
+            const updateDoc = {
+                diploma_issuance_name: req.body.diploma_issuance_name
+            };
+            const options = {returnDocument: "after"};
+
+            const updateDiplomaIssuance = await DiplomaIssuanceModel.findByIdAndUpdate(req.params._id, updateDoc, options);
+            return res.status(200).json(updateDiplomaIssuance);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    }
 }
 
 module.exports = diplomaIssuanceController;

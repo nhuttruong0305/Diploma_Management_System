@@ -10,7 +10,8 @@ const diplomaIssuanceSlice = createSlice({
             isFetching: false,
             error: false
         },
-        msg: '' //state này để thông báo khi thêm đợt cấp văn bằng thành công
+        msg: '', //state này để thông báo khi thêm đợt cấp văn bằng thành công
+        msgForEdit: ''
     },
     reducers:{
         getAllDiplomaIssuanceByMUStart: (state) => {
@@ -40,6 +41,21 @@ const diplomaIssuanceSlice = createSlice({
             state.diplomaIssuances.isFetching = false;
             state.diplomaIssuances.error = true;
             state.msg = action.payload;
+        },
+        editDiplomaIssuanceByMUStart: (state) => {
+            state.diplomaIssuances.isFetching = true;
+            state.diplomaIssuances.error = false;
+            state.msgForEdit = '';
+        },
+        editDiplomaIssuanceByMUSuccess: (state) => {
+            state.diplomaIssuances.isFetching = false;
+            state.diplomaIssuances.error = false;
+            state.msgForEdit = 'Cập nhật thông tin đợt cấp văn bằng thành công';
+        },
+        editDiplomaIssuanceByMUFailed: (state, action) => {
+            state.diplomaIssuances.isFetching = false;
+            state.diplomaIssuances.error = true;
+            state.msgForEdit = action.payload;            
         }
     }
 })
@@ -50,7 +66,10 @@ export const {
     getAllDiplomaIssuanceByMUFailed,
     addDiplomaIssuanceByMUStart,
     addDiplomaIssuanceByMUSuccess,
-    addDiplomaIssuanceByMUFailed
+    addDiplomaIssuanceByMUFailed,
+    editDiplomaIssuanceByMUStart,
+    editDiplomaIssuanceByMUSuccess,
+    editDiplomaIssuanceByMUFailed
 } = diplomaIssuanceSlice.actions;
 
 export default diplomaIssuanceSlice.reducer;
