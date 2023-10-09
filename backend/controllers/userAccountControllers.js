@@ -44,6 +44,88 @@ const userAccountControllers = {
             return res.status(500).json(error);
         }
     },
+    //Hàm lấy ra all user diploma importer thuộc 1 đơn vị quản lý
+    getAllUserDiplomaImporterByMU: async (req, res) => {
+        try{
+            const MU_id = parseInt(req.params.management_unit_id);
+            const listOfUser = await UserAccountModel.find({management_unit: MU_id, role: { $in: 'Diploma importer' }});
+            return res.status(200).json(listOfUser);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    //Lấy danh sách các mssv_cb có quyền nhập 1 loại văn bằng nào đó ra
+    getListOfMSCBDiplomaImporterByDiplomaNameID: async(req, res) => {
+        try{
+            const diplomaNameId = parseInt(req.params.diploma_name_id);
+            const listOfMSCB = await UserAccountModel.find({listOfDiplomaNameImport: { $in: diplomaNameId }});
+
+            //mảng chứa các mssv
+            let result = [];
+            listOfMSCB.forEach((currentValue) => {
+                result = [...result, currentValue.mssv_cb];
+            })
+
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    //Hàm thêm 1 tên(loại) văn bằng vào listOfDiplomaNameImport của 1 user
+    addDiplomaNameIntoUser: async(req, res) => {
+        try{
+            //Lấy thông tin về user đó ra
+            const _idUser = req.params._id_user;
+            const user = await UserAccountModel.findById(_idUser);
+
+            const diplomaNameId = parseInt(req.params.diploma_name_id);
+
+            const isExist = user.listOfDiplomaNameImport.includes(diplomaNameId);
+
+            if(!isExist){
+                const options = {returnDocument: "after"};
+                const updateDoc = {
+                    listOfDiplomaNameImport: [...user.listOfDiplomaNameImport, diplomaNameId]
+                }
+
+                const updateUser = await UserAccountModel.findByIdAndUpdate(_idUser, updateDoc, options);
+                return res.status(200).json(updateUser);
+            }else{
+                return res.status(200).json("Đã tồn tại loại văn bằng này trong danh sách được quyền import");
+            }
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    //Hàm xóa 1 loại văn bằng ra khỏi danh sách listOfDiplomaNameImport của 1 user
+    deleteDiplomaNameFromUser: async (req, res) => {
+        try{
+            //Lấy thông tin về user đó ra
+            const _idUser = req.params._id_user;
+            const user = await UserAccountModel.findById(_idUser);
+
+            const diplomaNameId = parseInt(req.params.diploma_name_id);
+            const isExist = user.listOfDiplomaNameImport.includes(diplomaNameId);
+
+            if(isExist){
+                const indexOfDiplomaName = user.listOfDiplomaNameImport.indexOf(diplomaNameId);
+                const removed = user.listOfDiplomaNameImport.splice(indexOfDiplomaName,1);
+
+                const options = {returnDocument: "after"};
+                const updateDoc = {
+                    listOfDiplomaNameImport: user.listOfDiplomaNameImport
+                }
+
+                const updateUser = await UserAccountModel.findByIdAndUpdate(_idUser, updateDoc, options);
+                return res.status(200).json(updateUser);
+            }else{
+                return res.status(200).json("Loại văn bằng này không tồn tại trong danh sách các loại văn bằng được quyền import");
+            }
+            // return res.status(200).json(indexOfDiplomaName);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    }
 }
 
 module.exports = userAccountControllers;

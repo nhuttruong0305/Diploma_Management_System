@@ -85,6 +85,14 @@ const userSchema = new mongoose.Schema(
             //Diploma reviewer: người duyệt văn bằng
             type: Array,
             default:[]
+        },
+        listOfDiplomaNameImport:{
+            type: Array,
+            default: []
+        },
+        listOfDiplomaNameReview:{
+            type: Array,
+            default: []
         }
     },
     {timestamps: true}

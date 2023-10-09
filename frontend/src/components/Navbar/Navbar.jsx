@@ -43,7 +43,7 @@ export default function Navbar() {
                                     <Link className="nav-link nav-link-navbar" to="/diploma-issuance">Quản lý đợt cấp văn bằng</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
-                                    <a className="nav-link nav-link-navbar" href="#">Quản lý nhập văn bằng</a>
+                                    <Link className="nav-link nav-link-navbar" to="/import-diploma">Quản lý nhập văn bằng</Link>
                                 </li>
                             </ul>
                         ) : role == 'Diploma reviewer' ? (

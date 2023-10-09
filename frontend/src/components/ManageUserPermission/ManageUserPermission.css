@@ -9,3 +9,26 @@
 #active-MUP{
     background-color: #0b619d;
 }
+
+#table-show-diplomaNameByMU{
+    border: 1px solid gainsboro;
+    width: 100%;
+}
+
+#table-show-diplomaNameByMU tr{
+    height: 50px;
+    border: 1px solid gainsboro;
+}
+
+#table-show-diplomaNameByMU td, #table-show-diplomaNameByMU th {
+    border: 1px solid gainsboro;
+}
+
+#table-show-diplomaNameByMU td{
+    padding: 10px;
+}
+
+.item-selected-MUP{
+    background-color: #0b619d !important;
+    color: white !important;
+}

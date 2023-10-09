@@ -262,7 +262,14 @@ export default function DiplomaIssuance(){
                                         <button className='btn btn-danger' style={{ width:'110px'}}>Xóa</button>
                                     </div> */}
                                     <div className='mx-2'>
-                                        <button className='btn' style={{border: '1px solid black', width:'110px'}}>Hủy bỏ</button>
+                                        <button 
+                                            className='btn' 
+                                            style={{border: '1px solid black', width:'110px'}}
+                                            onClick={(e) => {
+                                                setInputSelectDiplomaIssuanceName(null);
+                                                setInputDiplomaIssuanceName('');
+                                            }}
+                                        >Hủy bỏ</button>
                                     </div>
                                 </div>
                                 
