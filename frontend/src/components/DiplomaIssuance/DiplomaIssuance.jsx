@@ -72,8 +72,10 @@ export default function DiplomaIssuance(){
     useEffect(()=>{
         let resultOption = [];
         allDiplomaNameByMU?.forEach((currentValue)=>{
-            const newOption = { value: currentValue.diploma_name_id, label: currentValue.diploma_name_name };
-            resultOption = [...resultOption, newOption];
+            if(user.listOfDiplomaNameImport.includes(currentValue.diploma_name_id)){
+                const newOption = { value: currentValue.diploma_name_id, label: currentValue.diploma_name_name };
+                resultOption = [...resultOption, newOption];
+            }
         })
         setOptions(resultOption);
     }, [allDiplomaNameByMU])
@@ -126,9 +128,6 @@ export default function DiplomaIssuance(){
         await editDiplomaIssuanceByMU(dispatch, user.accessToken, DiplomaIssuanceInfor, _idOfDiplomaIssuance);
         noti4.current.showToast();  
         await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
-        // console.log("_Id: ",_idOfDiplomaIssuance);
-        // console.log("tên đợt cấp văn bằng: ",inputDiplomaIssuanceName);
-        // console.log("diploma_name_id: ", diplomaNameId);
     }
  
     return(
@@ -162,36 +161,39 @@ export default function DiplomaIssuance(){
                                     <tbody>
                                         {
                                             allDiplomaIssuance?.map((currentValue, index) => {
-                                                let nameOfDiplomaName = '';
-                                                allDiplomaName.forEach((diplomaName)=>{
-                                                    if(diplomaName.diploma_name_id == currentValue.diploma_name_id){
-                                                        nameOfDiplomaName = diplomaName.diploma_name_name;
-                                                    }
-                                                })
-                                                return(
-                                                    <tr 
-                                                        key={index}
-                                                        onClick={(e)=>{
-                                                            setInputDiplomaIssuanceName(currentValue.diploma_issuance_name);
-                                                            set_idOfDiplomaIssuance(currentValue._id);
-                                                            setDiplomaNameId(currentValue.diploma_name_id);
-                                                            options.forEach((option)=>{
-                                                                if(option.value == currentValue.diploma_name_id){
-                                                                    setInputSelectDiplomaIssuanceName(option);
+                                                // const listOfDiplomaNameImport = user.listOfDiplomaNameImport;
+                                                if(user.listOfDiplomaNameImport.includes(currentValue.diploma_name_id)){
+                                                    let nameOfDiplomaName = '';
+                                                    allDiplomaName.forEach((diplomaName)=>{
+                                                        if(diplomaName.diploma_name_id == currentValue.diploma_name_id){
+                                                            nameOfDiplomaName = diplomaName.diploma_name_name;
+                                                        }
+                                                    })
+                                                    return(
+                                                        <tr 
+                                                            key={index}
+                                                            onClick={(e)=>{
+                                                                setInputDiplomaIssuanceName(currentValue.diploma_issuance_name);
+                                                                set_idOfDiplomaIssuance(currentValue._id);
+                                                                setDiplomaNameId(currentValue.diploma_name_id);
+                                                                options.forEach((option)=>{
+                                                                    if(option.value == currentValue.diploma_name_id){
+                                                                        setInputSelectDiplomaIssuanceName(option);
+                                                                    }
+                                                                })
+                                                                const currentElement = document.querySelector(".item-selected-DI");
+                                                                if (currentElement) {
+                                                                    currentElement.classList.remove("item-selected-DI");
                                                                 }
-                                                            })
-                                                            const currentElement = document.querySelector(".item-selected-DI");
-                                                            if (currentElement) {
-                                                                currentElement.classList.remove("item-selected-DI");
-                                                            }
-                                                            e.target.parentNode.classList.add("item-selected-DI");
-                                                        }}
-                                                    >
-                                                        <th style={{width: '50px', textAlign: 'center'}}>{index + 1}</th>
-                                                        <td>{currentValue.diploma_issuance_name}</td>
-                                                        <td>{nameOfDiplomaName}</td>
-                                                    </tr>
-                                                )
+                                                                e.target.parentNode.classList.add("item-selected-DI");
+                                                            }}
+                                                        >
+                                                            <th style={{width: '50px', textAlign: 'center'}}>{index + 1}</th>
+                                                            <td>{currentValue.diploma_issuance_name}</td>
+                                                            <td>{nameOfDiplomaName}</td>
+                                                        </tr>
+                                                    )
+                                                }
                                             })
                                         }
                                     </tbody>
