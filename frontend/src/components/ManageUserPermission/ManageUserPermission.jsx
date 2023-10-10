@@ -72,9 +72,21 @@ export default function ManageUserPermission(){
     // 4.
     // Hàm call api lấy ra all user có quyền Diploma importer của đơn vị quản lý được chọn trong select có id = select-management-unit-MUP
     const [allUserImporterByMU, setAllUserImporterByMU] = useState([]);//state này đại diện cho all user có quyền import của 1 MU
+    const [allUserReviewerByMU, setAllUserReviewerByMU] = useState([]);//state đại diện cho all user có quyền review của 1 MU
     const [diplomaNameIdSelected, setDiplomaNameIdSelected] = useState();//state này đại diện cho diploma name id được chọn để phân quyền
     const [showUser, setShowUser] = useState(false); //state này để true thì show tài khoản, false thì không show
 
+    //Hàm lấy all user có quyền duyệt của 1 đơn vị quản lý
+    const getAllUserReviewByMU = async (management_unit_id) => {
+        try{
+            const res = await axios.get(`http://localhost:8000/v1/user_account/get_all_useraccount_review/${management_unit_id}`);
+            setAllUserReviewerByMU(res.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    //Hàm lấy all user có quyền import của 1 đơn vị quản lý
     const getAllUserImportByMU = async (management_unit_id) => {
         try{
             const res = await axios.get(`http://localhost:8000/v1/user_account/get_all_useraccount_import/${management_unit_id}`);
@@ -87,10 +99,12 @@ export default function ManageUserPermission(){
     useEffect(()=>{
         if(selectOptionMU != undefined){
             getAllDiplomaNameByMU(selectOptionMU.value);
-        }  
-        if(selectOptionMU != undefined){
             getAllUserImportByMU(selectOptionMU.value);
-        }
+            getAllUserReviewByMU(selectOptionMU.value);
+        }  
+        // if(selectOptionMU != undefined){
+        //     getAllUserImportByMU(selectOptionMU.value);
+        // }
         //Khi thay đổi đơn vị quản lý thì bỏ dòng tr màu xanh
         const currentElement = document.querySelector(".item-selected-MUP");
         if (currentElement) {
@@ -105,17 +119,32 @@ export default function ManageUserPermission(){
     //Nếu diplomaNameIdSelected thay đổi thì lấy ra danh sách các _id của các user có quyền nhập loại văn bằng được chọn bởi diplomaNameIdSelected
     //Tạo state để lưu các giá trị checkbox của tài khoản importer
     const [checkImport, setCheckImport] = useState([]);
+    //Tạo state để lưu các giá trị checkbox của tài khoản reviewer
+    const [checkReview, setCheckReview] = useState([]);
 
-    function handleCheckImport(_id) {
+    function handleCheckImport(mssv_cb) {
         setCheckImport((prev) => {
-          const exist = checkImport.includes(_id);
+          const exist = checkImport.includes(mssv_cb);
           if (exist) {
             return prev.filter((currentValue) => {
-              return currentValue != _id;
+              return currentValue != mssv_cb;
             });
           } else {
-            return [...prev, _id];
+            return [...prev, mssv_cb];
           }
+        });
+    }
+
+    function handleCheckReview(mssv_cb){
+        setCheckReview((prev) => {
+            const exist = checkReview.includes(mssv_cb);
+            if(exist){
+                return prev.filter((currentValue) => {
+                    return currentValue != mssv_cb;
+                });    
+            }else{
+                return [...prev, mssv_cb];
+            }
         });
     }
 
@@ -129,13 +158,24 @@ export default function ManageUserPermission(){
         }
     }
 
-    //Nếu diplomaNameIdSelected thì set lại checkImport  = [] và lấy danh sách các user có quyền nhập tên(loại) văn bằng dc chọn ra và chạy setCheckImport 
+    //Hàm lấy danh sách mscb có quyền duyệt 1 loại văn bằng
+    const getListOfMSCBReview = async (diploma_name_id) => {
+        try{
+            const res = await axios.get(`http://localhost:8000/v1/user_account/get_list_mscb_review_by_diploma_name_id/${diploma_name_id}`);
+            setCheckReview(res.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    //Nếu diplomaNameIdSelected thì set lại checkImport  = [] và checkReview = [] và lấy danh sách các user có quyền nhập và duyệt tên(loại) văn bằng dc chọn ra và chạy setCheckImport setCheckReview
     useEffect(()=>{
         setCheckImport(prev => []);
+        setCheckReview(prev => []);
         //
         if(diplomaNameIdSelected != undefined){
-            // setCheckImport(prev => ) 
             getListOfMSCB(diplomaNameIdSelected);
+            getListOfMSCBReview(diplomaNameIdSelected);
         }
     }, [diplomaNameIdSelected])
 
@@ -144,7 +184,7 @@ export default function ManageUserPermission(){
         // Tạo ra 1 danh sách các tài khoản không có dấu check và 1 danh sách các tài khoản có dấu check
         let userNotCheck = [];
         let userCheck = [];
-        if(allUserImporterByMU != [] && checkImport != []){
+        if(allUserImporterByMU != []){
             allUserImporterByMU.forEach((user)=>{
                 if(checkImport.includes(user.mssv_cb)){
                     userCheck = [...userCheck, user];
@@ -186,6 +226,54 @@ export default function ManageUserPermission(){
             console.log(error);
             noti1.current.showToast();
         }
+    }
+    
+    const handleAddDiplomaNameIntoUserReview = async (diploma_name_id, _id_user, accessToken) =>{
+        try{
+            const res = await axios.put(`http://localhost:8000/v1/user_account/add_diploma_name_id_into_user_review/${diploma_name_id}/${_id_user}`, _id_user, {
+                headers: {token: `Bearer ${accessToken}`}
+            });
+        }catch(error){
+            console.log(error);
+            noti1.current.showToast();
+        }
+    }
+
+    const handleDeleteDiplomaNameFromUerReview = async (diploma_name_id, _id_user, accessToken) => {
+        try{
+            const res = await axios.put(`http://localhost:8000/v1/user_account/delete_diploma_name_id_from_user_review/${diploma_name_id}/${_id_user}`, _id_user, {
+                headers: {token: `Bearer ${accessToken}`}
+            });
+        }catch(error){
+            console.log(error);
+            noti1.current.showToast();
+        }
+    }
+
+    const handleSubmitReview = async () => {
+        // Tạo ra 1 danh sách các tài khoản không có dấu check và 1 danh sách các tài khoản có dấu check
+        let userNotCheck = [];
+        let userCheck = [];
+        if(allUserReviewerByMU != []){
+            allUserReviewerByMU.forEach((user)=>{
+                if(checkReview.includes(user.mssv_cb)){
+                    userCheck = [...userCheck, user];
+                }else{
+                    userNotCheck = [...userNotCheck, user];
+                }
+            })
+        }
+        // Lặp qua danh sách user check để thêm diploma_name_id được chọn vào trường listOfDiplomaNameImport cho từng user
+        for(let i = 0; i < userCheck.length; i++){
+            // await handleAddDiplomaNameIntoUser(diplomaNameIdSelected, userCheck[i]._id, user.accessToken);
+            await handleAddDiplomaNameIntoUserReview(diplomaNameIdSelected, userCheck[i]._id, user.accessToken);
+        }
+        
+        for(let j = 0; j < userNotCheck.length; j++){
+            // await handleDeleteDiplomaNameFromUser(diplomaNameIdSelected, userNotCheck[j]._id, user.accessToken);
+            await handleDeleteDiplomaNameFromUerReview(diplomaNameIdSelected, userNotCheck[j]._id, user.accessToken);
+        }
+        noti.current.showToast();
     }
 
     return(
@@ -270,6 +358,7 @@ export default function ManageUserPermission(){
                     
                     {
                         showUser ? (
+                            <>
                                     <div className="row p-3">
                                         <p 
                                             className="text-center mt-2" 
@@ -279,11 +368,11 @@ export default function ManageUserPermission(){
                                             className="table table-bordered">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col"></th>
-                                                    <th scope="col">Tên cán bộ</th>
-                                                    <th scope="col">MSCB</th>
-                                                    <th scope="col">Email</th>
-                                                    <th style={{width: '120px'}} scope="col">Phân quyền</th>
+                                                    <th style={{width: '5%'}}  scope="col"></th>
+                                                    <th style={{width: '25%'}} scope="col">Tên cán bộ</th>
+                                                    <th style={{width: '15%'}} scope="col">MSCB</th>
+                                                    <th style={{width: '45%'}} scope="col">Email</th>
+                                                    <th style={{width: '10%'}} scope="col">Phân quyền</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -323,6 +412,7 @@ export default function ManageUserPermission(){
                                                 className="ms-3 btn btn-danger"
                                                 onClick={(e)=>{
                                                     setShowUser(false);
+                                                    setDiplomaNameIdSelected(undefined);
                                                     const currentElement = document.querySelector(".item-selected-MUP");
                                                     if (currentElement) {
                                                         currentElement.classList.remove("item-selected-MUP");
@@ -331,51 +421,76 @@ export default function ManageUserPermission(){
                                             >Hủy</button>
                                         </div>
                                     </div>
+
+                                    <div className="row p-3">
+                                        <p 
+                                            className="text-center mt-2" 
+                                            style={{fontWeight: 'bold'}}
+                                        >DANH SÁCH CÁC TÀI KHOẢN CÓ QUYỀN DUYỆT </p>
+                                        <table 
+                                            className="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th style={{width: '5%'}} scope="col"></th>
+                                                    <th style={{width: '25%'}} scope="col">Tên cán bộ</th>
+                                                    <th style={{width: '15%'}} scope="col">MSCB</th>
+                                                    <th style={{width: '45%'}} scope="col">Email</th>
+                                                    <th style={{width: '10%'}} scope="col">Phân quyền</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {
+                                                    allUserReviewerByMU?.map((currentValue, index)=>{
+                                                        return(
+                                                            <tr
+                                                                key={index}
+                                                            >   
+                                                                <th style={{textAlign: 'center'}} scope="row">{index+1}</th>
+                                                                <td>{currentValue.fullname}</td>
+                                                                <td>{currentValue.mssv_cb}</td>
+                                                                <td>{currentValue.email}</td>
+                                                                <td style={{textAlign: 'center'}}>
+                                                                    <input 
+                                                                        type="checkbox" 
+                                                                        checked={checkReview.includes(currentValue.mssv_cb)}
+                                                                        onChange={(e)=>{
+                                                                            handleCheckReview(currentValue.mssv_cb);
+                                                                        }}
+                                                                    />
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    })    
+                                                }
+                                            </tbody>
+                                        </table>
+                                        <div className="d-flex justify-content-end">
+                                            <button
+                                                className="btn btn-primary"
+                                                style={{width: '80px'}} 
+                                                onClick={(e)=>{
+                                                    handleSubmitReview();
+                                                }}
+                                            >Lưu</button>
+                                            <button
+                                                className="ms-3 btn btn-danger"
+                                                style={{width: '80px'}} 
+                                                onClick={(e)=>{
+                                                    setShowUser(false);
+                                                    setDiplomaNameIdSelected(undefined);
+                                                    const currentElement = document.querySelector(".item-selected-MUP");
+                                                    if (currentElement) {
+                                                        currentElement.classList.remove("item-selected-MUP");
+                                                    }
+                                                }}
+                                            >Hủy</button>
+                                        </div>
+                                    </div>
+                            </>
                         ) : (
                             ""
                         )
                     }
-
-                    {/* Table chứa các tài khoản được duyệt loại văn bằng được chọn */}
-                    {/* <div className="row p-3">
-                    <p 
-                        className="text-center mt-2" 
-                        style={{fontWeight: 'bold'}}
-                    >DANH SÁCH CÁC TÀI KHOẢN CÓ QUYỀN DUYỆT </p>
-                        <table 
-                            className="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col">Tên cán bộ</th>
-                                    <th scope="col">MSCB</th>
-                                    <th scope="col">Phân quyền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Lê Nhựt Trường</td>
-                                    <td>B1910015</td>
-                                    <td>
-                                        <input 
-                                            type="checkbox" 
-                                        />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Lê Nhựt Trường</td>
-                                    <td>B1910015</td>
-                                    <td>
-                                        <input 
-                                            type="checkbox" 
-                                        />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table> */}
-                    {/* </div> */}
                 </div>
             </div>
             <Toast
