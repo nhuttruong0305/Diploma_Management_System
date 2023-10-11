@@ -14,19 +14,21 @@ import authReducer from './authSlice';
 import diplomaTypeReducer from './diplomaSlice';
 import diplomaNameReducer from './diplomaNameSlice';
 import diplomaIssuanceSliceReducer from './diplomaIssuanceSlice';
+import diplomaReducer from './diploma';
 
 const persistConfig = {
     key: 'root',
     version: 1,
     storage,
-    blacklist: ['diplomaType', 'diplomaName', 'diplomaIssuance']
+    blacklist: ['diplomaType', 'diplomaName', 'diplomaIssuance', 'diploma']
 }
 
 const rootReducer =  combineReducers({
     auth: authReducer,
     diplomaType: diplomaTypeReducer,
     diplomaName: diplomaNameReducer,
-    diplomaIssuance: diplomaIssuanceSliceReducer
+    diplomaIssuance: diplomaIssuanceSliceReducer,
+    diploma: diplomaReducer
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)

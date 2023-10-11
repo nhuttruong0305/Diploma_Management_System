@@ -62,6 +62,12 @@ import {
     editDiplomaIssuanceByMUFailed
 } from './diplomaIssuanceSlice';
 
+import {
+    addDiplomaStart,
+    addDiplomaSuccess,
+    addDiplomaFailed
+} from './diploma'
+
 export const LoginUser = async(user, dispatch, navigate) => {
     //tham số đầu tiên user là 1 object chứa thông tin gồm: mssv_cb, password
     dispatch(loginStart());
@@ -276,5 +282,19 @@ export const editDiplomaIssuanceByMU = async (dispatch, accessToken, DiplomaIssu
         dispatch(editDiplomaIssuanceByMUSuccess());
     }catch(error){
         dispatch(editDiplomaIssuanceByMUFailed(error.response.data));
+    }
+}
+
+
+//Request for Diploma
+export const addDiploma = async (dispatch, accessToken, diplomaInfor) => {
+    dispatch(addDiplomaStart());
+    try{
+        const result = await axios.post("http://localhost:8000/v1/diploma/add_new_diploma", diplomaInfor, {
+            headers: {token: `Bearer ${accessToken}`}
+        })
+        dispatch(addDiplomaSuccess());
+    }catch(error){
+        dispatch(addDiplomaFailed(error.response.data))
     }
 }

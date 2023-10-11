@@ -164,7 +164,7 @@ export default function DiplomaIssuance(){
                                                 // const listOfDiplomaNameImport = user.listOfDiplomaNameImport;
                                                 if(user.listOfDiplomaNameImport.includes(currentValue.diploma_name_id)){
                                                     let nameOfDiplomaName = '';
-                                                    allDiplomaName.forEach((diplomaName)=>{
+                                                    allDiplomaName?.forEach((diplomaName)=>{
                                                         if(diplomaName.diploma_name_id == currentValue.diploma_name_id){
                                                             nameOfDiplomaName = diplomaName.diploma_name_name;
                                                         }

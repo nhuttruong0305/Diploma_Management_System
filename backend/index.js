@@ -11,6 +11,7 @@ const userAccountRoute = require("./routes/user_account");
 const diplomaTypeRoute = require("./routes/diploma_type");
 const diplomaNameRoute = require('./routes/diploma_name');
 const diolomaIssuance = require('./routes/diploma_issuance');
+const diplomaRoute = require("./routes/diploma");
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/v1/user_account", userAccountRoute);
 app.use("/v1/diploma_type", diplomaTypeRoute);
 app.use("/v1/diploma_name", diplomaNameRoute);
 app.use("/v1/diploma_issuance", diolomaIssuance);
+app.use("/v1/diploma", diplomaRoute);
 
 app.listen(process.env.PORT, ()=>{
     console.log(`Server is running...`);
