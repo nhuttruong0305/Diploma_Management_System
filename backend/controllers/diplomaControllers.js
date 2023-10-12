@@ -69,36 +69,59 @@ const diplomaControllers = {
             const numbersIntoTheNotebook = req.query.numbersIntoTheNotebook;
             const status = req.query.status;
             const result = await DiplomaModel.find({
-                                                    management_unit_id: parseInt(req.params.management_unit_id), 
+                                                    // management_unit_id: parseInt(req.params.management_unit_id), 
                                                     fullname:{ $regex: `${name}`, $options: 'i'},
                                                     diploma_number: { $regex: `${diplomaNumber}`, $options: 'i'},
                                                     numbersIntoTheNotebook: { $regex: `${numbersIntoTheNotebook}`, $options: 'i'},
                                                     status: { $regex: `${status}`, $options: 'i'}
             });
-            // const diplomaNameId = parseInt(req.query.diploma_name_id);
-            // const diplomaIssuance = parseInt(req.query.diploma_issuance_id);
-
-            // if(diplomaNameId != NaN || diplomaNameId != undefined){
-            //     let result2 = [];
-            //     result.forEach((currentValue)=>{
-            //         if(currentValue.diploma_name_id == diplomaNameId){
-            //             result2 = [...result2, currentValue];
-            //         }
-            //     })
-
-            //     if(diplomaIssuance != NaN || diplomaIssuance != undefined){
-            //         let result3 = [];
-            //         result2.forEach((diploma)=>{
-            //             if(diploma.diploma_issuance_id == diplomaIssuance){
-            //                 result3 = [...result3, diploma];
-            //             }
-            //         })
-            //         return res.status(200).json(result3);
-            //     }else{
-            //         return res.status(200).json(result2);
-            //     }
-            // }
             return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    editDiploma: async (req, res) => {
+        try{
+            //Đầu tiên lấy các văn bằng có cùng loại văn bằng ra trước
+            const diplomasOfTheSameDiplomaNameID = await DiplomaModel.find({diploma_name_id: parseInt(req.params.diploma_name_id)});  
+            //Biến kiểm tra trùng số hiệu văn bằng
+            let isExistDiplomaNumber = false;
+            //Biến kiểm tra trùng số vào sổ văn bằng
+            let isExistNumberNoteBook = false;
+            
+            diplomasOfTheSameDiplomaNameID.forEach((currentValue)=>{
+                if(currentValue.diploma_number == req.body.diplomaNumberEdit){
+                    isExistDiplomaNumber = true;
+                }
+
+                if(currentValue.numbersIntoTheNotebook == req.body.numberInNoteEdit){
+                    isExistNumberNoteBook = true;
+                }
+            })
+            if(isExistDiplomaNumber){
+                return res.status(400).json("Số hiệu của văn bằng đã tồn tại");
+            }
+            if(isExistNumberNoteBook){
+                return res.status(400).json("Số vào sổ của văn bằng đã tồn tại");
+            }
+
+            const options = {returnDocument: "after"};
+            const updateDoc = {
+                fullname: req.body.nameOfTheGranteeEdit,
+                sex: req.body.sexEdit,
+                dateofbirth: req.body.dateofbirthEdit,
+                address: req.body.addressEdit,
+                test_day: req.body.testDayEdit,
+                classification: req.body.classificationEdit,
+                graduationYear: req.body.graduationYearEdit,
+                sign_day: req.body.signDayEdit,
+                diploma_number: req.body.diplomaNumberEdit,
+                numbersIntoTheNotebook: req.body.numberInNoteEdit
+            }
+
+            const diplomaUpdate = await DiplomaModel.findByIdAndUpdate(req.params._id, updateDoc, options);
+
+            return res.status(200).json(diplomaUpdate);
         }catch(error){
             return res.status(500).json(error);
         }

@@ -5,7 +5,7 @@ import Toast from '../Toast/Toast';
 import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import {getAllDiplomaIssuanceByMU, addDiploma, getAllDiplomaByListOfDiplomaNameImport, searchDiplomaWithMultiCondition} from '../../redux/apiRequest';
+import {getAllDiplomaIssuanceByMU, addDiploma, editDiplomaInImportDiploma, searchDiplomaWithMultiCondition} from '../../redux/apiRequest';
 
 export default function ImportDiploma(){
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -370,18 +370,79 @@ export default function ImportDiploma(){
             searchDiplomaWithMultiCondition(dispatch, user.management_unit, nameSearch, numberDiplomaNumberSearch, numberInNoteBookSearch, selectedOptionDiplomaName?.value, selectedOptionDiplomaIssuance?.value,user.listOfDiplomaNameImport, statusDiplomaSearch?.value);
         },3000);
     }
-    // useLayoutEffect(()=>{
-    //     if(msg!=""){
-    //         noti13.current.showToast();
-    //     }
-    // }, [msg])   
-  
-    // console.log("diploma_name_id: ",selectedOptionDiplomaName?.value);
-    // console.log("diploma_issuance_id: ", selectedOptionDiplomaIssuance?.value);
-    // console.log("fullname: ", nameSearch);
-    // console.log("number diploma: ", numberDiplomaNumberSearch);
-    // console.log("note book: ", numberInNoteBookSearch);
-    // console.log("typeof status: ", typeof statusDiplomaSearch?.value);
+    
+    //Phần dưới là logic và các state cho việc edit văn bằng
+    // 1. Họ tên người được cấp
+    const [nameOfTheGranteeEdit, setNameOfTheGranteeEdit] = useState("");
+    // 2. Giới tính
+    const [sexEdit, setSexEdit] = useState();
+    // const handleChangeSexEdit = (selectedOption) => {
+    //     setSexEdit(selectedOption);
+    // }
+    // 3. Ngày sinh
+    const [dateofbirthEdit, setDateofbirthEdit] = useState("");
+    // 4. Nơi sinh
+    const [addressEdit, setAddressEdit] = useState("");
+    // 5. Ngày kiểm tra
+    const [testDayEdit, setTestDayEdit] = useState("");
+    // 6. Xếp loại
+    const [classificationEdit, setClassificationEdit] = useState("");
+    // const handleChangeClassificationEdit = (selectedOption) => {
+    //     setClassificationEdit
+    // }
+    // 7. Năm tốt nghiệp
+    const [graduationYearEdit, setGraduationYearEdit] = useState("");
+    // 8. Ngày ký
+    const [signDayEdit, setSignDayEdit] = useState(""); 
+    // 9. Số hiệu
+    const [diplomaNumberEdit, setDiplomaNumberEdit] = useState("");
+    // 10. Số vào sổ
+    const [numberInNoteEdit, setNumberInNoteEdit] = useState("");
+    // 11. _id của văn bằng muốn chỉnh sửa
+    const [_idDiplomaEdit, set_IdDiplomaEdit] = useState(""); 
+    // 12. diploma_name_id để lấy các văn bằng cùng loại và kiểm tra các điều kiện
+    const [diploma_name_idEdit, setDiploma_name_idEdit] = useState("");
+
+    const noti14 = useRef();
+    const msgEdit = useSelector((state) => state.diploma?.msgEdit);
+    const isErrorEdit = useSelector((state) => state.diploma.diplomas?.error);
+
+    //hàm submit edit văn bằng
+    const handleSubmitEdit = async (e) =>{
+        e.preventDefault();
+        // console.log("full name: ", nameOfTheGranteeEdit);
+        // console.log("sex edit: ", sexEdit);
+        // console.log("dateofbirth: ", dateofbirthEdit);
+        // console.log("addressedit: ",addressEdit);
+        // console.log("test day edit", testDayEdit);
+        // console.log("xep loai: ", classificationEdit);
+        // console.log("nam tot nghiep: ", graduationYearEdit);
+        // console.log("ngày ký: ", signDayEdit);
+        // console.log("Số hiệu: ", diplomaNumberEdit);
+        // console.log("Số vào sổ: ", numberInNoteEdit);
+        // console.log("_id: ",_idDiplomaEdit);
+        // console.log("Ten van bang: ", diploma_name_idEdit);
+
+        const diplomaUpdate = {
+            nameOfTheGranteeEdit: nameOfTheGranteeEdit,
+            sexEdit: sexEdit,
+            dateofbirthEdit: dateofbirthEdit,
+            addressEdit: addressEdit,
+            testDayEdit: testDayEdit,
+            classificationEdit: classificationEdit,
+            graduationYearEdit: graduationYearEdit,
+            signDayEdit: signDayEdit,
+            diplomaNumberEdit: diplomaNumberEdit,
+            numberInNoteEdit: numberInNoteEdit
+        }
+
+        await editDiplomaInImportDiploma(dispatch, user.accessToken, _idDiplomaEdit, diploma_name_idEdit, diplomaUpdate);
+        noti14.current.showToast();
+        setTimeout(()=>{
+            searchDiplomaWithMultiCondition(dispatch, user.management_unit, nameSearch, numberDiplomaNumberSearch, numberInNoteBookSearch, selectedOptionDiplomaName?.value, selectedOptionDiplomaIssuance?.value,user.listOfDiplomaNameImport, statusDiplomaSearch?.value);
+        },3000);
+    }
+
     return(
         <>
             <Header/> 
@@ -511,7 +572,25 @@ export default function ImportDiploma(){
                                                 })
                                                 return(
                                                     <tr key={index}>
-                                                        <td style={{textAlign: 'center'}}><i className="fa-solid fa-eye"></i></td>
+                                                        <td 
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editDiplomaModal"
+                                                            style={{textAlign: 'center'}}
+                                                            onClick={(e)=>{
+                                                                setNameOfTheGranteeEdit(currentValue.fullname);
+                                                                setSexEdit(currentValue.sex);
+                                                                setDateofbirthEdit(currentValue.dateofbirth);
+                                                                setAddressEdit(currentValue.address);
+                                                                setTestDayEdit(currentValue.test_day);
+                                                                setClassificationEdit(currentValue.classification);
+                                                                setGraduationYearEdit(currentValue.graduationYear);
+                                                                setSignDayEdit(currentValue.sign_day);
+                                                                setDiplomaNumberEdit(currentValue.diploma_number);
+                                                                setNumberInNoteEdit(currentValue.numbersIntoTheNotebook);
+                                                                set_IdDiplomaEdit(currentValue._id);
+                                                                setDiploma_name_idEdit(currentValue.diploma_name_id);
+                                                            }}
+                                                        ><i className="fa-solid fa-eye"></i></td>
                                                         <th scope="row" style={{textAlign: 'center'}}>{index + 1}</th>
                                                         <td>{currentValue.fullname}</td>
                                                         <td>{currentValue.dateofbirth}</td>
@@ -530,6 +609,242 @@ export default function ImportDiploma(){
                                 </table>
                             </div>
                         </div>
+
+                        {/* Modal chỉnh sửa hoặc xóa thông tin văn bằng */}
+                        <div className="modal fade" id="editDiplomaModal" tabIndex="-1" aria-labelledby="editDiplomaModalLabel" aria-hidden="true">
+                            <div className="modal-lg modal-dialog modal-dialog-centered">
+                                <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5" id="editDiplomaModalLabel">Thông tin văn bằng</h1>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div className="modal-body">
+                                    <form
+                                        id='edit-or-delete-diploma'
+                                        onSubmit={(e)=>{
+                                            handleSubmitEdit(e)
+                                        }}
+                                    >
+                                        <div className="row">
+                                            <div className='col-3'>
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >   
+                                                    Họ tên người được cấp
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    className='form-control'
+                                                    value={nameOfTheGranteeEdit}
+                                                    onChange={(e)=>{
+                                                        setNameOfTheGranteeEdit(e.target.value)
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >Giới tính</label>
+                                            </div>
+                                            <div className="col-9">
+                                                <select
+                                                    value={sexEdit}
+                                                    onChange={(e)=>{
+                                                        setSexEdit(e.target.value)
+                                                    }}
+                                                    className='form-control'
+                                                >
+                                                    <option value={true}>Nam</option>
+                                                    <option value={false}>Nữ</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Ngày sinh
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="date" 
+                                                    className='form-control'
+                                                    value={dateofbirthEdit}
+                                                    onChange={(e)=>{
+                                                        setDateofbirthEdit(e.target.value)
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >Nơi sinh</label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    className='form-control'
+                                                    value={addressEdit}
+                                                    onChange={(e)=>{
+                                                        setAddressEdit(e.target.value)
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >Ngày kiểm tra</label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="date" 
+                                                    className='form-control'
+                                                    value={testDayEdit}
+                                                    onChange={(e)=>{
+                                                        setTestDayEdit(e.target.value)
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Xếp loại
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <select
+                                                    value={classificationEdit}
+                                                    onChange={(e)=>{
+                                                        setClassificationEdit(e.target.value)
+                                                    }}
+                                                    className='form-control'
+                                                >
+                                                    <option value="Xuất sắc">Xuất sắc</option>
+                                                    <option value="Giỏi">Giỏi</option>
+                                                    <option value="Khá">Khá</option>
+                                                    <option value="Trung bình">Trung bình</option>
+                                                    <option value="Yếu">Yếu</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Năm tốt nghiệp</label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="number" 
+                                                    className='form-control'
+                                                    value={graduationYearEdit}
+                                                    onChange={(e)=>{
+                                                        setGraduationYearEdit(e.target.value)
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >Ngày ký</label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="date" 
+                                                    className='form-control'
+                                                    value={signDayEdit}
+                                                    onChange={(e)=>{
+                                                        setSignDayEdit(e.target.value)
+                                                    }}    
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Số hiệu
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    className='form-control'
+                                                    value={diplomaNumberEdit}
+                                                    onChange={(e)=>{
+                                                        setDiplomaNumberEdit(e.target.value)
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Số vào sổ
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    className='form-control'
+                                                    value={numberInNoteEdit}
+                                                    onChange={(e)=>{
+                                                        setNumberInNoteEdit(e.target.value)
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div className="modal-footer">
+                                    <button 
+                                        type="submit"
+                                        form='edit-or-delete-diploma' 
+                                        className="btn btn-primary"
+                                    >Sửa</button>
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-danger"
+                                    >Xóa</button>
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-secondary" 
+                                        data-bs-dismiss="modal"
+                                    >Hủy bỏ</button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                         {/* Modal thêm mới 1 văn bằng */}
                         <div className="modal fade" id="addDiplomaModal" tabIndex="-1" aria-labelledby="addDiplomaModalLabel" aria-hidden="true">
@@ -888,6 +1203,11 @@ export default function ImportDiploma(){
                 message={msg}
                 type={isError ? "error" : "success"}
                 ref={noti13}
+            />
+            <Toast
+                message={msgEdit}
+                type={isErrorEdit ? "error" : "success"}
+                ref={noti14}
             />
         </>
     )

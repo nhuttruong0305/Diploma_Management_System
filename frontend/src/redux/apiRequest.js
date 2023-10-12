@@ -71,7 +71,10 @@ import {
     getAllDiplomaByListOfDiplomaNameImportFailed,
     searchDiplomaWithMultiConditionStart,
     searchDiplomaWithMultiConditionSuccess,
-    searchDiplomaWithMultiConditionFailed 
+    searchDiplomaWithMultiConditionFailed,
+    editDiplomaStart,
+    editDiplomaSuccess,
+    editDiplomaFailed  
 } from './diploma'
 
 export const LoginUser = async(user, dispatch, navigate) => {
@@ -362,5 +365,17 @@ export const searchDiplomaWithMultiCondition = async (dispatch, management_unit_
         }
     }catch(error){
         dispatch(searchDiplomaWithMultiConditionFailed());
+    }
+}
+//Hàm chỉnh sửa văn bằng
+export const editDiplomaInImportDiploma = async(dispatch, accessToken, _id, diploma_name_id, diplomaUpdate) => {
+    dispatch(editDiplomaStart());
+    try{
+        const res = await axios.put(`http://localhost:8000/v1/diploma/edit_diploma/${_id}/${diploma_name_id}`, diplomaUpdate, {
+            headers: {token: `Bearer ${accessToken}`}
+        });
+        dispatch(editDiplomaSuccess());
+    }catch(error){
+        dispatch(editDiplomaFailed(error.response.data));
     }
 }

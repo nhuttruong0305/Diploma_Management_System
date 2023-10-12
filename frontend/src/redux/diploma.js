@@ -9,7 +9,8 @@ const diplomaSlice = createSlice({
             isFetching: false,
             error: false
         },
-        msg: '' //state để thống báo khi thêm văn bằng thành công
+        msg: '', //state để thống báo khi thêm văn bằng thành công
+        msgEdit: '' //state để thông báo khi chỉnh sửa văn bằng thành công
     },
     reducers:{
         addDiplomaStart: (state) => {
@@ -52,6 +53,21 @@ const diplomaSlice = createSlice({
         searchDiplomaWithMultiConditionFailed: (state) => {
             state.diplomas.isFetching = false;
             state.diplomas.error = true;
+        },
+        editDiplomaStart: (state)=>{
+            state.diplomas.isFetching = true;
+            state.diplomas.error = false;
+            state.msgEdit = '';
+        },
+        editDiplomaSuccess: (state) => {
+            state.diplomas.isFetching = false;
+            state.diplomas.error = false;
+            state.msgEdit = 'Cập nhật văn bằng thành công'
+        },
+        editDiplomaFailed: (state, action) => {
+            state.diplomas.isFetching = false;
+            state.diplomas.error = true;
+            state.msgEdit = action.payload;
         }
     }
 })
@@ -65,7 +81,10 @@ export const {
     getAllDiplomaByListOfDiplomaNameImportFailed,
     searchDiplomaWithMultiConditionStart,
     searchDiplomaWithMultiConditionSuccess,
-    searchDiplomaWithMultiConditionFailed           
+    searchDiplomaWithMultiConditionFailed,
+    editDiplomaStart,
+    editDiplomaSuccess,
+    editDiplomaFailed     
 } = diplomaSlice.actions;
 
 export default diplomaSlice.reducer;
