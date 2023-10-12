@@ -26,6 +26,32 @@ const diplomaSlice = createSlice({
             state.diplomas.isFetching = false;
             state.diplomas.error = true;
             state.msg = action.payload;
+        },
+        getAllDiplomaByListOfDiplomaNameImportStart: (state) => {
+            state.diplomas.isFetching = true;
+            state.diplomas.error = false;
+        },
+        getAllDiplomaByListOfDiplomaNameImportSuccess: (state, action) => {
+            state.diplomas.isFetching = false;
+            state.diplomas.error = false;
+            state.diplomas.allDiploma = action.payload;
+        },
+        getAllDiplomaByListOfDiplomaNameImportFailed: (state) => {
+            state.diplomas.isFetching = false;
+            state.diplomas.error = true;
+        },
+        searchDiplomaWithMultiConditionStart: (state) => {
+            state.diplomas.isFetching = true;
+            state.diplomas.error = false;
+        },
+        searchDiplomaWithMultiConditionSuccess: (state, action) => {
+            state.diplomas.isFetching = false;
+            state.diplomas.error = false;
+            state.diplomas.allDiploma = action.payload;
+        },
+        searchDiplomaWithMultiConditionFailed: (state) => {
+            state.diplomas.isFetching = false;
+            state.diplomas.error = true;
         }
     }
 })
@@ -33,7 +59,13 @@ const diplomaSlice = createSlice({
 export const {
     addDiplomaStart,
     addDiplomaSuccess,
-    addDiplomaFailed            
+    addDiplomaFailed,
+    getAllDiplomaByListOfDiplomaNameImportStart,
+    getAllDiplomaByListOfDiplomaNameImportSuccess,
+    getAllDiplomaByListOfDiplomaNameImportFailed,
+    searchDiplomaWithMultiConditionStart,
+    searchDiplomaWithMultiConditionSuccess,
+    searchDiplomaWithMultiConditionFailed           
 } = diplomaSlice.actions;
 
 export default diplomaSlice.reducer;

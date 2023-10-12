@@ -65,7 +65,13 @@ import {
 import {
     addDiplomaStart,
     addDiplomaSuccess,
-    addDiplomaFailed
+    addDiplomaFailed,
+    getAllDiplomaByListOfDiplomaNameImportStart,
+    getAllDiplomaByListOfDiplomaNameImportSuccess,
+    getAllDiplomaByListOfDiplomaNameImportFailed,
+    searchDiplomaWithMultiConditionStart,
+    searchDiplomaWithMultiConditionSuccess,
+    searchDiplomaWithMultiConditionFailed 
 } from './diploma'
 
 export const LoginUser = async(user, dispatch, navigate) => {
@@ -296,5 +302,74 @@ export const addDiploma = async (dispatch, accessToken, diplomaInfor) => {
         dispatch(addDiplomaSuccess());
     }catch(error){
         dispatch(addDiplomaFailed(error.response.data))
+    }
+}
+
+//Hàm này nhận văn listOfDiplomaNameImport của user và trả về các diploma có diploma_name_id thuộc các loại trong listOfDiplomaNameImport
+//Hàm này ko dùng trong code chỉ dùng để kiểm tra kết quả khi hàm searchDiplomaWithMultiCondition search với all điều kiện rỗng thì có ra kết quả là tất cả các văn bằng thuộc 1 đơn vị quản lý ko
+export const getAllDiplomaByListOfDiplomaNameImport = async (dispatch, listOfDiplomaNameImport, management_unit_id) => {
+    dispatch(getAllDiplomaByListOfDiplomaNameImportStart());
+    try{
+        const res = await axios.get(`http://localhost:8000/v1/diploma/get_all_diploma_byMU/${management_unit_id}`)
+        let result = [];
+        res.data.forEach((currentValue)=>{
+            if(listOfDiplomaNameImport.includes(currentValue.diploma_name_id)){
+                result = [...result, currentValue];
+            }
+        })
+        dispatch(getAllDiplomaByListOfDiplomaNameImportSuccess(result));
+    }catch(error){
+        dispatch(getAllDiplomaByListOfDiplomaNameImportFailed()); 
+    }
+}
+
+//Hàm search diploma theo nhiều điều kiện
+export const searchDiplomaWithMultiCondition = async (  dispatch, 
+                                                        management_unit_id, 
+                                                        fullname, 
+                                                        diploma_number, 
+                                                        numbersIntoTheNotebook, 
+                                                        diploma_name_id, 
+                                                        diploma_issuance_id,
+                                                        listOfDiplomaNameImport,
+                                                        statusDiplomaSearch
+                                                        ) => {
+    dispatch(searchDiplomaWithMultiConditionStart());
+    try{
+        if(statusDiplomaSearch == undefined){
+            statusDiplomaSearch = "";
+        }
+        const listOfDiploma = await axios.get(`http://localhost:8000/v1/diploma/search_diploma/${management_unit_id}?name=${fullname}&diplomaNumber=${diploma_number}&numbersIntoTheNotebook=${numbersIntoTheNotebook}&status=${statusDiplomaSearch}`);
+
+        let res = [];
+        listOfDiploma.data.forEach((currentValue)=>{
+            if(listOfDiplomaNameImport.includes(currentValue.diploma_name_id)){
+                res = [...res, currentValue];
+            }
+        })
+        
+        if(diploma_name_id != undefined){
+            if(diploma_issuance_id != undefined){
+                let result3 = [];
+                res.forEach((currentValue)=>{
+                    if(currentValue.diploma_name_id == diploma_name_id && currentValue.diploma_issuance_id == diploma_issuance_id){
+                        result3 = [...result3, currentValue];
+                    }
+                })
+                dispatch(searchDiplomaWithMultiConditionSuccess(result3));       
+            }else{
+                let result2 = [];
+                res.forEach((currentValue)=>{
+                    if(currentValue.diploma_name_id == diploma_name_id){
+                        result2 = [...result2, currentValue];
+                    }
+                })    
+                dispatch(searchDiplomaWithMultiConditionSuccess(result2));
+            }
+        }else{
+            dispatch(searchDiplomaWithMultiConditionSuccess(res));
+        }
+    }catch(error){
+        dispatch(searchDiplomaWithMultiConditionFailed());
     }
 }

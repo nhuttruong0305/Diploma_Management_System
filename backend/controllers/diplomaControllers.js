@@ -51,6 +51,57 @@ const diplomaControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    //Hàm này lấy ra all diploma của 1 đơn vị quản lý của tài khoản
+    getAllDiplomaByMU: async (req, res) => {
+        try{
+            const result = await DiplomaModel.find({management_unit_id: parseInt(req.params.management_unit_id)});
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    //Hàm search lấy ra các diploma của 1 đơn vị quản lý của tài khoản
+    searchDiplomaWithMultiCondition: async (req, res) => {
+        try{
+            const name = req.query.name;
+            const diplomaNumber = req.query.diplomaNumber;
+            const numbersIntoTheNotebook = req.query.numbersIntoTheNotebook;
+            const status = req.query.status;
+            const result = await DiplomaModel.find({
+                                                    management_unit_id: parseInt(req.params.management_unit_id), 
+                                                    fullname:{ $regex: `${name}`, $options: 'i'},
+                                                    diploma_number: { $regex: `${diplomaNumber}`, $options: 'i'},
+                                                    numbersIntoTheNotebook: { $regex: `${numbersIntoTheNotebook}`, $options: 'i'},
+                                                    status: { $regex: `${status}`, $options: 'i'}
+            });
+            // const diplomaNameId = parseInt(req.query.diploma_name_id);
+            // const diplomaIssuance = parseInt(req.query.diploma_issuance_id);
+
+            // if(diplomaNameId != NaN || diplomaNameId != undefined){
+            //     let result2 = [];
+            //     result.forEach((currentValue)=>{
+            //         if(currentValue.diploma_name_id == diplomaNameId){
+            //             result2 = [...result2, currentValue];
+            //         }
+            //     })
+
+            //     if(diplomaIssuance != NaN || diplomaIssuance != undefined){
+            //         let result3 = [];
+            //         result2.forEach((diploma)=>{
+            //             if(diploma.diploma_issuance_id == diplomaIssuance){
+            //                 result3 = [...result3, diploma];
+            //             }
+            //         })
+            //         return res.status(200).json(result3);
+            //     }else{
+            //         return res.status(200).json(result2);
+            //     }
+            // }
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

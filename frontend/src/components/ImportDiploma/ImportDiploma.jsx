@@ -5,7 +5,7 @@ import Toast from '../Toast/Toast';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import {getAllDiplomaIssuanceByMU, addDiploma} from '../../redux/apiRequest';
+import {getAllDiplomaIssuanceByMU, addDiploma, getAllDiplomaByListOfDiplomaNameImport, searchDiplomaWithMultiCondition} from '../../redux/apiRequest';
 
 export default function ImportDiploma(){
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -339,11 +339,41 @@ export default function ImportDiploma(){
         noti13.current.showToast();
     }   
   
+    const allDiplomaByListOfDiplomaNameImport = useSelector((state) => state.diploma.diplomas?.allDiploma);
 
-    // console.log("1: ",selectedOptionDiplomaName);
-    // console.log("2: ", selectedOptionDiplomaIssuance);
-    // console.log("3: ", selectedDiplomaNameInFormAdd)
-    // console.log("4: ",selectedDiplomaIssuanceInFormAdd);
+    //Các state để tìm kiếm văn bằng
+    const [nameSearch, setNameSearch] = useState("");
+    const [numberDiplomaNumberSearch, setNumberDiplomaNumberSearch] = useState("");
+    const [numberInNoteBookSearch, setNumberInNoteBookSearch] = useState("");
+    const [statusDiplomaSearch, setStatusDiplomaSearch] = useState();
+    
+    const handleChangeStatusDiplomaSearch = (selectedOption) => {
+        setStatusDiplomaSearch(selectedOption);
+    }
+    useEffect(()=>{
+        searchDiplomaWithMultiCondition(dispatch, 
+                                        user.management_unit, 
+                                        nameSearch, 
+                                        numberDiplomaNumberSearch, 
+                                        numberInNoteBookSearch, 
+                                        selectedOptionDiplomaName?.value, 
+                                        selectedOptionDiplomaIssuance?.value,
+                                        user.listOfDiplomaNameImport,
+                                        statusDiplomaSearch?.value);
+    }, [selectedOptionDiplomaName?.value, 
+        selectedOptionDiplomaIssuance?.value, 
+        nameSearch, 
+        numberDiplomaNumberSearch, 
+        numberInNoteBookSearch, 
+        statusDiplomaSearch]);
+
+    // console.log("diploma_name_id: ",selectedOptionDiplomaName?.value);
+    // console.log("diploma_issuance_id: ", selectedOptionDiplomaIssuance?.value);
+    // console.log("fullname: ", nameSearch);
+    // console.log("number diploma: ", numberDiplomaNumberSearch);
+    // console.log("note book: ", numberInNoteBookSearch);
+    console.log("status: ", statusDiplomaSearch?.value);
+    // console.log("typeof status: ", typeof statusDiplomaSearch?.value);
     return(
         <>
             <Header/> 
@@ -395,7 +425,11 @@ export default function ImportDiploma(){
                                 <input 
                                     type="text" 
                                     placeholder='Lọc theo họ tên'
-                                    className='form-control'    
+                                    className='form-control'  
+                                    value={nameSearch}  
+                                    onChange={(e)=>{
+                                        setNameSearch(e.target.value)
+                                    }}
                                 />
                             </div>
                             <div className='col-md-2'>
@@ -403,13 +437,21 @@ export default function ImportDiploma(){
                                     type="text" 
                                     placeholder='Lọc số hiệu'
                                     className='form-control'    
+                                    value={numberDiplomaNumberSearch}
+                                    onChange={(e)=>{
+                                        setNumberDiplomaNumberSearch(e.target.value)
+                                    }}
                                 />
                             </div>
                             <div className='col-md-2'>
                                 <input 
                                     type="text" 
                                     placeholder='Lọc số vào sổ'
-                                    className='form-control'    
+                                    className='form-control'  
+                                    value={numberInNoteBookSearch}
+                                    onChange={(e)=>{
+                                        setNumberInNoteBookSearch(e.target.value)
+                                    }}
                                 />
                             </div>
                             <div className='col-md-3'>
@@ -417,11 +459,14 @@ export default function ImportDiploma(){
                                     placeholder='Chọn trạng thái văn bằng'
                                     options={
                                         [
+                                            { value: "", label: "Tất cả trạng thái"},
                                             { value: "Chờ duyệt", label: "Chờ duyệt" },
                                             { value: "Đã duyệt", label: "Đã duyệt" },
                                             { value: "Không duyệt", label: "Không duyệt" }
                                         ]
                                     }
+                                    value={statusDiplomaSearch}
+                                    onChange={handleChangeStatusDiplomaSearch}
                                 />
                             </div>
                         </div>
@@ -448,19 +493,31 @@ export default function ImportDiploma(){
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td style={{textAlign: 'center'}}><i className="fa-solid fa-eye"></i></td>
-                                            <th scope="row" style={{textAlign: 'center'}}>1</th>
-                                            <td>Lê Nhựt Trường</td>
-                                            <td>03/05/2001</td>
-                                            <td>An Giang</td>
-                                            <td>17/04/2023</td>
-                                            <td>Trung tâm Ngoại ngữ - Trường DHCT</td>
-                                            <td>Giỏi</td>
-                                            <td>17/01/2023</td>
-                                            <td>A1980895</td>
-                                            <td>153.10248.A68</td>
-                                        </tr>
+                                        {
+                                            allDiplomaByListOfDiplomaNameImport?.map((currentValue, index)=>{
+                                                let council = '';
+                                                allMU?.forEach((management_unit) => {
+                                                    if(currentValue.management_unit_id == management_unit.management_unit_id){
+                                                        council = management_unit.management_unit_name;
+                                                    }
+                                                })
+                                                return(
+                                                    <tr key={index}>
+                                                        <td style={{textAlign: 'center'}}><i className="fa-solid fa-eye"></i></td>
+                                                        <th scope="row" style={{textAlign: 'center'}}>{index + 1}</th>
+                                                        <td>{currentValue.fullname}</td>
+                                                        <td>{currentValue.dateofbirth}</td>
+                                                        <td>{currentValue.address}</td>
+                                                        <td>{currentValue.test_day}</td>
+                                                        <td>{council}</td>
+                                                        <td>{currentValue.classification}</td>
+                                                        <td>{currentValue.sign_day}</td>
+                                                        <td>{currentValue.diploma_number}</td>
+                                                        <td>{currentValue.numbersIntoTheNotebook}</td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
                                     </tbody>
                                 </table>
                             </div>
