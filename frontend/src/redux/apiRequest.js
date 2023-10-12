@@ -221,10 +221,10 @@ export const decentralizationDiplomaName = async (data, dispatch, accessToken, d
     }
 }
 
-export const transferDiplomaName = async (dispatch, accessToken, diploma_name_id) => {
+export const transferDiplomaName = async (dispatch, accessToken, _id, diplomaNameIdUsedToDeleteList) => {
     dispatch(transferDiolomaNameStart());
     try{
-        const res = await axios.put(`http://localhost:8000/v1/diploma_name/transfer/${diploma_name_id}`, diploma_name_id, {
+        const res = await axios.put(`http://localhost:8000/v1/diploma_name/transfer/${_id}/${diplomaNameIdUsedToDeleteList}`, _id, {
             headers: {token: `Bearer ${accessToken}`}
         });
         dispatch(transferDiplomaNameSuccess());
@@ -324,16 +324,7 @@ export const getAllDiplomaByListOfDiplomaNameImport = async (dispatch, listOfDip
 }
 
 //Hàm search diploma theo nhiều điều kiện
-export const searchDiplomaWithMultiCondition = async (  dispatch, 
-                                                        management_unit_id, 
-                                                        fullname, 
-                                                        diploma_number, 
-                                                        numbersIntoTheNotebook, 
-                                                        diploma_name_id, 
-                                                        diploma_issuance_id,
-                                                        listOfDiplomaNameImport,
-                                                        statusDiplomaSearch
-                                                        ) => {
+export const searchDiplomaWithMultiCondition = async (dispatch, management_unit_id, fullname, diploma_number, numbersIntoTheNotebook, diploma_name_id, diploma_issuance_id, listOfDiplomaNameImport, statusDiplomaSearch) => {
     dispatch(searchDiplomaWithMultiConditionStart());
     try{
         if(statusDiplomaSearch == undefined){

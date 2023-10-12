@@ -92,9 +92,11 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
     }, [msg])
 
     //Hàm chuyển
+    //State diplomaNameIdUsedToDeleteList dùng để lấy ra diploma_name_id dùng để khi chuyển thì xóa diploma_name_id này ra khỏi 2 danh sách: listOfDiplomaNameImport và listOfDiplomaNameReview của user
+    const [diplomaNameIdUsedToDeleteList, setDiplomaNameIdUsedToDeleteList] = useState();
     const handleTransfer = async (e) => {
         e.preventDefault();
-        await transferDiplomaName(dispatch, user.accessToken, idDiplomaName);
+        await transferDiplomaName(dispatch, user.accessToken, idDiplomaName, diplomaNameIdUsedToDeleteList);
 
         const DiplomaNameInfor = {
             diploma_name_name: inputShowDiplomaName,
@@ -146,6 +148,7 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
                                             onClick={()=>{
                                                 setInputShowDiplomaName(dataValue.diploma_name_name);
                                                 setIdDiplomaName(dataValue._id);
+                                                setDiplomaNameIdUsedToDeleteList(dataValue.diploma_name_id);
                                                 if(dataValue.management_unit_id == null){
                                                     setInputChooseMUTableShowDiplomaName(""); 
                                                     setDateFrom("");

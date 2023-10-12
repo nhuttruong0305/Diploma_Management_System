@@ -1,4 +1,5 @@
 const DiplomaNameModel = require("../models/DiplomaName");
+const UserAccountModel = require("../models/User");
 
 const diplomaNameControllers = {
     addDiplomaName: async (req, res) => { //done
@@ -183,6 +184,32 @@ const diplomaNameControllers = {
             // const filter = {diploma_name_id: parseInt(req.params.diploma_name_id)};
             
             // const diplomaNameUpdate = await DiplomaNameModel.updateMany(filter, updateDoc);
+            //Tìm các user có quyền nhập và duyệt loại văn bằng này và xóa diploma_name_id trong 2 danh sách: listOfDiplomaNameImport & listOfDiplomaNameReview
+            //1. Lấy ra all user có quyền nhập văn bằng đó
+            const listOfUserNeedToDeletdImport = await UserAccountModel.find({listOfDiplomaNameImport: { $in: parseInt(req.params.diploma_name_id_to_delete_list) }});
+            for(let i = 0; i < listOfUserNeedToDeletdImport.length; i++){
+                const indexOfDiplomaName = listOfUserNeedToDeletdImport[i].listOfDiplomaNameImport.indexOf(parseInt(req.params.diploma_name_id_to_delete_list));
+                const removed = listOfUserNeedToDeletdImport[i].listOfDiplomaNameImport.splice(indexOfDiplomaName,1);
+
+                const options2 = {returnDocument: "after"};
+                const updateDoc2 = {
+                    listOfDiplomaNameImport: listOfUserNeedToDeletdImport[i].listOfDiplomaNameImport
+                }
+                const updateListImport = await UserAccountModel.findByIdAndUpdate(listOfUserNeedToDeletdImport[i]._id, updateDoc2, options2);
+            }
+
+            //2. Lấy ra all user có quyền duyệt văn bằng đó
+            const listOfUserNeedToDeleteReview = await UserAccountModel.find({listOfDiplomaNameReview: { $in: parseInt(req.params.diploma_name_id_to_delete_list) }});
+            for(let j = 0; j < listOfUserNeedToDeleteReview.length; j++){
+                const indexOfDiplomaName2 = listOfUserNeedToDeleteReview[j].listOfDiplomaNameReview.indexOf(parseInt(req.params.diploma_name_id_to_delete_list));
+                const removed2 = listOfUserNeedToDeleteReview[j].listOfDiplomaNameReview.splice(indexOfDiplomaName2,1);
+
+                const options3 = {returnDocument: "after"};
+                const updateDoc3 = {
+                    listOfDiplomaNameReview: listOfUserNeedToDeleteReview[j].listOfDiplomaNameReview
+                }
+                const updateListReview = await UserAccountModel.findByIdAndUpdate(listOfUserNeedToDeleteReview[j]._id, updateDoc3, options3);
+            }
 
             const options = {returnDocument: "after"};
             const diplomaNameUpdate = await DiplomaNameModel.findByIdAndUpdate(req.params.diploma_name_id, updateDoc, options);

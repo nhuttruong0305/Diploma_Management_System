@@ -2,7 +2,7 @@ import Header from '../Header/Header'
 import Select from "react-select";
 import './ImportDiploma.css';
 import Toast from '../Toast/Toast';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import {getAllDiplomaIssuanceByMU, addDiploma, getAllDiplomaByListOfDiplomaNameImport, searchDiplomaWithMultiCondition} from '../../redux/apiRequest';
@@ -244,6 +244,35 @@ export default function ImportDiploma(){
     const isError = useSelector((state)=> state.diploma.diplomas?.error);
     const noti13 = useRef();
     
+    const allDiplomaByListOfDiplomaNameImport = useSelector((state) => state.diploma.diplomas?.allDiploma);
+
+    //Các state để tìm kiếm văn bằng
+    const [nameSearch, setNameSearch] = useState("");
+    const [numberDiplomaNumberSearch, setNumberDiplomaNumberSearch] = useState("");
+    const [numberInNoteBookSearch, setNumberInNoteBookSearch] = useState("");
+    const [statusDiplomaSearch, setStatusDiplomaSearch] = useState();
+    
+    const handleChangeStatusDiplomaSearch = (selectedOption) => {
+        setStatusDiplomaSearch(selectedOption);
+    }
+    useEffect(()=>{
+        searchDiplomaWithMultiCondition(dispatch, 
+                                        user.management_unit, 
+                                        nameSearch, 
+                                        numberDiplomaNumberSearch, 
+                                        numberInNoteBookSearch, 
+                                        selectedOptionDiplomaName?.value, 
+                                        selectedOptionDiplomaIssuance?.value,
+                                        user.listOfDiplomaNameImport,
+                                        statusDiplomaSearch?.value);
+    }, [selectedOptionDiplomaName?.value, 
+        selectedOptionDiplomaIssuance?.value, 
+        nameSearch, 
+        numberDiplomaNumberSearch, 
+        numberInNoteBookSearch, 
+        statusDiplomaSearch]);
+
+
     const submitAddNewDiploma = async (e) => {
         e.preventDefault();
         //Kiểm tra tên văn bằng phải được chọn
@@ -337,42 +366,21 @@ export default function ImportDiploma(){
         }
         await addDiploma(dispatch, user.accessToken, newDiploma);
         noti13.current.showToast();
-    }   
-  
-    const allDiplomaByListOfDiplomaNameImport = useSelector((state) => state.diploma.diplomas?.allDiploma);
-
-    //Các state để tìm kiếm văn bằng
-    const [nameSearch, setNameSearch] = useState("");
-    const [numberDiplomaNumberSearch, setNumberDiplomaNumberSearch] = useState("");
-    const [numberInNoteBookSearch, setNumberInNoteBookSearch] = useState("");
-    const [statusDiplomaSearch, setStatusDiplomaSearch] = useState();
-    
-    const handleChangeStatusDiplomaSearch = (selectedOption) => {
-        setStatusDiplomaSearch(selectedOption);
+        setTimeout(()=>{
+            searchDiplomaWithMultiCondition(dispatch, user.management_unit, nameSearch, numberDiplomaNumberSearch, numberInNoteBookSearch, selectedOptionDiplomaName?.value, selectedOptionDiplomaIssuance?.value,user.listOfDiplomaNameImport, statusDiplomaSearch?.value);
+        },3000);
     }
-    useEffect(()=>{
-        searchDiplomaWithMultiCondition(dispatch, 
-                                        user.management_unit, 
-                                        nameSearch, 
-                                        numberDiplomaNumberSearch, 
-                                        numberInNoteBookSearch, 
-                                        selectedOptionDiplomaName?.value, 
-                                        selectedOptionDiplomaIssuance?.value,
-                                        user.listOfDiplomaNameImport,
-                                        statusDiplomaSearch?.value);
-    }, [selectedOptionDiplomaName?.value, 
-        selectedOptionDiplomaIssuance?.value, 
-        nameSearch, 
-        numberDiplomaNumberSearch, 
-        numberInNoteBookSearch, 
-        statusDiplomaSearch]);
-
+    // useLayoutEffect(()=>{
+    //     if(msg!=""){
+    //         noti13.current.showToast();
+    //     }
+    // }, [msg])   
+  
     // console.log("diploma_name_id: ",selectedOptionDiplomaName?.value);
     // console.log("diploma_issuance_id: ", selectedOptionDiplomaIssuance?.value);
     // console.log("fullname: ", nameSearch);
     // console.log("number diploma: ", numberDiplomaNumberSearch);
     // console.log("note book: ", numberInNoteBookSearch);
-    console.log("status: ", statusDiplomaSearch?.value);
     // console.log("typeof status: ", typeof statusDiplomaSearch?.value);
     return(
         <>
