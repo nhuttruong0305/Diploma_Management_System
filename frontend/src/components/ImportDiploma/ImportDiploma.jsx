@@ -5,7 +5,7 @@ import Toast from '../Toast/Toast';
 import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import {getAllDiplomaIssuanceByMU, addDiploma, editDiplomaInImportDiploma, searchDiplomaWithMultiCondition} from '../../redux/apiRequest';
+import {getAllDiplomaIssuanceByMU, addDiploma, editDiplomaInImportDiploma, searchDiplomaWithMultiCondition, deleteDiploma} from '../../redux/apiRequest';
 
 export default function ImportDiploma(){
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -402,6 +402,8 @@ export default function ImportDiploma(){
     const [_idDiplomaEdit, set_IdDiplomaEdit] = useState(""); 
     // 12. diploma_name_id để lấy các văn bằng cùng loại và kiểm tra các điều kiện
     const [diploma_name_idEdit, setDiploma_name_idEdit] = useState("");
+    // 13. state này để quyết định xem văn bằng được sửa và xóa không hay chỉ được xem
+    const [editOrOnlyView, setEditOrOnlyView] = useState(false);
 
     const noti14 = useRef();
     const msgEdit = useSelector((state) => state.diploma?.msgEdit);
@@ -459,9 +461,23 @@ export default function ImportDiploma(){
 
         await editDiplomaInImportDiploma(dispatch, user.accessToken, _idDiplomaEdit, diploma_name_idEdit, diplomaUpdate);
         noti14.current.showToast();
-        setTimeout(()=>{
-            searchDiplomaWithMultiCondition(dispatch, user.management_unit, nameSearch, numberDiplomaNumberSearch, numberInNoteBookSearch, selectedOptionDiplomaName?.value, selectedOptionDiplomaIssuance?.value,user.listOfDiplomaNameImport, statusDiplomaSearch?.value);
+        setTimeout( async ()=>{
+            await searchDiplomaWithMultiCondition(dispatch, user.management_unit, nameSearch, numberDiplomaNumberSearch, numberInNoteBookSearch, selectedOptionDiplomaName?.value, selectedOptionDiplomaIssuance?.value,user.listOfDiplomaNameImport, statusDiplomaSearch?.value);
         },3000);
+    }
+
+    const noti15 = useRef();
+    const msgDelete = useSelector((state) => state.diploma?.msgDelete);
+    const isErrorDelete = useSelector((state) => state.diploma.diplomas?.error);
+
+    const handleDeleteDiploma = async () =>{
+        // console.log("_id của diploma cần xóa: ", _idDiplomaEdit);
+        // console.log(typeof _idDiplomaEdit);
+        await deleteDiploma(dispatch, user?.accessToken, _idDiplomaEdit);
+        noti15.current.showToast();
+        setTimeout( async ()=>{
+            await searchDiplomaWithMultiCondition(dispatch, user.management_unit, nameSearch, numberDiplomaNumberSearch, numberInNoteBookSearch, selectedOptionDiplomaName?.value, selectedOptionDiplomaIssuance?.value,user.listOfDiplomaNameImport, statusDiplomaSearch?.value);
+        },1000);
     }
 
     return(
@@ -610,6 +626,11 @@ export default function ImportDiploma(){
                                                                 setNumberInNoteEdit(currentValue.numbersIntoTheNotebook);
                                                                 set_IdDiplomaEdit(currentValue._id);
                                                                 setDiploma_name_idEdit(currentValue.diploma_name_id);
+                                                                if(currentValue.status == "Chờ duyệt"){
+                                                                    setEditOrOnlyView(true);
+                                                                }else{
+                                                                    setEditOrOnlyView(false);
+                                                                }
                                                             }}
                                                         ><i className="fa-solid fa-eye"></i></td>
                                                         <th scope="row" style={{textAlign: 'center'}}>{index + 1}</th>
@@ -847,20 +868,35 @@ export default function ImportDiploma(){
                                     </form>
                                 </div>
                                 <div className="modal-footer">
-                                    <button 
-                                        type="submit"
-                                        form='edit-or-delete-diploma' 
-                                        className="btn btn-primary"
-                                    >Sửa</button>
-                                    <button 
-                                        type="button" 
-                                        className="btn btn-danger"
-                                    >Xóa</button>
-                                    <button 
-                                        type="button" 
-                                        className="btn btn-secondary" 
-                                        data-bs-dismiss="modal"
-                                    >Hủy bỏ</button>
+                                    {
+                                        editOrOnlyView ? (
+                                            <>
+                                                <button 
+                                                    type="submit"
+                                                    form='edit-or-delete-diploma' 
+                                                    className="btn btn-primary"
+                                                >Sửa</button>
+                                                <button 
+                                                    type="button" 
+                                                    className="btn btn-danger"
+                                                    onClick={(e)=>{
+                                                        handleDeleteDiploma()
+                                                    }}
+                                                >Xóa</button>
+                                                <button 
+                                                    type="button" 
+                                                    className="btn btn-secondary" 
+                                                    data-bs-dismiss="modal"
+                                                >Hủy bỏ</button>
+                                            </>
+                                        ) : (
+                                            <button 
+                                                    type="button" 
+                                                    className="btn btn-secondary" 
+                                                    data-bs-dismiss="modal"
+                                                >Hủy bỏ</button>
+                                        )
+                                    }
                                 </div>
                                 </div>
                             </div>
@@ -1229,6 +1265,11 @@ export default function ImportDiploma(){
                 message={msgEdit}
                 type={isErrorEdit ? "error" : "success"}
                 ref={noti14}
+            />
+            <Toast
+                message={msgDelete}
+                type={isErrorDelete ? "error" : "success"}
+                ref={noti15}
             />
         </>
     )

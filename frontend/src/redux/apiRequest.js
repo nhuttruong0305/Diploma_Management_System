@@ -74,7 +74,10 @@ import {
     searchDiplomaWithMultiConditionFailed,
     editDiplomaStart,
     editDiplomaSuccess,
-    editDiplomaFailed  
+    editDiplomaFailed,
+    deleteDiplomaStart,
+    deleteDiplomaSuccess,
+    deleteDiplomaFailed  
 } from './diploma'
 
 export const LoginUser = async(user, dispatch, navigate) => {
@@ -377,5 +380,17 @@ export const editDiplomaInImportDiploma = async(dispatch, accessToken, _id, dipl
         dispatch(editDiplomaSuccess());
     }catch(error){
         dispatch(editDiplomaFailed(error.response.data));
+    }
+}
+//Hàm xóa văn bằng
+export const deleteDiploma = async (dispatch, accessToken, _id) => {
+    dispatch(deleteDiplomaStart());
+    try{
+        const res = await axios.delete(`http://localhost:8000/v1/diploma/delete_diploma/${_id}`,{
+            headers: {token: `Bearer ${accessToken}`}
+        })
+        dispatch(deleteDiplomaSuccess());
+    }catch(error){
+        dispatch(deleteDiplomaFailed());
     }
 }

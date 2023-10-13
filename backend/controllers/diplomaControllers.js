@@ -132,6 +132,14 @@ const diplomaControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    deleteDiploma: async (req, res) => {
+        try{
+            const deleteDiploma = await DiplomaModel.findByIdAndDelete(req.params._id);
+            return res.status(200).json(deleteDiploma);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 
