@@ -83,7 +83,14 @@ const diplomaControllers = {
     editDiploma: async (req, res) => {
         try{
             //Đầu tiên lấy các văn bằng có cùng loại văn bằng ra trước
-            const diplomasOfTheSameDiplomaNameID = await DiplomaModel.find({diploma_name_id: parseInt(req.params.diploma_name_id)});  
+            const diplomasOfTheSameDiplomaNameID1 = await DiplomaModel.find({diploma_name_id: parseInt(req.params.diploma_name_id)});  
+            
+            let diplomasOfTheSameDiplomaNameID = [];
+            diplomasOfTheSameDiplomaNameID1.forEach((currentValue)=>{
+                if(currentValue._id != req.params._id){
+                    diplomasOfTheSameDiplomaNameID = [...diplomasOfTheSameDiplomaNameID, currentValue];
+                }
+            })
             //Biến kiểm tra trùng số hiệu văn bằng
             let isExistDiplomaNumber = false;
             //Biến kiểm tra trùng số vào sổ văn bằng

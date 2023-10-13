@@ -410,18 +410,39 @@ export default function ImportDiploma(){
     //hàm submit edit văn bằng
     const handleSubmitEdit = async (e) =>{
         e.preventDefault();
-        // console.log("full name: ", nameOfTheGranteeEdit);
-        // console.log("sex edit: ", sexEdit);
-        // console.log("dateofbirth: ", dateofbirthEdit);
-        // console.log("addressedit: ",addressEdit);
-        // console.log("test day edit", testDayEdit);
-        // console.log("xep loai: ", classificationEdit);
-        // console.log("nam tot nghiep: ", graduationYearEdit);
-        // console.log("ngày ký: ", signDayEdit);
-        // console.log("Số hiệu: ", diplomaNumberEdit);
-        // console.log("Số vào sổ: ", numberInNoteEdit);
-        // console.log("_id: ",_idDiplomaEdit);
-        // console.log("Ten van bang: ", diploma_name_idEdit);
+
+        if(nameOfTheGranteeEdit == ""){
+            noti3.current.showToast();
+            return;
+        }
+        if(dateofbirthEdit == ""){
+            noti5.current.showToast();
+            return;
+        }
+        if(addressEdit == ""){
+            noti6.current.showToast();
+            return;
+        }
+        if(testDayEdit == ""){
+            noti7.current.showToast();
+            return;
+        }
+        if(graduationYearEdit == ""){
+            noti9.current.showToast();
+            return;
+        }
+        if(signDayEdit == ""){
+            noti10.current.showToast();
+            return;
+        }
+        if(diplomaNumberEdit == ""){
+            noti11.current.showToast();
+            return;
+        }
+        if(numberInNoteEdit == ""){
+            noti12.current.showToast();
+            return;
+        }
 
         const diplomaUpdate = {
             nameOfTheGranteeEdit: nameOfTheGranteeEdit,
