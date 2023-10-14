@@ -12,6 +12,7 @@ import DiplomaNameManagementHistory from './components/DiplomaNameManagementHist
 import ManageUserPermission from './components/ManageUserPermission/ManageUserPermission';
 import DiplomaIssuance from './components/DiplomaIssuance/DiplomaIssuance';
 import ImportDiploma from './components/ImportDiploma/ImportDiploma';
+import DiplomaReview from './components/DiplomaReview/DiplomaReview';
 
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
@@ -123,6 +124,17 @@ function App() {
           >
             <ImportDiploma/>
           </ProtectedRouteDiplomaImporter>
+        )
+      },
+      {
+        path: '/review-diploma',
+        element: (
+          <ProtectedRouteDiplomaReviewer
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <DiplomaReview/>
+          </ProtectedRouteDiplomaReviewer>
         )
       }
     ])

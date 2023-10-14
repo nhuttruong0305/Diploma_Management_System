@@ -35,6 +35,10 @@ const diplomaSchema = new mongoose.Schema(
         test_day:{ //ngày kiểm tra
             type: String
         },
+        council: {
+            type: String,
+            default: ""
+        },
         classification:{ //xếp loại
             type: String
         },

@@ -184,6 +184,8 @@ export default function ImportDiploma(){
 
     //8. Ngày kiểm tra
     const [testDay, setTestDay] = useState("");
+    const [councilAdd, setCouncilAdd] = useState("");
+    
 
     //9. Xếp loại: nên nhập text hay chọn select
     const [classification, setClassification] = useState();
@@ -224,6 +226,9 @@ export default function ImportDiploma(){
 
     const noti7 = useRef();
     const testDayRef = useRef();
+
+    const noti16 = useRef();
+    const councilAddRef = useRef()
 
     const noti8 = useRef();
     const classificationRef = useRef();
@@ -358,6 +363,7 @@ export default function ImportDiploma(){
             dateofbirth: dateofbirth,
             address: address,
             test_day: testDay,
+            council: councilAdd,
             classification: classification?.value,
             graduationYear: parseInt(graduationYear), //ép kiểu thành number
             sign_day: signDay,
@@ -385,6 +391,8 @@ export default function ImportDiploma(){
     const [addressEdit, setAddressEdit] = useState("");
     // 5. Ngày kiểm tra
     const [testDayEdit, setTestDayEdit] = useState("");
+    // Hội đồng
+    const [councilEdit, setCouncilEdit] = useState("");
     // 6. Xếp loại
     const [classificationEdit, setClassificationEdit] = useState("");
     // const handleChangeClassificationEdit = (selectedOption) => {
@@ -452,6 +460,7 @@ export default function ImportDiploma(){
             dateofbirthEdit: dateofbirthEdit,
             addressEdit: addressEdit,
             testDayEdit: testDayEdit,
+            councilEdit: councilEdit,
             classificationEdit: classificationEdit,
             graduationYearEdit: graduationYearEdit,
             signDayEdit: signDayEdit,
@@ -601,12 +610,6 @@ export default function ImportDiploma(){
                                     <tbody>
                                         {
                                             allDiplomaByListOfDiplomaNameImport?.map((currentValue, index)=>{
-                                                let council = '';
-                                                allMU?.forEach((management_unit) => {
-                                                    if(currentValue.management_unit_id == management_unit.management_unit_id){
-                                                        council = management_unit.management_unit_name;
-                                                    }
-                                                })
                                                 return(
                                                     <tr key={index}>
                                                         <td 
@@ -619,6 +622,7 @@ export default function ImportDiploma(){
                                                                 setDateofbirthEdit(currentValue.dateofbirth);
                                                                 setAddressEdit(currentValue.address);
                                                                 setTestDayEdit(currentValue.test_day);
+                                                                setCouncilEdit(currentValue.council);
                                                                 setClassificationEdit(currentValue.classification);
                                                                 setGraduationYearEdit(currentValue.graduationYear);
                                                                 setSignDayEdit(currentValue.sign_day);
@@ -638,7 +642,7 @@ export default function ImportDiploma(){
                                                         <td>{currentValue.dateofbirth}</td>
                                                         <td>{currentValue.address}</td>
                                                         <td>{currentValue.test_day}</td>
-                                                        <td>{council}</td>
+                                                        <td>{currentValue.council}</td>
                                                         <td>{currentValue.classification}</td>
                                                         <td>{currentValue.sign_day}</td>
                                                         <td>{currentValue.diploma_number}</td>
@@ -759,6 +763,24 @@ export default function ImportDiploma(){
                                                     value={testDayEdit}
                                                     onChange={(e)=>{
                                                         setTestDayEdit(e.target.value)
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >Hội đồng</label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    className='form-control'
+                                                    value={councilEdit}
+                                                    onChange={(e)=>{
+                                                        setCouncilEdit(e.target.value)
                                                     }}
                                                 />
                                             </div>
@@ -1076,6 +1098,27 @@ export default function ImportDiploma(){
                                                 />
                                             </div>
                                         </div>
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label
+                                                    style={{ fontStyle: 'italic' }}
+                                                    className='col-form-label text-end d-block' 
+                                                >
+                                                    Hội đồng thi
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    className='form-control'
+                                                    value={councilAdd}
+                                                    onChange={(e)=>{
+                                                        setCouncilAdd(e.target.value)
+                                                    }}    
+                                                    ref={councilAddRef}
+                                                />
+                                            </div>
+                                        </div>
                                         <div className='row mt-2'>
                                             <div className="col-3">
                                                 <label 
@@ -1270,6 +1313,11 @@ export default function ImportDiploma(){
                 message={msgDelete}
                 type={isErrorDelete ? "error" : "success"}
                 ref={noti15}
+            />
+            <Toast
+                message="Vui lòng nhập tên hội đồng thi"
+                type="warning"
+                ref={noti16}
             />
         </>
     )

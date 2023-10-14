@@ -37,7 +37,7 @@ export default function Navbar() {
                         ) : role == 'Diploma importer' ? (
                             <ul className="navbar-nav">
                                 <li className="nav-item nav-item-navbar">
-                                    <a className="nav-link nav-link-navbar" href="#">Tra cứu</a>
+                                    <Link className="nav-link nav-link-navbar" to="/">Tra cứu</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/diploma-issuance">Quản lý đợt cấp văn bằng</Link>
@@ -49,10 +49,10 @@ export default function Navbar() {
                         ) : role == 'Diploma reviewer' ? (
                             <ul className="navbar-nav">
                                 <li className="nav-item nav-item-navbar">
-                                    <a className="nav-link nav-link-navbar" href="#">Tra cứu</a>
+                                    <Link className="nav-link nav-link-navbar" to="/">Tra cứu</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
-                                    <a className="nav-link nav-link-navbar" href="#">Duyệt văn bằng</a>
+                                    <Link className="nav-link nav-link-navbar" to="/review-diploma">Duyệt văn bằng</Link>
                                 </li>
                             </ul>
                         ) : (
