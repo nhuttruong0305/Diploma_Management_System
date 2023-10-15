@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../../redux/apiRequest';
 import Toast from '../Toast/Toast';
-
+import Footer from '../Footer/Footer';
 export default function UserAccountManagement() {
     const [sex, setSex] = useState(true); //state đại diện cho giới tính
     const [position, setPosition] = useState('Student'); //state đại diện cho chức vụ
@@ -906,6 +906,7 @@ export default function UserAccountManagement() {
                     ref={noti}
                 />
             </div>
+            <Footer/>
         </>
     );
 }

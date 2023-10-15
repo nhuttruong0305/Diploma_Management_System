@@ -8,9 +8,17 @@
 }
 
 .nav-link-navbar{
-    color:rgb(55, 55, 55)!important;
+    color:white!important;
 }
 
 .nav-link-navbar:hover {
-    color: black!important;
+    color: #1b95a2!important;
+}
+
+#contain-nav{
+    background-color: #3a454b;    
+}
+
+.active-nav-navbar{
+    color: #1b95a2!important;
 }

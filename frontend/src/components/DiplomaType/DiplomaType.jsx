@@ -7,7 +7,7 @@ import Header from '../Header/Header';
 import {getAllDiplomaType, addDiplomaType, editDiplomaType, searchDiplomaType} from '../../redux/apiRequest';
 import { useDispatch, useSelector } from 'react-redux';
 import Toast from '../Toast/Toast';
-
+import Footer from '../Footer/Footer';
 export default function DiplomaType(){
     const dispatch = useDispatch();
     const allDiplomaType = useSelector((state) => state.diplomaType.diplomaTypes?.allDiplomaType);
@@ -241,6 +241,7 @@ export default function DiplomaType(){
                 type={isError ? "error" : "success"}
                 ref={noti}
             />
+            <Footer/>
         </>
     )
 }

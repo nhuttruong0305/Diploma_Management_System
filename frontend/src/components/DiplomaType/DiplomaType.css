@@ -1,18 +1,18 @@
 #body-diplomatype{
     padding-top: 10px;
     padding-bottom: 20px;
-    border: 1px solid rgb(184, 184, 184);
-    background-color: #e5e5e5;
+    /* border: 1px solid rgb(184, 184, 184); */
+    background-color: #fff;
     border-radius: 0px 0px 5px 5px;
 }
 
 #active-diplomatype{
-    background-color: #0b619d;
+    background-color: #00abeb;
 }
 
 #add-diploma-type{
     display: block;
-    background-color: #0b619d;
+    background-color: #00abeb;
     color: white;
     border-radius: 5px;
     border: none;

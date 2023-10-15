@@ -1,11 +1,10 @@
 #body-DNMH{
     padding-top: 10px;
     padding-bottom: 20px;
-    border: 1px solid rgb(184, 184, 184);
-    background-color: #e5e5e5;
+    background-color: #fff;
     border-radius: 0px 0px 5px 5px;
 }
 
 #active-DNMH{
-    background-color: #0b619d;
+    background-color: #00abeb;
 }

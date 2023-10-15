@@ -1,19 +1,18 @@
 #body-DI{
     padding-top: 10px;
     padding-bottom: 20px;
-    border: 1px solid rgb(184, 184, 184);
-    background-color: #e5e5e5;
+    background-color: #fff;
     border-radius: 0px 0px 5px 5px;
 }
 
 #add-diploma-issuance-DI{
-    background-color: #0b619d;
+    background-color: #00abeb;
     color: white;
 }
 
 /* class để làm nổi bật mục đang được chọn */
 .item-selected-DI{ 
-    background-color: #0b619d !important;
+    background-color: #00abeb !important;
     color: white !important;
 }
 

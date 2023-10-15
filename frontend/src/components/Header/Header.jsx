@@ -4,6 +4,8 @@ import {Link, useNavigate} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRef } from 'react';
 import { logoutUser } from '../../redux/apiRequest';
+import header_img from '../../assets/header_img.png';
+import header2 from '../../assets/header2.png';
 
 export default function Header(){
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -27,14 +29,23 @@ export default function Header(){
 
     return(
         <>
-            <div className='container' id='background-header'>
-                <div className="row">
+            <div className="container">
+                <div className="row pt-3">
                     <div className='col-md-1'>
                         <img id='logo-header' src="https://qlvb.ctu.edu.vn/image/layout_set_logo?img_id=2450798&t=1686463767127" alt="Đang tải hình ảnh" />
                     </div>
-                    <div className='col-md-9'>
-                        <p style={{fontSize: '18px', color: '#fff', marginBottom: '0px'}}>TRƯỜNG ĐẠI HỌC CẦN THƠ</p>
-                        <p style={{fontSize: '16px', color: '#FDFFD0'}}>Hệ thống tra cứu văn bằng chứng chỉ</p>
+                    <div className="col-md-6">
+                        <div style={{fontWeight: 'bold', fontSize: '35px', color: '#00abeb'}}>TRƯỜNG ĐẠI HỌC CẦN THƠ</div>
+                        <div style={{fontSize: '26px', color: 'black'}}>Hệ thống tra cứu văn bằng chứng chỉ</div>
+                    </div>
+                    <div className="col-md-3">
+                        <div>
+                        <img 
+                            style={{display: 'block', width: '170px'}}
+                            src={header_img}
+                            alt="Đang tải hình ảnh" />
+                        </div>
+                        
                     </div>
                     <div className="col-md-2">
                         {user ? (
@@ -53,7 +64,7 @@ export default function Header(){
                                     <div>
                                         <button 
                                             id='btn-logout-header' 
-                                            className='btn btn-primary'
+                                            className='btn'
                                             ref={btn_logout}
                                             onClick={handleLogout}
                                         ><i className="fa-solid fa-power-off"></i> Đăng xuất</button>
@@ -66,17 +77,20 @@ export default function Header(){
                         )}
                     </div>
                 </div>
-                <div className='row pb-2'>
-                    <Navbar/>
-                </div>
+            </div>      
+                
+            <div className='mt-4'>
+                <img 
+                    src={header2} 
+                    alt="Đang tải hình ảnh" 
+                    style={{display: 'block', height:'270px', width: '100%'}}
+                />
             </div>
             <div className="container">
                 <div className="row">
-                    <div className="col" id='title-header'>
-                    Tra cứu văn bằng chứng chỉ
-                    </div>
+                    <Navbar/>
                 </div>
-            </div>
+            </div>        
         </>
     );
 }

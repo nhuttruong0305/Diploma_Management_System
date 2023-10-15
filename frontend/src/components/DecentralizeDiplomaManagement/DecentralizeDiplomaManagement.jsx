@@ -6,7 +6,7 @@ import './DecentralizeDiplomaManagement.css';
 import TableShowDiplomaName from './TableShowDiplomaName';
 import { useEffect, useState } from 'react';
 import {searchDiplomaName} from '../../redux/apiRequest';
-
+import Footer from '../Footer/Footer';
 export default function DecentralizeDiplomaManagement(){
     // const [allDiplomaName, setAllDiplomaName] = useState([]) //state lấy ra all diploma name
     const allDiplomaName = useSelector((state) => state.diplomaName.diplomaNames?.allDiplomaName); //state lấy ra all diploma name
@@ -95,6 +95,7 @@ export default function DecentralizeDiplomaManagement(){
                     </div>
                 </div>
             </div>
+            <Footer/>
         </>
     );
 }

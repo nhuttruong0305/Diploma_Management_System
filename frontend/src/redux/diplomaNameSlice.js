@@ -9,7 +9,8 @@ const diplomaNameSlice = createSlice({
             error: false
         },
         msg:'', //msg này để thông báo cho component DiplomaName.jsx
-        msgForDDM: '' //msg này để thông báo cho component DecentralizeDiplomaManagement.jsx và component TableShowDiplomaName.jsx
+        msgForDDM: '', //msg này để thông báo cho component DecentralizeDiplomaManagement.jsx và component TableShowDiplomaName.jsx
+        msgPQ: ''   //msg dùng để phân quyền
     },
     reducers:{
         getAllDiplomaNameStart: (state) => { //lấy để hiện ra màn hình
@@ -72,12 +73,12 @@ const diplomaNameSlice = createSlice({
         decentralizationDiolomaNameStart: (state) => {
             state.diplomaNames.isFetching = true;
             state.diplomaNames.error = false;
-            state.msgForDDM = '';
+            state.msgPQ = '';
         },
         decentralizationDiolomaNameSuccess: (state) => {
             state.diplomaNames.error = false;
             state.diplomaNames.isFetching = false;
-            state.msgForDDM = 'Phân quyền thành công';
+            state.msgPQ = 'Phân quyền thành công';
         },
         decentralizationDiolomaNameFailed: (state) => {
             state.diplomaNames.error = true;

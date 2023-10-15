@@ -6,7 +6,7 @@ import Header from "../Header/Header";
 import './Login.css';
 import {LoginUser} from "../../redux/apiRequest";
 import Toast from '../Toast/Toast';
-
+import Footer from "../Footer/Footer";
 export default function Login(){
     const [mssv_cb, setMssv_cb] = useState('');
     const [password, setPassword] = useState('');
@@ -14,7 +14,6 @@ export default function Login(){
     const navigate = useNavigate();
     const noti = useRef();
     const msg = useSelector((state) => state.auth?.msg);
-    const [reset, setReset] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,11 +66,11 @@ export default function Login(){
                                         className="form-control" 
                                         id="password"/>
                                 </div>
-                                <div className="form-group form-check">
+                                {/* <div className="form-group form-check">
                                     <input type="checkbox" className="form-check-input" id="remember_1"/>
                                     <label className="form-check-label" htmlFor="remember_1">Ghi nhớ đăng nhập</label>
-                                </div>
-                                <button className='btn btn-primary mt-3' id="btn-login" type="submit" form="form-login">Đăng nhập</button>
+                                </div> */}
+                                <button className='btn mt-3' id="btn-login" type="submit" form="form-login">Đăng nhập</button>
                             </form>
                         </div>
                         <div className="col-lg"></div>
@@ -83,6 +82,7 @@ export default function Login(){
                 type="error"
                 ref={noti}
             />
+            <Footer/>
         </>
     );
 }

@@ -8,6 +8,7 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.login?.currentUser);
     const msg = useSelector((state) => state.diplomaName?.msgForDDM);
+    const msgPQ = useSelector((state) => state.diplomaName?.msgPQ);
     const [allManagementUnit, setManagementUnit]= useState([]); //state để lấy ra all đơn vị quản lý
     const [inputShowDiplomaName, setInputShowDiplomaName] = useState(''); //state đại diện cho ô input show diploname
     const [inputChooseMUTableShowDiplomaName, setInputChooseMUTableShowDiplomaName] = useState(); //state đại diện cho đơn vị quản lý của diploma name
@@ -20,6 +21,7 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
     const noti2 = useRef();
     const noti3 = useRef();
     const noti4 = useRef();
+    const noti5 = useRef();
     const select1 = useRef();
     const date1 = useRef();
     //Hàm lấy ra tất cả các đơn vị quản lý
@@ -82,14 +84,15 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
             from: dateFrom
         }
         await decentralizationDiplomaName(dataUpdate, dispatch, user.accessToken, idDiplomaName);
+        noti5.current.showToast();
         await searchDiplomaName(dispatch, inputSearch, status);
     }
 
-    useLayoutEffect(()=>{
-        if(msg!=""){
-            noti.current.showToast();
-        }
-    }, [msg])
+    // useLayoutEffect(()=>{
+    //     if(msg!=""){
+    //         noti.current.showToast();
+    //     }
+    // }, [msg])
 
     //Hàm chuyển
     //State diplomaNameIdUsedToDeleteList dùng để lấy ra diploma_name_id dùng để khi chuyển thì xóa diploma_name_id này ra khỏi 2 danh sách: listOfDiplomaNameImport và listOfDiplomaNameReview của user
@@ -104,6 +107,7 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
             isCheckDuplicate: false
         }
         await addDiplomaName(DiplomaNameInfor, dispatch, user.accessToken);
+        noti.current.showToast();
         await searchDiplomaName(dispatch, inputSearch, status);
     }
 
@@ -406,6 +410,11 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
                 message={msg}
                 type="success"
                 ref={noti}
+            />
+            <Toast
+                message={msgPQ}
+                type="success"
+                ref={noti5}
             />
         </>
     )

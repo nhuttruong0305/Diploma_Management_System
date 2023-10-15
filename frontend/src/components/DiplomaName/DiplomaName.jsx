@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { searchDiplomaName, getAllDiplomaName, getAllDiplomaType, addDiplomaName, editDiplomaName } from '../../redux/apiRequest';
 import Toast from '../Toast/Toast';
+import Footer from '../Footer/Footer';
 
 export default function DiplomaName(){
     const dispatch = useDispatch();
@@ -406,6 +407,7 @@ export default function DiplomaName(){
                 type="warning"
                 ref={noti3}
             />
+            <Footer/>
         </>
     );
 }

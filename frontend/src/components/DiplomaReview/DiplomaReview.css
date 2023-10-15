@@ -1,8 +1,7 @@
 #body-diploma-review{
     padding-top: 10px;
     padding-bottom: 20px;
-    border: 1px solid rgb(184, 184, 184);
-    background-color: #e5e5e5;
+    background-color: #fff;
     border-radius: 0px 0px 5px 5px;
 }
 
@@ -24,5 +23,4 @@
 
 #footer-modal-review-DR{
     padding: 20px;
-    
 }

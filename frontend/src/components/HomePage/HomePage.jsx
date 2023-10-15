@@ -1,13 +1,27 @@
 import Header from '../Header/Header'
 import './HomePage.css';
+import Footer from '../Footer/Footer';
 
 export default function HomePage() {
     return (
         <>
             <Header />
             <div className="container" id='body-homepage'>
-                <form style={{backgroundColor: '#ffffff', padding: '10px', borderRadius: '10px'}}>
+                <form style={{backgroundColor: '#ffffff', borderRadius: '10px'}}>
                     <div id='form-search-homepage'>
+                        <div id='bg-orange-homepage'>
+                            <h5 id='tittle-in-bg-orange-homepage'>
+                                Tìm kiếm
+                                <p style={{fontSize: '25px', color: '#fff200', marginBottom: '0px'}}>VĂN BẰNG</p>
+                            </h5>
+                            <div style={{color: 'white'}}>
+                                <img 
+                                    style={{width: '40px', marginLeft: '70px', marginRight: '10px'}}
+                                    src="https://www.web30s.vn/images/icon-arrow.svg" 
+                                    alt="Đang tải hình ảnh" />
+                                Tại đây 
+                            </div>
+                        </div>
                         <div className="row">
                             <div className="col-2 offset-md-2">
                                 <label htmlFor="diploma-name-homepage" className="col-form-label text-end d-block" style={{fontSize: '12px', fontStyle: 'italic'}}>Tên văn bằng <span style={{color: 'red'}}>*</span></label>
@@ -42,8 +56,8 @@ export default function HomePage() {
                         </div>
                     </div>
                 </form>
-                
             </div>
+            <Footer/>
         </>
     );
 }

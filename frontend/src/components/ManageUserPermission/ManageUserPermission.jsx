@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from "react-redux";
 import Toast from '../Toast/Toast';
+import Footer from "../Footer/Footer";
 
 export default function ManageUserPermission(){
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -503,6 +504,7 @@ export default function ManageUserPermission(){
                 type="error"
                 ref={noti1}
             />
+            <Footer/>
         </>
     )
 }

@@ -1,11 +1,5 @@
-#background-header{
-    background-color: #0b619d;
-    padding: 10px 20px 0px 20px;
-    border-radius:  5px 5px 0px 0px;
-}
-
 #logo-header{
-    width: 60px;
+    width: 80px;
     display: block;
     margin: 0 auto;
 }
@@ -14,7 +8,7 @@
     margin-top: 15px;
     display: block;
     float: right;
-    background-color: #094e7e;
+    background-color: #1fb5ed;
     border: 0px;
     font-weight: bold;
     font-size: 13px;
@@ -26,7 +20,7 @@
     width: 100%;
     display: block;
     float: right;
-    background-color: #094e7e;
+    background-color: #1fb5ed;
     border: 0px;
     font-weight: bold;
     border-radius: 5px 0px 0px 5px;
@@ -36,26 +30,15 @@
     margin-top: 15px;
     display: block;
     border-radius: 0px 5px 5px 0px;
-    background-color: #095082;
+    background-color: #1fb5ed;
     border: none;
 }
 
 #btn-logout-header{
-    margin-top: 5px;
     display: none;
     width: 100%;
-    background-color: white;
     color: black;
     border: none;
     font-size: 13px;
-}
-
-#title-header{
-    background-color: #297fbb;
-    text-align: center;
-    color: #fdffd0;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    font-size: 14px;
-    /* margin: 10px 0px 0px 0px; */
+    border: 1px solid #e5e5e5;
 }

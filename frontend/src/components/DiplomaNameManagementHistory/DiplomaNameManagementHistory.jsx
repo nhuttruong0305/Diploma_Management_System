@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {searchDiplomaNameForDNMH} from '../../redux/apiRequest';
 import { useDispatch, useSelector } from 'react-redux';
-
+import Footer from '../Footer/Footer';
 export default function DiplomaNameManagementHistory(){
     const [inputSearch, setInputSearch] = useState(''); //state đại diện cho input để lọc văn bằng theo tên
     const [inputMU, setInputMU] = useState(); //state đại diện cho input để lọc văn bằng theo đơn vị quản lý
@@ -155,10 +155,10 @@ export default function DiplomaNameManagementHistory(){
                                 </table>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
+            <Footer/>
         </>
     )
 }

@@ -6,7 +6,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from "react-select";
 import Toast from '../Toast/Toast';
-
+import Footer from '../Footer/Footer';
 export default function DiplomaIssuance(){
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -201,7 +201,7 @@ export default function DiplomaIssuance(){
                             </div>
                             <div className='row' style={{padding: '0px 0px 0px 20px'}}>
                                 <p 
-                                    style={{color: '#297fbb', fontWeight: 'bold', marginLeft:'10px', paddingLeft: '0px'}}
+                                    style={{color: '#00abeb', fontWeight: 'bold', marginLeft:'10px', paddingLeft: '0px'}}
                                 >Thông tin chung</p>                                
                             </div>
                             <form
@@ -257,7 +257,7 @@ export default function DiplomaIssuance(){
                                             className='btn' 
                                             type='submit'
                                             form='form-edit-diploma-issuance'
-                                            style={{backgroundColor: '#0b619d', width:'110px'}}
+                                            style={{backgroundColor: '#00abeb', width:'110px'}}
                                         >Lưu</button>
                                     </div>
                                     {/* <div className='mx-2'>
@@ -374,7 +374,7 @@ export default function DiplomaIssuance(){
                 type={isErrorEdit ? "error" : "success"}
                 ref={noti4}
             />
-
+            <Footer/>
         </>
     )
 }

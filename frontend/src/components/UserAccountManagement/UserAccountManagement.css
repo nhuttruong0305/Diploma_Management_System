@@ -1,14 +1,13 @@
 #body-useraccountmanagement{
     padding-top: 10px;
     padding-bottom: 20px;
-    border: 1px solid rgb(184, 184, 184);
-    background-color: #e5e5e5;
+    background-color: #fff;
     border-radius: 0px 0px 5px 5px;
 }
 
 #add-user-account-useraccountmanagement{
     display: block;
-    background-color: #0b619d;
+    background-color: #00abeb;
     color: white;
     border-radius: 5px;
     border: none;
@@ -16,5 +15,5 @@
 }
 
 #active-useraccount-management{
-    background-color: #0b619d;
+    background-color: #00abeb;
 }

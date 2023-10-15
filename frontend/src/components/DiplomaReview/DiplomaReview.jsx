@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import {getAllDiplomaIssuanceByMU, searchDiplomaWithMultiCondition} from '../../redux/apiRequest';
-
+import Footer from '../Footer/Footer';
 export default function DiplomaReview(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -389,6 +389,7 @@ export default function DiplomaReview(){
                     </div>
                 </div>  
             </div>
+            <Footer/>
         </>
     )
 } 

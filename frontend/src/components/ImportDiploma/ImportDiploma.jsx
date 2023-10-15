@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import {getAllDiplomaIssuanceByMU, addDiploma, editDiplomaInImportDiploma, searchDiplomaWithMultiCondition, deleteDiploma} from '../../redux/apiRequest';
-
+import Footer from '../Footer/Footer';
 export default function ImportDiploma(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -520,7 +520,7 @@ export default function ImportDiploma(){
                             <div className='d-flex justify-content-start'>
                                 <div className='ms-3'>
                                     <button 
-                                        style={{width: '110px', backgroundColor: '#0b619d'}} 
+                                        style={{width: '110px', backgroundColor: '#00abeb'}} 
                                         className='btn'
                                         type='button'
                                         data-bs-toggle="modal" 
@@ -528,7 +528,7 @@ export default function ImportDiploma(){
                                     >Thêm mới</button>
                                 </div>
                                 <div className='ms-3'>
-                                    <button style={{width: '110px', backgroundColor: '#0b619d'}} className='btn'>Import</button>
+                                    <button style={{width: '110px', backgroundColor: '#fed25c'}} className='btn'>Import</button>
                                 </div>
                                 <div className='ms-3'>
                                     <button style={{width: '110px', backgroundColor: '#297fbb'}} className='btn'>Mẫu Import</button>
@@ -1319,6 +1319,7 @@ export default function ImportDiploma(){
                 type="warning"
                 ref={noti16}
             />
+            <Footer/>
         </>
     )
 }
