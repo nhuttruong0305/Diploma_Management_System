@@ -402,8 +402,8 @@ export default function ManageUserPermission(){
                                         </table>
                                         <div className="d-flex justify-content-end">                            
                                             <button 
-                                                style={{width: '80px'}} 
-                                                className="btn btn-primary"
+                                                style={{width: '80px', backgroundColor: '#1b95a2'}} 
+                                                className="btn"
                                                 onClick={(e)=>{
                                                     handleSubmit()
                                                 }}
@@ -467,8 +467,8 @@ export default function ManageUserPermission(){
                                         </table>
                                         <div className="d-flex justify-content-end">
                                             <button
-                                                className="btn btn-primary"
-                                                style={{width: '80px'}} 
+                                                className="btn"
+                                                style={{width: '80px', backgroundColor: '#1b95a2'}} 
                                                 onClick={(e)=>{
                                                     handleSubmitReview();
                                                 }}

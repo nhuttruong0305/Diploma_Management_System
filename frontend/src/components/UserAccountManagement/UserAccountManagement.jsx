@@ -886,7 +886,8 @@ export default function UserAccountManagement() {
                                                 <button 
                                                     type="submit" 
                                                     form='form-add-useraccount-useraccountmanagement' 
-                                                    className="btn btn-primary"
+                                                    className="btn"
+                                                    style={{backgroundColor: '#1b95a2'}}
                                                     >Thêm tài khoản</button>
                                             </div>
                                         </div>

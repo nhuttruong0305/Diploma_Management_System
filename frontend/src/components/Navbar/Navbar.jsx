@@ -60,6 +60,10 @@ export default function Navbar() {
                 var currentElement = document.querySelector("#duyet-van-bang");
                 currentElement.classList.add("active-nav-navbar");
                 break;
+            case '/diploma-diary':
+                var currentElement = document.querySelector("#nhat-ky-van-bang");
+                currentElement.classList.add("active-nav-navbar");
+                break;  
             }
     })
 
@@ -97,7 +101,11 @@ export default function Navbar() {
                                     >Quản lý người dùng</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
-                                    <a className="nav-link nav-link-navbar" href="#">Nhật ký văn bằng</a>
+                                    <Link 
+                                        className="nav-link nav-link-navbar" 
+                                        to="/diploma-diary"
+                                        id='nhat-ky-van-bang'
+                                    >Nhật ký văn bằng</Link>
                                 </li>
                             </ul>
                         ) : role == 'Diploma importer' ? (

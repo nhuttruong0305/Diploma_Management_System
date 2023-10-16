@@ -159,6 +159,23 @@ const diplomaControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    searchDiplomaForDiplomaDiary: async (req, res) => {
+        try{
+            const officer_name = req.query.officer_name ;
+            const mscb = req.query.mscb;
+            const status = req.query.status; 
+
+            const result = await DiplomaModel.find({
+                officer_name: { $regex: `${officer_name}`, $options: 'i'},
+                mscb: { $regex: `${mscb}`, $options: 'i'},
+                status: { $regex: `${status}`, $options: 'i'}
+                // status: status
+            });
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

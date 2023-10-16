@@ -7,7 +7,7 @@
 
 #add-user-account-useraccountmanagement{
     display: block;
-    background-color: #00abeb;
+    background-color: #1b95a2;
     color: white;
     border-radius: 5px;
     border: none;
@@ -15,5 +15,5 @@
 }
 
 #active-useraccount-management{
-    background-color: #00abeb;
+    background-color: #1b95a2;
 }

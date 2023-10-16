@@ -6,7 +6,7 @@
 }
 
 #active-MUP{
-    background-color: #00abeb;
+    background-color: #1b95a2;
 }
 
 #table-show-diplomaNameByMU{
@@ -28,6 +28,6 @@
 }
 
 .item-selected-MUP{
-    background-color: #00abeb !important;
+    background-color: #1b95a2 !important;
     color: white !important;
 }

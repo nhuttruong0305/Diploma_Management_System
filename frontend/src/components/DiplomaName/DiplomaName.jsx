@@ -283,7 +283,8 @@ export default function DiplomaName(){
                                             <button 
                                                 type="submit"
                                                 form='form-add-diplomaName-diplomaName' 
-                                                className="btn btn-primary"
+                                                className="btn"
+                                                style={{backgroundColor: '#1b95a2'}}
                                             >Thêm</button>
                                         </div>
                                         </div>
@@ -371,7 +372,8 @@ export default function DiplomaName(){
                                             <button 
                                                 type="submit"
                                                 form='form-edit-diplomaName-diplomaName' 
-                                                className="btn btn-primary"
+                                                className="btn"
+                                                style={{backgroundColor: '#1b95a2'}}
                                             >Lưu</button>
                                         </div>
                                         </div>

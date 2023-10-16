@@ -121,6 +121,7 @@ export default function DiplomaType(){
                                                                     data-bs-toggle="modal" 
                                                                     data-bs-target="#modalEditDiplomaType" 
                                                                     className="fa-solid fa-eye"
+                                                                    style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
                                                                 ></i>
                                                             </td>
                                                         </tr>
@@ -173,7 +174,8 @@ export default function DiplomaType(){
                                             <button 
                                                 type="submit"
                                                 form='form-edit-diplomatype' 
-                                                className="btn btn-primary"
+                                                className="btn"
+                                                style={{backgroundColor: '#1b95a2'}}
                                             >Lưu</button>
                                         </div>
                                         </div>
@@ -225,7 +227,8 @@ export default function DiplomaType(){
                                             <button 
                                                 type="submit"
                                                 form='form-add-diplomatype' 
-                                                className="btn btn-primary"
+                                                className="btn"
+                                                style={{backgroundColor: '#1b95a2'}}
                                             >Thêm</button>
                                         </div>
                                         </div>
