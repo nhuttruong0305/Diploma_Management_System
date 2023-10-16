@@ -142,6 +142,23 @@ const diplomaControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    reviewDiploma: async (req,res) => {
+        try{
+            const options = {returnDocument: "after"};
+            const updateDoc = {
+                status: req.body.status, 
+                mscb: req.body.mscb,
+                officer_name: req.body.officer_name,
+                time: req.body.time,
+                explain: req.body.explain
+            }
+
+            const diplomaUpdate = await DiplomaModel.findByIdAndUpdate(req.params._id, updateDoc, options);
+            return res.status(200).json(diplomaUpdate);            
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

@@ -201,7 +201,7 @@ export default function DiplomaIssuance(){
                             </div>
                             <div className='row' style={{padding: '0px 0px 0px 20px'}}>
                                 <p 
-                                    style={{color: '#00abeb', fontWeight: 'bold', marginLeft:'10px', paddingLeft: '0px'}}
+                                    style={{color: '#1b95a2', fontWeight: 'bold', marginLeft:'10px', paddingLeft: '0px'}}
                                 >Thông tin chung</p>                                
                             </div>
                             <form
@@ -257,7 +257,7 @@ export default function DiplomaIssuance(){
                                             className='btn' 
                                             type='submit'
                                             form='form-edit-diploma-issuance'
-                                            style={{backgroundColor: '#00abeb', width:'110px'}}
+                                            style={{backgroundColor: '#1b95a2', width:'110px', color: 'white'}}
                                         >Lưu</button>
                                     </div>
                                     {/* <div className='mx-2'>

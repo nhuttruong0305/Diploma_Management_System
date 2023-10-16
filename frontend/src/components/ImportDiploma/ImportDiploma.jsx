@@ -587,7 +587,11 @@ export default function ImportDiploma(){
                         </div>
 
                         <div className="row mt-2 p-4">
-                            <div className='table-wrapper table-responsive'>
+                            <div 
+                                // className='table-wrapper table-responsive'
+                                id='contain-table-show-diploma-ID'
+                                
+                                >
                                 <table 
                                     className="table table-bordered"
                                     id='table-show-diploma-ID'
@@ -636,7 +640,9 @@ export default function ImportDiploma(){
                                                                     setEditOrOnlyView(false);
                                                                 }
                                                             }}
-                                                        ><i className="fa-solid fa-eye"></i></td>
+                                                        ><i 
+                                                            style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                            className="fa-solid fa-eye"></i></td>
                                                         <th scope="row" style={{textAlign: 'center'}}>{index + 1}</th>
                                                         <td>{currentValue.fullname}</td>
                                                         <td>{currentValue.dateofbirth}</td>

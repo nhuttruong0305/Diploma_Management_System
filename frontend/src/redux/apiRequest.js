@@ -77,7 +77,10 @@ import {
     editDiplomaFailed,
     deleteDiplomaStart,
     deleteDiplomaSuccess,
-    deleteDiplomaFailed  
+    deleteDiplomaFailed,
+    reviewDiplomaStart,
+    reviewDiplomaSuccess,
+    reviewDiplomaFailed  
 } from './diploma'
 
 export const LoginUser = async(user, dispatch, navigate) => {
@@ -392,5 +395,17 @@ export const deleteDiploma = async (dispatch, accessToken, _id) => {
         dispatch(deleteDiplomaSuccess());
     }catch(error){
         dispatch(deleteDiplomaFailed());
+    }
+}
+//Hàm duyệt văn bằng
+export const reviewDiploma = async (dispatch, accessToken, _id, updateInfor) => {
+    dispatch(reviewDiplomaStart());
+    try{
+        const res = await axios.put(`http://localhost:8000/v1/diploma/review_diploma/${_id}`, updateInfor, {
+            headers: {token: `Bearer ${accessToken}`}
+        });
+        dispatch(reviewDiplomaSuccess());
+    }catch(error){
+        dispatch(reviewDiplomaFailed());
     }
 }

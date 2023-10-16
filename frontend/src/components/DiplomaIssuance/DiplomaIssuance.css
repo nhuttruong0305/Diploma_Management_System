@@ -6,13 +6,13 @@
 }
 
 #add-diploma-issuance-DI{
-    background-color: #00abeb;
+    background-color: #1b95a2;
     color: white;
 }
 
 /* class để làm nổi bật mục đang được chọn */
 .item-selected-DI{ 
-    background-color: #00abeb !important;
+    background-color: #1b95a2 !important;
     color: white !important;
 }
 

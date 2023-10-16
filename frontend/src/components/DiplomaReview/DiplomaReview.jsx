@@ -3,9 +3,10 @@ import Header from '../Header/Header';
 import Select from "react-select";
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import {getAllDiplomaIssuanceByMU, searchDiplomaWithMultiCondition} from '../../redux/apiRequest';
+import { useEffect, useRef, useState } from 'react';
+import {getAllDiplomaIssuanceByMU, searchDiplomaWithMultiCondition, reviewDiploma } from '../../redux/apiRequest';
 import Footer from '../Footer/Footer';
+import Toast from '../Toast/Toast';
 export default function DiplomaReview(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -100,6 +101,72 @@ export default function DiplomaReview(){
     const [signDayModalReview, setSignDayModalReview] = useState("");
     const [diplomaNumberModalReview, setDiplomaNumberModalReview] = useState("");
     const [numberInNoteModalReview, setNumberInNoteModalReview] = useState("");
+
+    //Phần diễn giải sẽ được thêm vào DB khi duyệt hoặc không duyệt
+    const [explainModalReview, setExplainModalReview] = useState("");
+    //_id dùng để tìm và cập nhật văn bằng trong DB
+    const [_idDiplomaModalReview, set_IDDiplomaModalReview] = useState("");
+
+    const msg = useSelector((state) => state.diploma?.msgReview);
+    const isError = useSelector((state) => state.diploma.diplomas?.error);
+    const noti = useRef();
+
+    const handleReview = async () => {
+        //MSCB
+        const mscbReview = user?.mssv_cb;
+        //Tên cán bộ
+        const officerNameReview = user?.fullname;
+        
+        const today = new Date();
+        const day = today.getDate();
+        const month = today.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
+        const year = today.getFullYear();
+
+        //Time
+        const dayResult = `${year}-${month}-${day}`;
+
+        const reviewObject = {
+            status: 'Đã duyệt',
+            mscb: mscbReview,
+            officer_name: officerNameReview,
+            time: dayResult,
+            explain: explainModalReview
+        }
+        await reviewDiploma(dispatch, user.accessToken, _idDiplomaModalReview, reviewObject);
+        noti.current.showToast();
+        setTimeout( async ()=>{
+            await searchDiplomaWithMultiCondition(dispatch, user.management_unit, fullname, diplomaNumber, diplomaNumberInNote, selectedForSelectDiplomaNameDR?.value, selectedForSelectDiplomaIssuanceDR?.value, user.listOfDiplomaNameReview, selectedStatusDiploma?.value);
+        },2000);
+    }
+
+    const handleNotReview = async () => {
+        //MSCB
+        const mscbReview = user?.mssv_cb;
+        //Tên cán bộ
+        const officerNameReview = user?.fullname;
+        
+        const today = new Date();
+        const day = today.getDate();
+        const month = today.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
+        const year = today.getFullYear();
+
+        //Time
+        const dayResult = `${year}-${month}-${day}`;
+
+        const reviewObject = {
+            status: 'Không duyệt',
+            mscb: mscbReview,
+            officer_name: officerNameReview,
+            time: dayResult,
+            explain: explainModalReview
+        }
+        await reviewDiploma(dispatch, user.accessToken, _idDiplomaModalReview, reviewObject);
+        noti.current.showToast();
+        setTimeout( async ()=>{
+            await searchDiplomaWithMultiCondition(dispatch, user.management_unit, fullname, diplomaNumber, diplomaNumberInNote, selectedForSelectDiplomaNameDR?.value, selectedForSelectDiplomaIssuanceDR?.value, user.listOfDiplomaNameReview, selectedStatusDiploma?.value);
+        },2000);
+    }
+
     return(
         <>
             <Header/>
@@ -217,7 +284,7 @@ export default function DiplomaReview(){
                                                     >
                                                         <i 
                                                             className="fa-solid fa-eye"
-                                                            style={{backgroundColor: "#0b619d", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                            style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
                                                             data-bs-toggle="modal" data-bs-target="#showDiplomaModal"
                                                             onClick={(e)=>{
                                                                 setFullnameModalReview(currentValue.fullname);
@@ -231,6 +298,8 @@ export default function DiplomaReview(){
                                                                 setSignDayModalReview(currentValue.sign_day);
                                                                 setDiplomaNumberModalReview(currentValue.diploma_number);
                                                                 setNumberInNoteModalReview(currentValue.numbersIntoTheNotebook);
+                                                                set_IDDiplomaModalReview(currentValue._id);
+                                                                setExplainModalReview("");
                                                             }}
                                                         ></i>
                                                     </td>
@@ -361,6 +430,10 @@ export default function DiplomaReview(){
                                             <div className="form-floating">
                                                 <textarea 
                                                     className="form-control" 
+                                                    value={explainModalReview}
+                                                    onChange={(e)=>{
+                                                        setExplainModalReview(e.target.value);
+                                                    }}
                                                     placeholder="Leave a comment here" 
                                                     id="floatingTextarea2" style={{height: "100px"}}></textarea>
                                                 <label htmlFor="floatingTextarea2">Nhập diễn giải</label>
@@ -371,10 +444,18 @@ export default function DiplomaReview(){
                                                 <div className='ms-2'>
                                                     <button 
                                                         className="btn btn-primary"
+                                                        onClick={(e)=>{
+                                                            handleReview();
+                                                        }}
                                                     >Duyệt</button>
                                                 </div>
                                                 <div className='ms-2'>
-                                                    <button className="btn btn-danger">Không duyệt</button>
+                                                    <button 
+                                                        className="btn btn-danger"
+                                                        onClick={(e)=>{
+                                                            handleNotReview();
+                                                        }}
+                                                    >Không duyệt</button>
                                                 </div>
                                                 <div className='ms-2'>
                                                     <button className="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
@@ -390,6 +471,11 @@ export default function DiplomaReview(){
                 </div>  
             </div>
             <Footer/>
+            <Toast
+                message={msg}
+                type={isError ? "error" : 'success'}
+                ref={noti}
+            />
         </>
     )
 } 

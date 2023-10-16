@@ -37,6 +37,16 @@ const middlewareController = {
                 return res.status(403).json("You are not authorized");
             }
         })
+    },
+
+    verifyTokenAndDiplomaReviewer: (req, res, next) => {
+        middlewareController.verifyToken(req, res, () => {
+            if(req.user.role[0] == 'Diploma reviewer'){
+                next();
+            }else{
+                return res.status(403).json("You are not authorized");
+            }
+        })
     }
 }
 
