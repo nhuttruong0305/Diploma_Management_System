@@ -27,10 +27,15 @@ export default function Navbar() {
                     if(currentElement!=null){
                         currentElement.classList.add("active-nav-navbar");  
                     }
-                    console.log("!11");
+                    break;
+                }else if(role == 'Diploma reviewer'){
+                    var currentElement = document.querySelector("#trang-chu3");
+                    if(currentElement!=null){
+                        currentElement.classList.add("active-nav-navbar");  
+                    }
                     break;
                 }else{
-                    var currentElement = document.querySelector("#trang-chu3");
+                    var currentElement = document.querySelector("#trang-chu4");
                     if(currentElement!=null){
                         currentElement.classList.add("active-nav-navbar");  
                     }
@@ -144,7 +149,7 @@ export default function Navbar() {
                         ) : (
                             <ul className="navbar-nav">
                                 <li className="nav-item nav-item-navbar">
-                                    <a className="nav-link nav-link-navbar" href="#">Tra cứu</a>
+                                    <Link className="nav-link nav-link-navbar" to="/" id='trang-chu4'>Tra cứu</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <a className="nav-link nav-link-navbar" href="#">Hướng dẫn sử dụng</a>

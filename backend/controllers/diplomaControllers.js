@@ -176,6 +176,26 @@ const diplomaControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    searchDiplomaTraCuu: async(req, res) => {
+        try{
+            const diploma_name_id = parseInt(req.query.diploma_name_id);
+            const fullname = req.query.fullname;
+            const diploma_number = req.query.diploma_number;
+            const number_in_note = req.query.number_in_note;
+
+            const result = await DiplomaModel.find({
+                diploma_name_id: diploma_name_id,
+                fullname: { $regex: `${fullname}`, $options: 'i'},
+                diploma_number: { $regex: `${diploma_number}`, $options: 'i'},
+                numbersIntoTheNotebook: { $regex: `${number_in_note}`, $options: 'i'},
+                status: "Đã duyệt"
+            });
+
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

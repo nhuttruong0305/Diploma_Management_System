@@ -9,4 +9,5 @@ router.put("/edit_diploma/:_id/:diploma_name_id", middlewareController.verifyTok
 router.delete("/delete_diploma/:_id", middlewareController.verifyTokenAndDiplomaImporter, diplomaControllers.deleteDiploma);
 router.put("/review_diploma/:_id", middlewareController.verifyTokenAndDiplomaReviewer, diplomaControllers.reviewDiploma);
 router.get("/search_diploma_for_diploma_diary", diplomaControllers.searchDiplomaForDiplomaDiary);
+router.get("/search_diploma_tracuu", diplomaControllers.searchDiplomaTraCuu);
 module.exports = router;
