@@ -316,21 +316,21 @@ export const addDiploma = async (dispatch, accessToken, diplomaInfor) => {
 
 //Hàm này nhận văn listOfDiplomaNameImport của user và trả về các diploma có diploma_name_id thuộc các loại trong listOfDiplomaNameImport
 //Hàm này ko dùng trong code chỉ dùng để kiểm tra kết quả khi hàm searchDiplomaWithMultiCondition search với all điều kiện rỗng thì có ra kết quả là tất cả các văn bằng thuộc 1 đơn vị quản lý ko
-export const getAllDiplomaByListOfDiplomaNameImport = async (dispatch, listOfDiplomaNameImport, management_unit_id) => {
-    dispatch(getAllDiplomaByListOfDiplomaNameImportStart());
-    try{
-        const res = await axios.get(`http://localhost:8000/v1/diploma/get_all_diploma_byMU/${management_unit_id}`)
-        let result = [];
-        res.data.forEach((currentValue)=>{
-            if(listOfDiplomaNameImport.includes(currentValue.diploma_name_id)){
-                result = [...result, currentValue];
-            }
-        })
-        dispatch(getAllDiplomaByListOfDiplomaNameImportSuccess(result));
-    }catch(error){
-        dispatch(getAllDiplomaByListOfDiplomaNameImportFailed()); 
-    }
-}
+// export const getAllDiplomaByListOfDiplomaNameImport = async (dispatch, listOfDiplomaNameImport, management_unit_id) => {
+//     dispatch(getAllDiplomaByListOfDiplomaNameImportStart());
+//     try{
+//         const res = await axios.get(`http://localhost:8000/v1/diploma/get_all_diploma_byMU/${management_unit_id}`)
+//         let result = [];
+//         res.data.forEach((currentValue)=>{
+//             if(listOfDiplomaNameImport.includes(currentValue.diploma_name_id)){
+//                 result = [...result, currentValue];
+//             }
+//         })
+//         dispatch(getAllDiplomaByListOfDiplomaNameImportSuccess(result));
+//     }catch(error){
+//         dispatch(getAllDiplomaByListOfDiplomaNameImportFailed()); 
+//     }
+// }
 
 //Hàm search diploma theo nhiều điều kiện
 export const searchDiplomaWithMultiCondition = async (dispatch, management_unit_id, fullname, diploma_number, numbersIntoTheNotebook, diploma_name_id, diploma_issuance_id, listOfDiplomaNameImport, statusDiplomaSearch) => {

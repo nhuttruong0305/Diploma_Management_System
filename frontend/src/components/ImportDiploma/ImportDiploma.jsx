@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import {getAllDiplomaIssuanceByMU, addDiploma, editDiplomaInImportDiploma, searchDiplomaWithMultiCondition, deleteDiploma} from '../../redux/apiRequest';
 import Footer from '../Footer/Footer';
+import * as XLSX from 'xlsx';
+
 export default function ImportDiploma(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -489,6 +491,296 @@ export default function ImportDiploma(){
         },1000);
     }
 
+    //Hàm tạo file excel mẫu để download
+    function createAndDownloadExcel() {
+        // Tạo dữ liệu bạn muốn đưa vào tệp Excel
+        const data = [
+            {
+                stt: "",
+                name:"",
+                sex:"",
+                dateofbirth:"",
+                address:"",
+                testDay:"",
+                Council:"",
+                classification:"",
+                graduationYear:"",
+                signDay:"",
+                diplomaNumber:"",
+                numberInNote:""
+            }
+        ];
+        // Tạo một Workbook và một Worksheet
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(data);
+
+        worksheet['A1'] = { v: 'STT', t: 's' };
+        worksheet['B1'] = { v: 'Họ tên người được cấp', t: 's' };
+        worksheet['C1'] = { v: 'Giới tính', t: 's' };
+        worksheet['D1'] = { v: 'Ngày sinh', t: 's' };
+        worksheet['E1'] = { v: 'Nơi sinh', t: 's' };
+        worksheet['F1'] = { v: 'Ngày kiểm tra', t: 's' };
+        worksheet['G1'] = { v: 'Hội đồng thi', t: 's' };
+        worksheet['H1'] = { v: 'Xếp loại', t: 's' };
+        worksheet['I1'] = { v: 'Năm tốt nghiệp', t: 's' };
+        worksheet['J1'] = { v: 'Ngày ký', t: 's' };
+        worksheet['K1'] = { v: 'Số hiệu', t: 's' };
+        worksheet['L1'] = { v: 'Số vào sổ', t: 's' };
+
+        // Thêm Worksheet vào Workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+        // Chuyển đổi Workbook thành dạng binary
+        var wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+        // Chuyển đổi dạng binary thành ArrayBuffer
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i < s.length; i++) {
+                view[i] = s.charCodeAt(i) & 0xff;
+            }
+            return buf;
+        }
+        // Tạo một Blob từ ArrayBuffer
+        var blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+
+        // Tạo một URL cho Blob
+        var url = URL.createObjectURL(blob);
+
+        // Tạo một đường link tải xuống
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = 'output.xlsx';
+
+        // Thêm đường link vào DOM và tự động kích hoạt sự kiện click để tải xuống
+        // export_excel_btn.append(link);
+        link.click();
+        // document.body.removeChild(link);
+
+    }
+
+    //Các state này dùng cho form chọn tên văn bằng và đợt cấp văn bằng khi import
+    const [selectedDiplomaNameImport, setSelectedDiplomaNameImport] = useState("");
+    const handleChangeDiplomaNameImport = (selectedOption) => {
+        setSelectedDiplomaNameImport(selectedOption);
+    }
+    
+    const [optionDiplomaIssuanceImport, setOptionDiplomaIssuanceImport] = useState([]);
+    const [listDiplomaIssuanceImport, setListDiplomaIssuanceImport] = useState([]);
+    const [selectedDiplomaIssuanceImport, setSelectedDiplomaIssuanceImport] = useState("");
+    const handleChangeIssuanceImport = (selectedOption) => {
+        setSelectedDiplomaIssuanceImport(selectedOption);
+    }    
+
+    useEffect(()=>{
+        setSelectedDiplomaIssuanceImport("");
+        let result = [];
+        if(selectedDiplomaNameImport!=undefined && selectedDiplomaNameImport!=""){
+            allDiplomaIssuance?.forEach((currentValue)=>{
+                if(currentValue.diploma_name_id == selectedDiplomaNameImport.value){
+                    result = [...result, currentValue];
+                }
+            });
+            getAllDiplomaByDiplomaNameID(selectedDiplomaNameImport.value); 
+        }
+        setListDiplomaIssuanceImport(result);
+        
+    }, [selectedDiplomaNameImport])
+
+    useEffect(()=>{
+        let resultOption = [];
+        listDiplomaIssuanceImport?.forEach((currentValue) => {
+            const newOption = { value: currentValue.diploma_issuance_id, label: currentValue.diploma_issuance_name};
+            resultOption = [...resultOption, newOption];
+        })
+        setOptionDiplomaIssuanceImport(resultOption);
+    }, [listDiplomaIssuanceImport])
+
+    //state để ẩn/hiện form import
+    const [showImport, setShowImport] = useState(false);
+
+    //Xử lý việc import file
+    const [file, setFile] = useState(null);
+    const [data, setData] = useState(null);
+    const handleFileChange = (e) => {
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+
+        if (selectedFile) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const fileData = event.target.result;
+                const workbook = XLSX.read(fileData, { type: 'binary' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const parsedData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });                
+                setData(parsedData);
+            };
+            reader.readAsBinaryString(selectedFile);
+        }
+    };
+
+    const noti17 = useRef();
+    const noti18 = useRef();
+    const noti21 = useRef();
+
+    //Hàm lấy ra all diploma thuộc loại được chọn ở selectedDiplomaNameImport
+    const [allDiplomaByDiplomaNameID, setAllDiplomaByDiplomaNameID] = useState([]);
+
+    //Hàm call api lấy ra all diploma của 1 loại diploma_name_id
+    const getAllDiplomaByDiplomaNameID = async (diploma_name_id) => {
+        try{
+            const res = await axios.get(`http://localhost:8000/v1/diploma/get_all_diploma_by_diploma_name_id/${diploma_name_id}`);
+            setAllDiplomaByDiplomaNameID(res.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    //state lưu mảng các diploma trong file excel bị trùng số hiệu
+    const [danhSachTrungSoHieu, setDanhSachTrungSoHieu] = useState([]);
+    //state lưu mảng các diploma trong file excel bị trùng số vào sổ
+    const [danhSachTrungSoVaoSo, setDanhSachTrungSoVaoSo] = useState([]);
+    const noti19 = useRef();
+    const noti20 = useRef();
+    const noti22 = useRef();
+
+    const handleImportDiplomaExcel = async() => {
+        //Check xem đã chọn tên văn bằng chưa
+        if(selectedDiplomaNameImport=="" || selectedDiplomaNameImport==undefined){
+            noti17.current.showToast();
+            return;
+        }
+        //Check xem đã chọn đợt cấp văn bằng chưa
+        if(selectedDiplomaIssuanceImport=="" || selectedDiplomaIssuanceImport==undefined){
+            noti18.current.showToast();
+            return;
+        }
+
+        if(file==null){
+            noti21.current.showToast();
+            return;
+        }
+
+        //Biến này sẽ là true nếu có 1 văn bằng trùng số hiệu hoặc số vào sổ
+        let isFault = false;
+
+        //Check kiểm tra trùng số hiệu
+        let listDiplomaTrungSoHieu = [];
+        //Check kiểm tra trùng số vào sổ
+        let listDiplomaTrungSoVaoSo = [];
+
+        let allDataInExcel = [];        
+        for(let i = 1; i<data.length; i++){
+            let gioiTinh = false;
+            if(data[i][2] == "Nam"){
+                gioiTinh = true;
+            }else{
+                gioiTinh = false;
+            }
+            //Xử lý ngày sinh
+            const dateOfBirthExcel = new Date((data[i][3] - 25569) * 86400 * 1000);
+            let monthOfdateOfBirthExcel;
+            if(dateOfBirthExcel.getMonth() + 1 < 10){
+                monthOfdateOfBirthExcel = `0${dateOfBirthExcel.getMonth() + 1}`;
+            }else{
+                monthOfdateOfBirthExcel=dateOfBirthExcel.getMonth() + 1
+            }
+            let dayOfdateOfBirthExcel;
+            if(dateOfBirthExcel.getDate() < 10){
+                dayOfdateOfBirthExcel = `0${dateOfBirthExcel.getDate()}`;
+            }else{
+                dayOfdateOfBirthExcel = dateOfBirthExcel.getDate();
+            }
+            //Xử lý ngày kiểm tra
+            const dateTestDay = new Date((data[i][5] - 25569) * 86400 * 1000);
+            let monthOfdateTestDay;
+            if(dateTestDay.getMonth() + 1 < 10){
+                monthOfdateTestDay = `0${dateTestDay.getMonth() + 1}`;
+            }else{
+                monthOfdateTestDay = dateTestDay.getMonth() + 1;
+            }
+            let dayOfdateTestDay;
+            if(dateTestDay.getDate() < 10){
+                dayOfdateTestDay = `0${dateTestDay.getDate()}`;
+            }else{
+                dayOfdateTestDay = dateTestDay.getDate();
+            }
+            //Xử lý ngày kỳ
+            const signDayExcel = new Date((data[i][9] - 25569) * 86400 * 1000);
+            let monthOfSignDay;
+            if(signDayExcel.getMonth() + 1 < 10){
+                monthOfSignDay = `0${signDayExcel.getMonth() + 1}`;
+            }else{
+                monthOfSignDay = signDayExcel.getMonth() + 1;
+            }
+            let dayOfSignDay;
+            if(signDayExcel.getDate() < 10){
+                dayOfSignDay = `0${signDayExcel.getDate()}`;
+            }else{
+                dayOfSignDay = signDayExcel.getDate();
+            }
+
+            allDiplomaByDiplomaNameID.forEach((currentValue)=>{
+                if(currentValue.diploma_number == data[i][10]){
+                    listDiplomaTrungSoHieu = [...listDiplomaTrungSoHieu, i];
+                    isFault = true;
+                }
+            })
+            setDanhSachTrungSoHieu(listDiplomaTrungSoHieu);
+            
+            allDiplomaByDiplomaNameID.forEach((currentValue)=>{
+                if(currentValue.numbersIntoTheNotebook == data[i][11]){
+                    listDiplomaTrungSoVaoSo = [...listDiplomaTrungSoVaoSo, i];
+                    isFault = true;
+                }
+            })
+            setDanhSachTrungSoVaoSo(listDiplomaTrungSoVaoSo);
+
+            const newDiplomaObject = {
+                management_unit_id: user.management_unit,
+                diploma_name_id: selectedDiplomaNameImport?.value,
+                diploma_issuance_id:selectedDiplomaIssuanceImport?.value,
+                fullname: data[i][1],
+                sex: gioiTinh,
+                dateofbirth: `${dateOfBirthExcel.getFullYear()}-${monthOfdateOfBirthExcel}-${dayOfdateOfBirthExcel}`,
+                address: data[i][4],
+                test_day: `${dateTestDay.getFullYear()}-${monthOfdateTestDay}-${dayOfdateTestDay}`,
+                council: data[i][6],
+                classification: data[i][7],
+                graduationYear: parseInt(data[i][8]), //ép kiểu thành number
+                sign_day: `${signDayExcel.getFullYear()}-${monthOfSignDay}-${dayOfSignDay}`,
+                diploma_number: data[i][10],
+                numbersIntoTheNotebook: data[i][11]
+            }
+            allDataInExcel = [...allDataInExcel, newDiplomaObject];
+        }     
+            
+        if(isFault){
+            return;
+        }else{
+            for(let j = 0; j < allDataInExcel.length; j++){
+                await addDiploma(dispatch, user.accessToken, allDataInExcel[j]);
+            }
+            noti22.current.showToast();
+            setTimeout(()=>{
+                searchDiplomaWithMultiCondition(dispatch, user.management_unit, nameSearch, numberDiplomaNumberSearch, numberInNoteBookSearch, selectedOptionDiplomaName?.value, selectedOptionDiplomaIssuance?.value,user.listOfDiplomaNameImport, statusDiplomaSearch?.value);
+            },3000);    
+            setFile(null);
+        }
+    }
+    useLayoutEffect(()=>{
+        if(danhSachTrungSoHieu.length>0){
+            noti19.current.showToast();
+        }
+    }, [danhSachTrungSoHieu]);
+
+    useLayoutEffect(()=>{
+        if(danhSachTrungSoVaoSo.length>0){
+            noti20.current.showToast();
+        }
+    }, [danhSachTrungSoVaoSo]);
+
     return(
         <>
             <Header/> 
@@ -528,13 +820,87 @@ export default function ImportDiploma(){
                                     >Thêm mới</button>
                                 </div>
                                 <div className='ms-3'>
-                                    <button style={{width: '110px', backgroundColor: '#fed25c'}} className='btn'>Import</button>
+                                    <button 
+                                        style={{width: '110px', backgroundColor: '#fed25c'}} 
+                                        className='btn'
+                                        onClick={(e)=>{
+                                            setShowImport(!showImport)
+                                        }}
+                                    >Import</button>
                                 </div>
                                 <div className='ms-3'>
-                                    <button style={{width: '110px', backgroundColor: '#297fbb'}} className='btn'>Mẫu Import</button>
+                                    <button 
+                                        style={{width: '110px', backgroundColor: '#297fbb'}} 
+                                        className='btn'
+                                        onClick={(e)=>{
+                                            createAndDownloadExcel();
+                                        }}
+                                    >Mẫu Import</button>
                                 </div>
                             </div>
                         </div>
+
+                        {/* Form import */}
+                        {
+                            showImport ? (
+                                            <div className="row mt-2 p-3" id='form-add-diploma-import'>
+                                                <div className="col-6">
+                                                    <div className="card p-3">
+                                                        <div className="row">
+                                                            <div className="col-4">Tên đơn vị quản lý</div>
+                                                            <div className="col-8">{managementUnitId?.management_unit_name}</div>
+                                                        </div>
+                                                        <div className="row mt-3">
+                                                            <div className="col-4">Tên văn bằng</div>
+                                                            <div className="col-8">
+                                                                <Select
+                                                                    id='select-diplomaName-import'
+                                                                    options={options}
+                                                                    placeholder="Chọn tên văn bằng"
+                                                                    value={selectedDiplomaNameImport}
+                                                                    onChange={handleChangeDiplomaNameImport}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="row mt-2">
+                                                            <div className="col-4">Đợt cấp văn bằng</div>
+                                                            <div className="col-8">
+                                                                <Select
+                                                                    id='select-diplomaIssuance-import'
+                                                                    options={optionDiplomaIssuanceImport}
+                                                                    placeholder="Chọn đợt cấp văn bằng"
+                                                                    value={selectedDiplomaIssuanceImport}
+                                                                    onChange={handleChangeIssuanceImport}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="row mt-2">
+                                                            <div className="input-group">
+                                                                <input 
+                                                                    type="file" className="form-control" 
+                                                                    id="inputGroupFile04" 
+                                                                    aria-describedby="inputGroupFileAddon04" 
+                                                                    aria-label="Upload"
+                                                                    accept=".xlsx" 
+                                                                    onChange={handleFileChange}
+                                                                />
+                                                                <button 
+                                                                    className="btn btn-outline-secondary" 
+                                                                    type="button" 
+                                                                    id="inputGroupFileAddon04"
+                                                                    onClick={(e)=>{
+                                                                        handleImportDiplomaExcel()
+                                                                    }}
+                                                                >Thêm văn bằng</button>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                            ) : (
+                                ""
+                            )
+                        }
                         <div className='row mt-2 p-3'>
                             <div className='col-md-3'>
                                 <input 
@@ -1324,6 +1690,36 @@ export default function ImportDiploma(){
                 message="Vui lòng nhập tên hội đồng thi"
                 type="warning"
                 ref={noti16}
+            />
+            <Toast
+                message="Vui lòng chọn tên văn bằng trước khi import"
+                type="warning"
+                ref={noti17}
+            />
+            <Toast
+                message="Vui lòng chọn đợt cấp văn bằng trước khi import"
+                type="warning"
+                ref={noti18}
+            />
+            <Toast
+                message={`Số hiệu của văn bằng có STT ${danhSachTrungSoHieu} trong file excel đã tồn tại` }
+                type="warning"
+                ref={noti19}
+            />
+            <Toast
+                message={`Số vào sổ của văn bằng có STT ${danhSachTrungSoVaoSo} trong file excel đã tồn tại` }
+                type="warning"
+                ref={noti20}
+            />
+            <Toast
+                message="Vui lòng chọn file"
+                type="warning"
+                ref={noti21}
+            />
+            <Toast
+                message="Thêm văn bằng thành công"
+                type="success"
+                ref={noti22}
             />
             <Footer/>
         </>

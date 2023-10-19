@@ -43,7 +43,7 @@ export default function HomePage() {
     //Các state sau để dùng cho chức năng tra cứu
     const [allDiplomaSearch, setAllDIplomaSearch] = useState([]);//state dùng để chứa toàn bộ dữ liệu được tìm thấy
     const [allDiplomaShow, setAllDiplomaShow] = useState([]);//state dùng để chứa dữ liệu sau khi đã phân trang hiển thị lên màn hình
-    const [page, setPage] = useState();
+    const [page, setPage] = useState(1);
     // const [count, setCount] = useState();
     const handleChange = (event, value) => {
         setPage(value);
@@ -475,13 +475,14 @@ export default function HomePage() {
 
                     <div className='d-flex justify-content-center'>
                         <Stack spacing={2}>
-                            <Typography className='text-center'>Trang: {page}</Typography>
+                            {/* <Typography className='text-center'>Trang: {page}</Typography> */}
                             <Pagination 
                                 count={Math.ceil(allDiplomaSearch?.length/3)}
                                 variant="outlined"
                                 page={page}
                                 onChange={handleChange}
-                                // color="secondary"
+                                color="info"
+                        
                                 />
                         </Stack>
                     </div>
