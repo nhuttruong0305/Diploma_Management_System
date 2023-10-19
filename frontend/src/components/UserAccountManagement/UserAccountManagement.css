@@ -17,3 +17,8 @@
 #active-useraccount-management{
     background-color: #1b95a2;
 }
+
+#contain-table-show-all-user{
+    height: 300px;
+    overflow-y:auto;
+}

@@ -21,6 +21,15 @@ const majorsControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+
+    getAllMajorsShowModal: async (req, res) => {
+        try{
+            const majors = await MajorsModel.find();
+            return res.status(200).json(majors);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

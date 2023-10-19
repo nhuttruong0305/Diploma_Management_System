@@ -137,6 +137,7 @@ export default function UserAccountManagement() {
     //Gọi useEffect để lấy về danh sách khoa
     useEffect(() => {
         const allFaculty = getAllFculty();
+        getAllMajorsShowModal();
     }, [])
 
     // //Gọi useEffect để lấy về danh sách đơn vị quản lý
@@ -256,6 +257,33 @@ export default function UserAccountManagement() {
         await searchUserAccountByName(inputSearch, inputMSSV_CB, inputPosition);
     };
 
+    //State dùng cho việc hiển thị thông tin người dùng
+    //Hàm lấy ra all majors
+    const [allMajorsShowModal, setAllMajorsShowModal] = useState([]);
+    const getAllMajorsShowModal = async () =>{
+        try{
+            const result = await axios.get("http://localhost:8000/v1/majors/get_all_majors_show_modal");
+            setAllMajorsShowModal(result.data); 
+        }catch(error){
+            console.log(error);
+        }
+    }
+    console.log(allMajorsShowModal);
+    const [fullNameShowModal, setFullNameShowModal] = useState("");
+    const [MSSV_CBShowModal, setMSSV_CBShowModal] = useState("");
+    const [emailShowModal,setEmailShowModal] = useState("");
+    const [dateOfBirthShowModal, setDateOfBirthShowModal] = useState("");
+    const [addressShowModal, setAddressShowModal] = useState("");
+    const [CCCDShowModal, setCCCDShowModal] = useState("");
+    const [sexShowModal, setSexShowModal] = useState("");
+    const [SDTShowModal, setSDTShowModal] = useState("");
+    const [positionShowModal, setPositionShowModal] = useState("");
+    const [classIDShowModal, setClassIDShowModal] = useState("");
+    const [falcutyShowModal, setFalcutyShowModal] = useState("");
+    const [majorsShowModal, setMajorsShowModal] = useState("");
+    const [courseShowModal, setCourseShowModal] = useState("");
+    const [managementUnitShowModal, setManagementUnitShowModal] = useState("");
+    const [roleShowModal, setRoleShowModal] = useState("");
     return (
         <>
             <Header />
@@ -319,32 +347,387 @@ export default function UserAccountManagement() {
                                         </div>
                                     </div>
                                 </div>
-                                <table className='table mt-3'>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col"></th>
-                                            <th scope="col">Họ tên</th>
-                                            <th scope="col">MSSV/CB</th>
-                                            <th scope="col">Chức vụ</th>
-                                            <th scope="col"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            allUserAccount?.map((currentValue, index) => {
-                                                return(
-                                                    <tr key={index}>
-                                                        <th scope="row">{index + 1}</th>
-                                                        <td>{currentValue.fullname}</td>
-                                                        <td>{currentValue.mssv_cb}</td>
-                                                        <td>{currentValue.position}</td>
-                                                        <td><i className="fa-solid fa-eye"></i></td>
-                                                    </tr>
+                                <div id='contain-table-show-all-user'>
+                                    <table id='table-show-all-user' className='table mt-3'>
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col">Họ tên</th>
+                                                <th scope="col">MSSV/CB</th>
+                                                <th scope="col">Chức vụ</th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                allUserAccount?.map((currentValue, index) => {        
+                                                    let chucVu ="";
+                                                    if(currentValue.position == "Student"){
+                                                        chucVu = "Sinh viên";                                                   
+                                                    }else if(currentValue.position == "Officer"){
+                                                        chucVu = "Cán bộ";
+                                                    }
+
+                                                    let quyen = '';
+                                                    if(currentValue.role[0] == "Diploma importer"){
+                                                        quyen = "Cán bộ nhập văn bằng";
+                                                    }else if(currentValue.role[0] == "Diploma reviewer"){
+                                                        quyen = "Cán bộ duyệt văn bằng"
+                                                    }
+                                                    return(
+                                                        <tr key={index}>
+                                                            
+                                                            <th scope="row">{index + 1}</th>
+                                                            <td>{currentValue.fullname}</td>
+                                                            <td>{currentValue.mssv_cb}</td>
+                                                            <td>{chucVu}</td>
+                                                            <td>
+                                                                <i 
+                                                                    className="fa-solid fa-eye"
+                                                                    style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                    data-bs-toggle="modal" 
+                                                                    data-bs-target="#showInforUserModal"
+                                                                    onClick={(e)=>{
+                                                                        let sex = "Nữ";
+                                                                        if(currentValue.sex == true){
+                                                                            sex = "Nam";                   
+                                                                        }
+                                                                        
+
+                                                                        let khoa ="";
+                                                                        faculty?.forEach((faculty)=>{
+                                                                            if(faculty.faculty_id == currentValue.faculty){
+                                                                                khoa = faculty.faculty_name;
+                                                                            }                                           
+                                                                        })
+
+                                                                        let nganh = "";
+                                                                        allMajorsShowModal?.forEach((majorValue) => {
+                                                                            if(majorValue.majors_id == currentValue.majors){
+                                                                                nganh = majorValue.majors_name;
+                                                                            }
+                                                                        })
+
+                                                                        let donViQuanLy = '';
+                                                                        managementUnit?.forEach((MUValue) => {
+                                                                            if(MUValue.management_unit_id == currentValue.management_unit){
+                                                                                donViQuanLy = MUValue.management_unit_name;                                                  
+                                                                            }
+                                                                        })
+
+                                                                        setFullNameShowModal(currentValue.fullname);
+                                                                        setMSSV_CBShowModal(currentValue.mssv_cb);
+                                                                        setEmailShowModal(currentValue.email);
+                                                                        setDateOfBirthShowModal(currentValue.dateofbirth);
+                                                                        setAddressShowModal(currentValue.address);
+                                                                        setCCCDShowModal(currentValue.cccd);
+                                                                        setSexShowModal(sex);
+                                                                        setSDTShowModal(currentValue.phonenumber);
+                                                                        setPositionShowModal(chucVu);
+                                                                        setClassIDShowModal(currentValue.class);
+                                                                        setFalcutyShowModal(khoa);
+                                                                        setMajorsShowModal(nganh);
+                                                                        setCourseShowModal(currentValue.course);
+                                                                        setManagementUnitShowModal(donViQuanLy);
+                                                                        setRoleShowModal(quyen);
+                                                                    }}
+                                                                ></i>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {/* Modal hiển thị thông tin user */}
+                                <div className="modal fade" id="showInforUserModal" tabIndex="-1" aria-labelledby="showInforUserModalLabel" aria-hidden="true">
+                                    <div className="modal-dialog modal-lg modal-dialog-centered">
+                                        <div className="modal-content">
+                                        <div className="modal-header">
+                                            <h1 className="modal-title fs-5" id="showInforUserModalLabel">Thông tin tài khoản người dùng</h1>
+                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div className="modal-body">
+                                            <div className="row">
+                                                <div className="col-2">
+                                                    <label
+                                                        htmlFor="fullname"
+                                                        className="col-form-label text-end d-block"
+                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                    >Họ và tên</label>
+                                                </div>
+                                                <div className="col-10">
+                                                    <input 
+                                                        type="text" 
+                                                        readOnly={true}
+                                                        value={fullNameShowModal}
+                                                        className='form-control'
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row mt-3">
+                                                <div className="col-2">
+                                                    <label
+                                                        htmlFor="fullname"
+                                                        className="col-form-label text-end d-block"
+                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                    >MSSV/CB</label>
+                                                </div>
+                                                <div className="col-10">
+                                                    <input 
+                                                        type="text" 
+                                                        readOnly={true}
+                                                        className='form-control'
+                                                        value={MSSV_CBShowModal}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row mt-3">
+                                                <div className="col-2">
+                                                    <label
+                                                        htmlFor="fullname"
+                                                        className="col-form-label text-end d-block"
+                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                    >Email</label>
+                                                </div>
+                                                <div className="col-10">
+                                                    <input 
+                                                        type="text" 
+                                                        readOnly={true}
+                                                        className='form-control'
+                                                        value={emailShowModal}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row mt-3">
+                                                <div className="col-2">
+                                                    <label
+                                                        htmlFor="fullname"
+                                                        className="col-form-label text-end d-block"
+                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                    >Ngày sinh</label>
+                                                </div>
+                                                <div className="col-10">
+                                                    <input 
+                                                        type="text" 
+                                                        readOnly={true}
+                                                        className='form-control'
+                                                        value={dateOfBirthShowModal}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row mt-3">
+                                                <div className="col-2">
+                                                    <label
+                                                        htmlFor="fullname"
+                                                        className="col-form-label text-end d-block"
+                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                    >Địa chỉ</label>
+                                                </div>
+                                                <div className="col-10">
+                                                    <input 
+                                                        type="text" 
+                                                        readOnly={true}
+                                                        className='form-control'
+                                                        value={addressShowModal}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row mt-3">
+                                                <div className="col-2">
+                                                    <label
+                                                        htmlFor="fullname"
+                                                        className="col-form-label text-end d-block"
+                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                    >CCCD</label>
+                                                </div>
+                                                <div className="col-10">
+                                                    <input 
+                                                        type="text" 
+                                                        readOnly={true}
+                                                        className='form-control'
+                                                        value={CCCDShowModal}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row mt-3">
+                                                <div className="col-2">
+                                                    <label
+                                                        htmlFor="fullname"
+                                                        className="col-form-label text-end d-block"
+                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                    >Giới tính</label>
+                                                </div>
+                                                <div className="col-10">
+                                                    <input 
+                                                        type="text" 
+                                                        readOnly={true}
+                                                        className='form-control'
+                                                        value={sexShowModal}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row mt-3">
+                                                <div className="col-2">
+                                                    <label
+                                                        htmlFor="fullname"
+                                                        className="col-form-label text-end d-block"
+                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                    >Số điện thoại</label>
+                                                </div>
+                                                <div className="col-10">
+                                                    <input 
+                                                        type="text" 
+                                                        readOnly={true}
+                                                        className='form-control'
+                                                        value={SDTShowModal}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="row mt-3">
+                                                <div className="col-2">
+                                                    <label
+                                                        htmlFor="fullname"
+                                                        className="col-form-label text-end d-block"
+                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                    >Chức vụ</label>
+                                                </div>
+                                                <div className="col-10">
+                                                    <input 
+                                                        type="text" 
+                                                        readOnly={true}
+                                                        className='form-control'
+                                                        value={positionShowModal}
+                                                    />
+                                                </div>
+                                            </div>
+                                            
+                                            {
+                                                positionShowModal == "Sinh viên" ? (
+                                                    <>
+                                                        <div className="row mt-3">
+                                                            <div className="col-2">
+                                                                <label
+                                                                    htmlFor="fullname"
+                                                                    className="col-form-label text-end d-block"
+                                                                    style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                                >Mã lớp</label>
+                                                            </div>
+                                                            <div className="col-10">
+                                                                <input 
+                                                                    type="text" 
+                                                                    readOnly={true}
+                                                                    className='form-control'
+                                                                    value={classIDShowModal}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="row mt-3">
+                                                            <div className="col-2">
+                                                                <label
+                                                                    htmlFor="fullname"
+                                                                    className="col-form-label text-end d-block"
+                                                                    style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                                >Khoa</label>
+                                                            </div>
+                                                            <div className="col-10">
+                                                                <input 
+                                                                    type="text" 
+                                                                    readOnly={true}
+                                                                    className='form-control'
+                                                                    value={falcutyShowModal}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="row mt-3">
+                                                            <div className="col-2">
+                                                                <label
+                                                                    htmlFor="fullname"
+                                                                    className="col-form-label text-end d-block"
+                                                                    style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                                >Chuyên ngành</label>
+                                                            </div>
+                                                            <div className="col-10">
+                                                                <input 
+                                                                    type="text" 
+                                                                    readOnly={true}
+                                                                    className='form-control'
+                                                                    value={majorsShowModal}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="row mt-3">
+                                                            <div className="col-2">
+                                                                <label
+                                                                    htmlFor="fullname"
+                                                                    className="col-form-label text-end d-block"
+                                                                    style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                                >Khóa</label>
+                                                            </div>
+                                                            <div className="col-10">
+                                                                <input 
+                                                                    type="text" 
+                                                                    readOnly={true}
+                                                                    className='form-control'
+                                                                    value={courseShowModal}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="row mt-3">
+                                                            <div className="col-2">
+                                                                <label
+                                                                    htmlFor="fullname"
+                                                                    className="col-form-label text-end d-block"
+                                                                    style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                                >Đơn vị quản lý</label>
+                                                            </div>
+                                                            <div className="col-10">
+                                                                <input 
+                                                                    type="text" 
+                                                                    readOnly={true}
+                                                                    className='form-control'
+                                                                    value={managementUnitShowModal}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="row mt-3">
+                                                            <div className="col-2">
+                                                                <label
+                                                                    htmlFor="fullname"
+                                                                    className="col-form-label text-end d-block"
+                                                                    style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                                >Quyền</label>
+                                                            </div>
+                                                            <div className="col-10">
+                                                                <input 
+                                                                    type="text" 
+                                                                    readOnly={true}
+                                                                    className='form-control'
+                                                                    value={roleShowModal}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </>
                                                 )
-                                            })
-                                        }
-                                    </tbody>
-                                </table>
+                                            }
+                                            
+                                            
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                            {/* <button type="button" class="btn btn-primary">Save changes</button> */}
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
 
                                 <div className="modal fade" id="exampleModalAddUserAccount" tabIndex="-1" aria-labelledby="exampleModalAddUserAccountLabel" aria-hidden="true">
                                     <div className="modal-dialog modal-lg modal-dialog-centered">

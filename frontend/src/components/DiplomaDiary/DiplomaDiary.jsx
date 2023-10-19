@@ -21,7 +21,15 @@ export default function DiplomaDiary(){
                 status = "";
             }
             const result = await axios.get(`http://localhost:8000/v1/diploma/search_diploma_for_diploma_diary?officer_name=${officerName}&mscb=${mscb}&status=${status}`);
-            setApprovedDiploma(result.data);
+            
+            //mảng để lưu các văn bằng sau khi đã lọc ra các văn bằng có trạng thái "Chờ duyệt"
+            let finalResult = [];
+            result.data?.forEach((currentValue)=>{
+                if(currentValue.status != "Chờ duyệt"){
+                    finalResult = [...finalResult, currentValue];
+                }
+            })
+            setApprovedDiploma(finalResult);
         }catch(error){
             console.log(error);
         }
