@@ -299,7 +299,7 @@ export default function UserAccountInfo(){
                                     </div>
                                     <ul className="list-group list-group-flush">
                                         <li id="active-UAI" className="list-group-item">Thông tin tài khoản</li>
-                                        <Link style={{textDecoration: 'none'}} to='/'>
+                                        <Link style={{textDecoration: 'none'}} to='/change-password'>
                                             <li className="list-group-item">Đổi mật khẩu</li>
                                         </Link>
                                     </ul>

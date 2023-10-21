@@ -15,6 +15,7 @@ import ImportDiploma from './components/ImportDiploma/ImportDiploma';
 import DiplomaReview from './components/DiplomaReview/DiplomaReview';
 import DiplomaDiary from './components/DiplomaDiary/DiplomaDiary';
 import UserAccountInfo from './components/UserAccountInfo/UserAccountInfo';
+import ChangePassword from './components/ChangePassword/ChangePassword';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -161,6 +162,17 @@ function App() {
             role = {user?.role[0]}
           >
             <UserAccountInfo/>
+          </ProtectedRouteUserAccountInfo>
+        )
+      },
+      {
+        path: '/change-password',
+        element: (
+          <ProtectedRouteUserAccountInfo
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <ChangePassword/>
           </ProtectedRouteUserAccountInfo>
         )
       }

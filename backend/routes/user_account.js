@@ -13,4 +13,5 @@ router.get("/get_list_mscb_review_by_diploma_name_id/:diploma_name_id", userAcco
 router.put("/add_diploma_name_id_into_user_review/:diploma_name_id/:_id_user", middlewareController.verifyTokenAndSystemAdministratorRole, userAccountControllers.addDiplomaNameIntoUserReview);
 router.put("/delete_diploma_name_id_from_user_review/:diploma_name_id/:_id_user", middlewareController.verifyTokenAndSystemAdministratorRole, userAccountControllers.deleteDiplomaNameFromUserReview);
 router.put("/edit_user_account_info/:_id", userAccountControllers.editUserAccountInfo);
+router.put("/change_password/:_id", userAccountControllers.changePassword);
 module.exports = router;

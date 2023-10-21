@@ -1,5 +1,5 @@
 const UserAccountModel = require("../models/User");
-
+const bcrypt = require("bcrypt");
 const userAccountControllers = {
     //Get all user account
     getAllUserAccount: async (req, res) => {
@@ -237,6 +237,34 @@ const userAccountControllers = {
             }
             const userUpdate = await UserAccountModel.findByIdAndUpdate(_idUserAccount, updateDoc, options);
             return res.status(200).json(userUpdate);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    //Hàm đổi mật khẩu
+    changePassword: async (req, res) => {
+        try{
+            const currentPassword = req.body.currentPassword;
+            const userInfor = await UserAccountModel.findById(req.params._id);
+            const validPassword = await bcrypt.compare(currentPassword, userInfor.password);
+
+            if(validPassword){
+                const newPassword = req.body.newPassword;
+
+                //hash password do người dùng nhập vào
+                const salt = await bcrypt.genSalt(10);
+                const hashed = await bcrypt.hash(newPassword, salt);
+
+                //Tiến hành cập nhật vào CSDL
+                const options = {returnDocument: "after"};
+                const updateDoc = {
+                    password: hashed,
+                };
+                const changePassword = await UserAccountModel.findByIdAndUpdate(req.params._id, updateDoc, options);
+                return res.status(200).json(changePassword);
+            }else{
+                return res.status(400).json("Mật khẩu hiện tại của bạn không đúng");
+            }
         }catch(error){
             return res.status(500).json(error);
         }
