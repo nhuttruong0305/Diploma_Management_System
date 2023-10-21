@@ -146,7 +146,7 @@ export default function DiplomaIssuance(){
                                     data-bs-target="#modalAddDiplomaIssuance"
                                 ><i className="fa-sharp fa-solid fa-plus"></i> Thêm</button>
                             </div>
-                            <div className="row" style={{padding: '5px 28px 5px 28px'}}>
+                            <div className="row" style={{padding: '5px 28px 5px 28px'}} id='contain-table-show-all-DI'>
                                 <table 
                                     // className="table table-bordered"
                                     id='table-showDI'

@@ -8,7 +8,8 @@ import axios from 'axios';
 import {getAllDiplomaIssuanceByMU, addDiploma, editDiplomaInImportDiploma, searchDiplomaWithMultiCondition, deleteDiploma} from '../../redux/apiRequest';
 import Footer from '../Footer/Footer';
 import * as XLSX from 'xlsx';
-
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 export default function ImportDiploma(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -781,6 +782,36 @@ export default function ImportDiploma(){
         }
     }, [danhSachTrungSoVaoSo]);
 
+    //Phần dưới xử lý logic cho việc phân trang
+    const [page, setPage] = useState(1);
+    const [allDiplomaByListOfDiplomaNameImportShow, setAllDiplomaByListOfDiplomaNameImportShow] = useState([]);
+    const handleChange = (event, value) => {
+        setPage(value);
+    };
+
+    useEffect(()=>{
+        if(page!=undefined && allDiplomaByListOfDiplomaNameImport!=undefined){
+            if(allDiplomaByListOfDiplomaNameImport.length>5){
+                const numberOfPage = Math.ceil(allDiplomaByListOfDiplomaNameImport?.length/5);
+                const startElement = (page - 1) * 5;
+                let endElement = 0;
+                if(page == numberOfPage){
+                    endElement = allDiplomaByListOfDiplomaNameImport.length-1;
+                }else{
+                    endElement = page * 5-1;
+                }
+
+                let result = [];
+                for(let i = startElement; i <= endElement; i++){
+                    result = [...result, allDiplomaByListOfDiplomaNameImport[i]];
+                }
+                setAllDiplomaByListOfDiplomaNameImportShow(result);
+            }else{
+                setAllDiplomaByListOfDiplomaNameImportShow(allDiplomaByListOfDiplomaNameImport);
+            }         
+        }
+    });
+
     return(
         <>
             <Header/> 
@@ -979,7 +1010,7 @@ export default function ImportDiploma(){
                                     </thead>
                                     <tbody>
                                         {
-                                            allDiplomaByListOfDiplomaNameImport?.map((currentValue, index)=>{
+                                            allDiplomaByListOfDiplomaNameImportShow?.map((currentValue, index)=>{
                                                 return(
                                                     <tr key={index}>
                                                         <td 
@@ -1027,7 +1058,18 @@ export default function ImportDiploma(){
                                 </table>
                             </div>
                         </div>
-
+                        <div className="d-flex justify-content-center">
+                            <Stack spacing={2}>
+                                {/* <Typography className='text-center'>Trang: {page}</Typography> */}
+                                <Pagination 
+                                    count={Math.ceil(allDiplomaByListOfDiplomaNameImport?.length/5)}
+                                    variant="outlined"
+                                    page={page}
+                                    onChange={handleChange}
+                                    color="info"
+                                    />
+                            </Stack>
+                        </div>
                         {/* Modal chỉnh sửa hoặc xóa thông tin văn bằng */}
                         <div className="modal fade" id="editDiplomaModal" tabIndex="-1" aria-labelledby="editDiplomaModalLabel" aria-hidden="true">
                             <div className="modal-lg modal-dialog modal-dialog-centered">

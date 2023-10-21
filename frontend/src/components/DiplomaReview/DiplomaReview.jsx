@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from 'react';
 import {getAllDiplomaIssuanceByMU, searchDiplomaWithMultiCondition, reviewDiploma } from '../../redux/apiRequest';
 import Footer from '../Footer/Footer';
 import Toast from '../Toast/Toast';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 export default function DiplomaReview(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -101,6 +103,7 @@ export default function DiplomaReview(){
     const [signDayModalReview, setSignDayModalReview] = useState("");
     const [diplomaNumberModalReview, setDiplomaNumberModalReview] = useState("");
     const [numberInNoteModalReview, setNumberInNoteModalReview] = useState("");
+    const [statusModalReview, setStatusModalReview] = useState("");
 
     //Phần diễn giải sẽ được thêm vào DB khi duyệt hoặc không duyệt
     const [explainModalReview, setExplainModalReview] = useState("");
@@ -166,6 +169,36 @@ export default function DiplomaReview(){
             await searchDiplomaWithMultiCondition(dispatch, user.management_unit, fullname, diplomaNumber, diplomaNumberInNote, selectedForSelectDiplomaNameDR?.value, selectedForSelectDiplomaIssuanceDR?.value, user.listOfDiplomaNameReview, selectedStatusDiploma?.value);
         },2000);
     }
+
+    //Phần logic xử lý phân trang
+    const [page, setPage] = useState(1);
+    const [allDiplomaByListOfDiplomaNameShow, setAllDiplomaByListOfDiplomaNameShow] = useState([]);
+    const handleChange = (event, value) => {
+        setPage(value);
+    };
+
+    useEffect(()=>{
+        if(page!=undefined && allDiplomaByListOfDiplomaName!=undefined){
+            if(allDiplomaByListOfDiplomaName.length>5){
+                const numberOfPage = Math.ceil(allDiplomaByListOfDiplomaName?.length/5);
+                const startElement = (page - 1) * 5;
+                let endElement = 0;
+                if(page == numberOfPage){
+                    endElement = allDiplomaByListOfDiplomaName.length-1;
+                }else{
+                    endElement = page * 5-1;
+                }
+
+                let result = [];
+                for(let i = startElement; i <= endElement; i++){
+                    result = [...result, allDiplomaByListOfDiplomaName[i]];
+                }
+                setAllDiplomaByListOfDiplomaNameShow(result);
+            }else{
+                setAllDiplomaByListOfDiplomaNameShow(allDiplomaByListOfDiplomaName);
+            }         
+        }
+    });
 
     return(
         <>
@@ -276,7 +309,7 @@ export default function DiplomaReview(){
                                     </thead>
                                     <tbody>
                                         {
-                                            allDiplomaByListOfDiplomaName?.map((currentValue, index)=>{
+                                            allDiplomaByListOfDiplomaNameShow?.map((currentValue, index)=>{
                                                 return(
                                                 <tr key={index}>
                                                     <td
@@ -300,6 +333,7 @@ export default function DiplomaReview(){
                                                                 setNumberInNoteModalReview(currentValue.numbersIntoTheNotebook);
                                                                 set_IDDiplomaModalReview(currentValue._id);
                                                                 setExplainModalReview("");
+                                                                setStatusModalReview(currentValue.status);
                                                             }}
                                                         ></i>
                                                     </td>
@@ -323,6 +357,18 @@ export default function DiplomaReview(){
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+
+                        <div className="d-flex justify-content-center">
+                            <Stack spacing={2}>
+                                <Pagination 
+                                    count={Math.ceil(allDiplomaByListOfDiplomaName?.length/5)}
+                                    variant="outlined"
+                                    page={page}
+                                    onChange={handleChange}
+                                    color="info"
+                                    />
+                            </Stack>
                         </div>
 
                         {/* Modal show thông tin văn bằng để duyệt hoặc xem */}
@@ -441,25 +487,36 @@ export default function DiplomaReview(){
                                         </div>
                                         <div className="col-5">
                                             <div className='d-flex align-items-end' style={{height: '100%'}}>
-                                                <div className='ms-2'>
-                                                    <button 
-                                                        className="btn btn-primary"
-                                                        onClick={(e)=>{
-                                                            handleReview();
-                                                        }}
-                                                    >Duyệt</button>
-                                                </div>
-                                                <div className='ms-2'>
-                                                    <button 
-                                                        className="btn btn-danger"
-                                                        onClick={(e)=>{
-                                                            handleNotReview();
-                                                        }}
-                                                    >Không duyệt</button>
-                                                </div>
-                                                <div className='ms-2'>
-                                                    <button className="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
-                                                </div>
+                                                {
+                                                    statusModalReview == "Chờ duyệt" ? (
+                                                        <>
+                                                            <div className='ms-2'>
+                                                                <button 
+                                                                    className="btn btn-primary"
+                                                                    onClick={(e)=>{
+                                                                        handleReview();
+                                                                    }}
+                                                                >Duyệt</button>
+                                                            </div>
+                                                            <div className='ms-2'>
+                                                                <button 
+                                                                    className="btn btn-danger"
+                                                                    onClick={(e)=>{
+                                                                        handleNotReview();
+                                                                    }}
+                                                                >Không duyệt</button>
+                                                            </div>
+                                                            <div className='ms-2'>
+                                                                <button className="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                            <div className='ms-2'>
+                                                                <button className="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                                                            </div>
+                                                    )
+                                                }
+                                                
                                             </div>
                                         </div>
                                     </div>

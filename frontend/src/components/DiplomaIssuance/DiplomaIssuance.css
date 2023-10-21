@@ -32,3 +32,8 @@
 #table-showDI td{
     padding: 10px;
 }
+
+#contain-table-show-all-DI{
+    height: 300px;
+    overflow-y:auto;
+}
