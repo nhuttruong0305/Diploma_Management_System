@@ -409,3 +409,14 @@ export const reviewDiploma = async (dispatch, accessToken, _id, updateInfor) => 
         dispatch(reviewDiplomaFailed());
     }
 }
+
+//Hàm chỉnh sửa thông tin tài khoản
+// export const editUserAccount = async(dispatch, _id, updateInfor) => {
+//     dispatch(editUserAccountStart());
+//     try{
+//         const res = await axios.put(`http://localhost:8000/v1/user_account/edit_user_account_info/${_id}`,updateInfor);
+//         dispatch(editUserAccountSuccess());
+//     }catch(error){
+//         dispatch(editUserAccountFailed(error.response.data));
+//     }
+// }

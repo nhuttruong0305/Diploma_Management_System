@@ -205,6 +205,41 @@ const userAccountControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    //Hàm chỉnh sửa thông tin user account
+    editUserAccountInfo: async (req, res) => {
+        try{
+            const _idUserAccount = req.params._id;
+            //Lấy ra all user trừ user đang đăng nhập để kiểm tra trùng CCCD
+            const allUser = await UserAccountModel.find({ _id: { $ne: _idUserAccount } });
+
+            //Biến kiểm tra xem có trùng số CCCD không
+            let isFault = false;
+
+            allUser.forEach((currentValue)=>{
+                if(currentValue.cccd == req.body.CCCDEdit){
+                    isFault = true;
+                }
+            })
+
+            if(isFault){
+                return res.status(400).json("Số CCCD đã tồn tại, vui lòng nhập số CCCD khác");
+            }
+
+            const options = {returnDocument: "after"};
+            const updateDoc = {
+                fullname: req.body.fullNameEdit,
+                dateofbirth: req.body.dateOfBirthEdit,
+                address: req.body.addressEdit,
+                cccd: req.body.CCCDEdit,
+                sex: req.body.sexEdit,
+                phonenumber: req.body.phoneNumberEdit
+            }
+            const userUpdate = await UserAccountModel.findByIdAndUpdate(_idUserAccount, updateDoc, options);
+            return res.status(200).json(userUpdate);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

@@ -14,7 +14,7 @@ import DiplomaIssuance from './components/DiplomaIssuance/DiplomaIssuance';
 import ImportDiploma from './components/ImportDiploma/ImportDiploma';
 import DiplomaReview from './components/DiplomaReview/DiplomaReview';
 import DiplomaDiary from './components/DiplomaDiary/DiplomaDiary';
-
+import UserAccountInfo from './components/UserAccountInfo/UserAccountInfo';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -30,6 +30,10 @@ const ProtectedRouteDiplomaReviewer = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'Diploma reviewer' ? children : <Navigate to="/"/>;
 }
 
+//Bảo vệ route của UserAccountInfo chỉ cho phép người dùng ngoại trừ admin vào trang này
+const ProtectedRouteUserAccountInfo = ({ isAuthenticated, role, children }) => {
+  return isAuthenticated && role != 'System administrator' ? children : <Navigate to="/"/>;
+}
 
 function App() {
   //Lấy thông tin user 
@@ -149,6 +153,17 @@ function App() {
           </ProtectedRouteSystemAdministrator>
         )
       },
+      {
+        path: '/user-account-info',
+        element: (
+          <ProtectedRouteUserAccountInfo
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <UserAccountInfo/>
+          </ProtectedRouteUserAccountInfo>
+        )
+      }
     ])
     return element;
   }

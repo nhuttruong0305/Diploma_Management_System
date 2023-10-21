@@ -14,6 +14,7 @@ export default function Login(){
     const navigate = useNavigate();
     const noti = useRef();
     const msg = useSelector((state) => state.auth?.msg);
+    const user = useSelector((state) => state.auth.login?.currentUser);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,6 +31,12 @@ export default function Login(){
             noti.current.showToast();
         }
     }, [msg])
+
+    useEffect(()=>{
+        if(user){
+            navigate("/");
+        }
+    },[])
 
     return(
         <>

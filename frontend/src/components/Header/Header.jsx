@@ -53,7 +53,9 @@ export default function Header(){
                                 {/* button này sẽ sổ xuống cho người dùng chọn vào xem và chỉnh sửa profile hoặc đăng xuất */}
                                 <div>
                                     <div className="d-flex">
-                                        <button id='btn-userinfor-login-header' className='btn btn-primary'>{user.fullname}</button>
+                                        <button 
+                                                id='btn-userinfor-login-header' 
+                                                className='btn btn-primary'><Link style={{color: 'white', textDecoration: 'none'}} to='/user-account-info'>{user.fullname}</Link></button>
                                         <button 
                                             className='btn btn-primary' 
                                             id='btn-show-logout'
