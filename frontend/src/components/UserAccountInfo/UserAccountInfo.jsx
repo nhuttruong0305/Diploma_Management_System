@@ -58,6 +58,8 @@ export default function UserAccountInfo(){
             setRoleOfUser("Cán bộ nhập văn bằng")
         }else if(user?.role[0] == "Diploma reviewer"){
             setRoleOfUser("Cán bộ duyệt văn bằng");
+        }else if(user?.role[0] == "Center Director_Head of Department"){
+            setRoleOfUser("Giám đốc Trung tâm/Trưởng phòng");
         }
     }, [])
 
@@ -550,7 +552,7 @@ export default function UserAccountInfo(){
                                                         <label
                                                             className="col-form-label text-end d-block"
                                                             style={{ fontSize: '12px', fontStyle: 'italic' }}
-                                                        >Quyền</label>
+                                                        >Chức vụ</label>
                                                     </div>
                                                     <div className="col-10">
                                                         <input 

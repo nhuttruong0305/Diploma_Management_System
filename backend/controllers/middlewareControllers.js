@@ -47,6 +47,16 @@ const middlewareController = {
                 return res.status(403).json("You are not authorized");
             }
         })
+    },
+
+    verifyTokenAndCenterDirectorHeadofDepartment: (req, res, next) => {
+        middlewareController.verifyToken(req, res, () => {
+            if(req.user.role[0] == 'Center Director_Head of Department'){
+                next();
+            }else{
+                return res.status(403).json("You are not authorized");
+            }
+        })
     }
 }
 

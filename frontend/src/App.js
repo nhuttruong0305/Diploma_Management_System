@@ -1,6 +1,8 @@
 import { useRoutes, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from "react";
 
+import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner';
 import './App.css';
 import HomePage from './components/HomePage/HomePage';
 import Login from './components/Login/Login';
@@ -16,6 +18,7 @@ import DiplomaReview from './components/DiplomaReview/DiplomaReview';
 import DiplomaDiary from './components/DiplomaDiary/DiplomaDiary';
 import UserAccountInfo from './components/UserAccountInfo/UserAccountInfo';
 import ChangePassword from './components/ChangePassword/ChangePassword';
+import RequestsForDiplomaDrafts from './components/RequestsForDiplomaDrafts/RequestsForDiplomaDrafts';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -34,6 +37,11 @@ const ProtectedRouteDiplomaReviewer = ({ isAuthenticated, role, children }) => {
 //Bảo vệ route của UserAccountInfo chỉ cho phép người dùng ngoại trừ admin vào trang này
 const ProtectedRouteUserAccountInfo = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role != 'System administrator' ? children : <Navigate to="/"/>;
+}
+
+//Bảo vệ route chỉ cho phép tài khoản có quyền Center Director_Head of Department mới vào dc các trang này
+const ProtectedRouteCenterDirectorHeadOfDepartment = ({ isAuthenticated, role, children }) => {
+  return isAuthenticated && role == 'Center Director_Head of Department' ? children : <Navigate to="/"/>;
 }
 
 function App() {
@@ -175,14 +183,37 @@ function App() {
             <ChangePassword/>
           </ProtectedRouteUserAccountInfo>
         )
+      },
+      {
+        path: '/manage_requests_for_diploma_drafts',
+        element: (
+          <ProtectedRouteCenterDirectorHeadOfDepartment
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <RequestsForDiplomaDrafts/>
+          </ProtectedRouteCenterDirectorHeadOfDepartment>
+        )
       }
     ])
     return element;
   }
 
+  const [loading, setLoading] = useState(true);
+  
+  // Mô phỏng thời gian tải trang (có thể thay thế bằng thực tế)
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
+
+
+
   return (
     <div id='div-App'>
-        <Routes />
+        {/* <Routes /> */}
+        {loading ? <LoadingSpinner /> : <Routes />}
     </div>
   );
 }

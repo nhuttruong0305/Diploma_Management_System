@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
+import Select from "react-select";
 
 //Các import bên dưới là để validate form
 import React from 'react';
@@ -23,6 +24,10 @@ export default function UserAccountManagement() {
     const [choose_majors, setChooseMajors] = useState(); //state đại diện cho chuyên ngành được chọn để cấp tài khoản cho sinh viên
     const [choose_managementUnit, setChooseManagementUnit] = useState() //state đại diện cho đơn vị quản lý được chọn
     const [role, setRole] = useState('') //state đại diện cho các quyền của tài khoản, hiện chỉ xử lý theo cách 1 tài khoản có 1 quyền (chọn với input type = radio), có thể đổi sang cách xử lý để 1 tài khoản có nhiều quyền(chọn với input type = checkbox)
+    const handleChangeSelectRole = (selectedOption) => {
+        setRole(selectedOption);
+    }
+    console.log(role);
 
     const [inputSearch, setInputSearch] = useState(''); //state dùng để tìm kiếm user account theo tên
     const [inputMSSV_CB, setInputMSSV_CB] = useState(''); //state dùng để tìm kiếm user account theo MSSV_CB
@@ -243,7 +248,7 @@ export default function UserAccountManagement() {
                 majors: null,
                 course: null,
                 management_unit: choose_managementUnit,
-                role: role
+                role: role?.value
             }//done
         }
 
@@ -268,7 +273,7 @@ export default function UserAccountManagement() {
             console.log(error);
         }
     }
-    console.log(allMajorsShowModal);
+    // console.log(allMajorsShowModal);
     const [fullNameShowModal, setFullNameShowModal] = useState("");
     const [MSSV_CBShowModal, setMSSV_CBShowModal] = useState("");
     const [emailShowModal,setEmailShowModal] = useState("");
@@ -373,6 +378,8 @@ export default function UserAccountManagement() {
                                                         quyen = "Cán bộ nhập văn bằng";
                                                     }else if(currentValue.role[0] == "Diploma reviewer"){
                                                         quyen = "Cán bộ duyệt văn bằng"
+                                                    }else if(currentValue.role[0] == "Center Director_Head of Department"){
+                                                        quyen = "Giám đốc Trung tâm/Trưởng phòng"
                                                     }
                                                     return(
                                                         <tr key={index}>
@@ -701,7 +708,7 @@ export default function UserAccountManagement() {
                                                                     htmlFor="fullname"
                                                                     className="col-form-label text-end d-block"
                                                                     style={{ fontSize: '12px', fontStyle: 'italic' }}
-                                                                >Quyền</label>
+                                                                >Chức vụ</label>
                                                             </div>
                                                             <div className="col-10">
                                                                 <input 
@@ -1044,7 +1051,7 @@ export default function UserAccountManagement() {
                                                             <label
                                                                 className="col-form-label text-end d-block"
                                                                 style={{ fontSize: '12px', fontStyle: 'italic' }}
-                                                            >Chức vụ</label>
+                                                            >Loại tài khoản</label>
                                                         </div>
                                                         <div className="col-10">
                                                             {/* <div className="form-check"> */}
@@ -1232,10 +1239,10 @@ export default function UserAccountManagement() {
                                                                 <div className="col-2">
                                                                     <label
                                                                         className="col-form-label text-end d-block"
-                                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}>Quyền</label>
+                                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}>Chức vụ</label>
                                                                 </div>
                                                                 <div className="col-10">
-                                                                    <input 
+                                                                    {/* <input 
                                                                         className="form-check-input"
                                                                         checked={role=="Diploma importer"} 
                                                                         onChange={()=>{
@@ -1244,7 +1251,7 @@ export default function UserAccountManagement() {
                                                                         type="radio" 
                                                                         id="enter-diploma-user-account-useraccountmanagement" />&nbsp;
                                                                     <label className="form-check-label" htmlFor="enter-diploma-user-account-useraccountmanagement">
-                                                                        Nhập văn bằng
+                                                                        Cán bộ nhập văn bằng
                                                                     </label>&nbsp;
                                                                 
                                                                     <input 
@@ -1256,8 +1263,32 @@ export default function UserAccountManagement() {
                                                                         type="radio" 
                                                                         id="diploma-approval-user-account-useraccountmanagement" />&nbsp;
                                                                     <label className="form-check-label" htmlFor="diploma-approval-user-account-useraccountmanagement">
-                                                                        Duyệt văn bằng
+                                                                        Cán bộ duyệt văn bằng
                                                                     </label>
+
+                                                                    <input 
+                                                                        className="form-check-input" 
+                                                                        checked={role=="Center Director_Head of Department"} 
+                                                                        onChange={()=>{
+                                                                            setRole("Center Director_Head of Department")
+                                                                        }}
+                                                                        type="radio" 
+                                                                        id="diploma-approval-user-account-useraccountmanagement" />&nbsp;
+                                                                    <label className="form-check-label" htmlFor="diploma-approval-user-account-useraccountmanagement">
+                                                                        Trưởng phòng/Giám đốc Trung tâm
+                                                                    </label> */}
+                                                                    <Select
+                                                                        options = {[
+                                                                            {value: "Diploma importer", label: "Cán bộ nhập văn bằng"},
+                                                                            {value: "Diploma reviewer", label: "Cán bộ duyệt văn bằng"},
+                                                                            {value: "Center Director_Head of Department", label: "Trưởng phòng/Giám đốc Trung tâm"},
+                                                                            {value: "Secretary", label: "Thư ký"},
+                                                                            {value: "Stocker", label: "Thủ kho"},
+                                                                        ]}
+                                                                        value={role}
+                                                                        onChange={handleChangeSelectRole}
+                                                                        placeholder="Chọn chức vụ tài khoản"
+                                                                    />
                                                                 </div>
                                                             </div>
                                                         </>
