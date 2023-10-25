@@ -1,7 +1,7 @@
 import Header from '../Header/Header';
 import axios from 'axios';
 import './DiplomaIssuance.css';
-import {getAllDiplomaIssuanceByMU, getAllDiplomaName, addDiplomaIssuanceByMU, editDiplomaIssuanceByMU } from '../../redux/apiRequest';
+import {getAllDiplomaIssuanceByMU, getAllDiplomaName, addDiplomaIssuanceByMU, editDiplomaIssuanceByMU, deleteDiplomaIssuance } from '../../redux/apiRequest';
 import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Select from "react-select";
@@ -129,7 +129,23 @@ export default function DiplomaIssuance(){
         noti4.current.showToast();  
         await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
     }
- 
+
+    //xử lý logic xóa đợt cấp văn bằng
+    const msgDelete = useSelector((state) => state.diplomaIssuance?.msgDelete);
+    const isErrorDelete = useSelector((state) => state.diplomaIssuance.diplomaIssuances?.error);
+    const noti5 = useRef();
+    const noti6 = useRef();
+
+    const handleDeleteDiplomaIssuance = async () => {
+        if(_idOfDiplomaIssuance == ""){
+            noti6.current.showToast();
+            return;
+        }
+        await deleteDiplomaIssuance(dispatch, user.accessToken, _idOfDiplomaIssuance);
+        noti5.current.showToast();
+        await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
+    }
+
     return(
         <>
             <Header/>
@@ -260,9 +276,15 @@ export default function DiplomaIssuance(){
                                             style={{backgroundColor: '#1b95a2', width:'110px', color: 'white'}}
                                         >Lưu</button>
                                     </div>
-                                    {/* <div className='mx-2'>
-                                        <button className='btn btn-danger' style={{ width:'110px'}}>Xóa</button>
-                                    </div> */}
+                                    <div className='mx-2'>
+                                        <button 
+                                            className='btn btn-danger' 
+                                            style={{ width:'110px'}}
+                                            onClick={(e)=>{
+                                                handleDeleteDiplomaIssuance()
+                                            }}
+                                        >Xóa</button>
+                                    </div>
                                     <div className='mx-2'>
                                         <button 
                                             className='btn' 
@@ -270,6 +292,12 @@ export default function DiplomaIssuance(){
                                             onClick={(e) => {
                                                 setInputSelectDiplomaIssuanceName(null);
                                                 setInputDiplomaIssuanceName('');
+                                                set_idOfDiplomaIssuance("");
+
+                                                const currentElement = document.querySelector(".item-selected-DI");
+                                                if (currentElement) {
+                                                    currentElement.classList.remove("item-selected-DI");
+                                                }
                                             }}
                                         >Hủy bỏ</button>
                                     </div>
@@ -373,6 +401,16 @@ export default function DiplomaIssuance(){
                 message={msgEdit}
                 type={isErrorEdit ? "error" : "success"}
                 ref={noti4}
+            />
+            <Toast
+                message={msgDelete}
+                type={isErrorDelete ? "error" : 'success'}
+                ref={noti5}
+            />
+            <Toast
+                message="Vui lòng chọn đợt cấp văn bằng cần xóa"
+                type="warning"
+                ref={noti6}
             />
             <Footer/>
         </>

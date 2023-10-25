@@ -1,6 +1,6 @@
 const DiplomaIssuanceModel = require("../models/DiplomaIssuance");
 const DiplomaNamesModel = require("../models/DiplomaName");
-
+const DiplomaModel = require("../models/Diploma");
 const diplomaIssuanceController = {
     getAllDiplomaIssuanceByMU: async (req, res) => {// Hàm này để lấy tất cả các đợt cấp văn bằng dựa theo đơn vị quản lý của tài khoản cán bộ
         try{
@@ -83,6 +83,24 @@ const diplomaIssuanceController = {
 
             const updateDiplomaIssuance = await DiplomaIssuanceModel.findByIdAndUpdate(req.params._id, updateDoc, options);
             return res.status(200).json(updateDiplomaIssuance);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    deleteDiplomaIssuance: async (req,res) => {
+        try{    
+            const _IdOfdiplomaIssuance = req.params._id;
+            const currentDiplomaIssuance = await DiplomaIssuanceModel.findById(_IdOfdiplomaIssuance);
+         
+            //Lấy ra các document trong collection diplomas trước, nếu ko có document nào có diploma_issuance_id thì được xóa
+            const allDiplomaByDiplomaIssuanceID = await DiplomaModel.find({diploma_issuance_id: currentDiplomaIssuance.diploma_issuance_id});
+
+            if(allDiplomaByDiplomaIssuanceID.length>0){
+                return res.status(400).json("Đã có văn bằng thuộc đợt cấp này được thêm, không thể xóa");
+            }
+            
+            const deleteDiplomaIssuance = await DiplomaIssuanceModel.findByIdAndDelete(_IdOfdiplomaIssuance);
+            return res.status(200).json(deleteDiplomaIssuance);
         }catch(error){
             return res.status(500).json(error);
         }

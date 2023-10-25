@@ -1,9 +1,11 @@
 const EmbryoIssuanceRequestModel = require("../models/EmbryoIssuanceRequest");
 
+//Sửa lại hàm này (đã sửa)
 const embryoIssuanceRequestController = {
-    getAllembryoIssuanceRequest: async (req, res) => {
+    getAllembryoIssuanceRequestByListDiplomaNameId: async (req, res) => {
         try{
-            return res.status(200).json("Trả về all yêu cầu cấp phôi")
+            const result = await EmbryoIssuanceRequestModel.find({diploma_name_id: req.params.diploma_name_id});            
+            return res.status(200).json(result);
         }catch(error){
             return res.status(500).json(error);
         }

@@ -17,3 +17,8 @@
     border: none;
     padding: 5px 8px;
 }
+
+#contain-table-diplomaName-DN{
+    height: 500px;
+    overflow-y:auto;
+}

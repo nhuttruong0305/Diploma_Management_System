@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import Header from '../Header/Header';
 import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { searchDiplomaName, getAllDiplomaName, getAllDiplomaType, addDiplomaName, editDiplomaName } from '../../redux/apiRequest';
+import { searchDiplomaName, getAllDiplomaName, getAllDiplomaType, addDiplomaName, editDiplomaName, deleteDiplomaName } from '../../redux/apiRequest';
 import Toast from '../Toast/Toast';
 import Footer from '../Footer/Footer';
 
@@ -107,6 +107,15 @@ export default function DiplomaName(){
         // await getAllDiplomaName(dispatch);
         searchDiplomaName(dispatch, inputSearch, "");  
     }
+    //Xử lý logic cho phần xóa tên văn bằng
+    const msgDelete = useSelector((state) => state.diplomaName?.msgDelete);
+    const isErrorDelete = useSelector((state) => state.diplomaName.diplomaNames?.error);
+    const noti4 = useRef();
+    const handleDeleteDiplomaName = async (diploma_name_id) => {
+        await deleteDiplomaName(dispatch, user.accessToken, diploma_name_id);
+        noti4.current.showToast();
+        searchDiplomaName(dispatch, inputSearch, "");  
+    }
     
     return(
         <>
@@ -155,53 +164,66 @@ export default function DiplomaName(){
                                         />
                                     </div>
                                 </div>
-                                <table className='table mt-3'>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col"></th>
-                                            <th scope="col">Tên văn bằng</th>
-                                            <th scope="col">Loại văn bằng</th>
-                                            <th scope="col"></th>
-                                            <th scope="col"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {
-                                            allDiplomaName?.map((currentValue, index) => {
-                                                let nameOfDiplomaType = '';
-                                                allDiplomaType?.forEach((diplomaType) => {
-                                                    if(currentValue.diploma_type_id == diplomaType.diploma_type_id){
-                                                        nameOfDiplomaType = diplomaType.diploma_type_name;
-                                                    }
+                                <div id='contain-table-diplomaName-DN'>
+                                    <table className='table mt-3'>
+                                        <thead>
+                                            <tr>
+                                                <th scope="col"></th>
+                                                <th scope="col">Tên văn bằng</th>
+                                                <th scope="col">Loại văn bằng</th>
+                                                <th scope="col"></th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                allDiplomaName?.map((currentValue, index) => {
+                                                    let nameOfDiplomaType = '';
+                                                    allDiplomaType?.forEach((diplomaType) => {
+                                                        if(currentValue.diploma_type_id == diplomaType.diploma_type_id){
+                                                            nameOfDiplomaType = diplomaType.diploma_type_name;
+                                                        }
+                                                    })
+                                                    return(
+                                                        <tr key={index}>
+                                                            <th scope='row'>{index + 1}</th>
+                                                            <td>{currentValue.diploma_name_name}</td>
+                                                            <td>{nameOfDiplomaType}</td>
+                                                            <td>
+                                                                <i
+                                                                    onClick={(e) => {
+                                                                        setDiplomaNameEditInput(currentValue.diploma_name_name);
+                                                                        setChoose_diplomaTypeIdEdit(currentValue.diploma_type_id);
+                                                                        setDiplomaNameIdEdit(currentValue.diploma_name_id);
+                                                                    }}
+                                                                    type='button' 
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#modalEditDiplomaName"
+                                                                    className="fa-solid fa-eye"
+                                                                    style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                ></i>
+                                                            </td>
+                                                            <td>
+                                                                <button
+                                                                    className='btn'
+                                                                    style={{backgroundColor:'red', width:'32px', height: '30px'}}
+                                                                >
+                                                                    <i
+                                                                        onClick={(e)=>{
+                                                                            handleDeleteDiplomaName(currentValue.diploma_name_id);
+                                                                        }}
+                                                                        className="fa-solid fa-trash text-center d-block"
+                                                                        style={{marginLeft: '-4px', color: 'white'}}
+                                                                    ></i></button>
+                                                            </td>
+                                                        </tr>
+                                                    )
                                                 })
-                                                return(
-                                                    <tr key={index}>
-                                                        <th scope='row'>{index + 1}</th>
-                                                        <td>{currentValue.diploma_name_name}</td>
-                                                        <td>{nameOfDiplomaType}</td>
-                                                        <td>
-                                                            <i
-                                                                onClick={(e) => {
-                                                                    setDiplomaNameEditInput(currentValue.diploma_name_name);
-                                                                    setChoose_diplomaTypeIdEdit(currentValue.diploma_type_id);
-                                                                    setDiplomaNameIdEdit(currentValue.diploma_name_id);
-                                                                }}
-                                                                type='button' 
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#modalEditDiplomaName"
-                                                                className="fa-solid fa-eye"
-                                                            ></i>
-                                                        </td>
-                                                        <td>
-                                                            <button className='btn btn-danger'>Xóa</button>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            })
-                                        }
-                                    </tbody>
-                                </table>
-
+                                            }
+                                        </tbody>
+                                    </table>            
+                                </div>
+                                
                                 {/* Modal để thêm loại văn bằng */}
                                 <div className="modal fade" id="modalAddDiplomaName" tabIndex="-1" aria-labelledby="modalAddDiplomaNameLabel" aria-hidden="true">
                                     <div className="modal-dialog modal-lg modal-dialog-centered">
@@ -379,12 +401,6 @@ export default function DiplomaName(){
                                         </div>
                                     </div>
                                 </div>
-
-
-
-
-
-
                             </div>
                         </div>
                     </div>
@@ -408,6 +424,11 @@ export default function DiplomaName(){
                 message="Vui lòng chọn loại văn bằng"
                 type="warning"
                 ref={noti3}
+            />
+            <Toast
+                message={msgDelete}
+                type={isErrorDelete ? "error" : "success"}
+                ref={noti4}
             />
             <Footer/>
         </>

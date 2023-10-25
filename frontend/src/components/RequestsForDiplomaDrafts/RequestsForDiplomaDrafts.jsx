@@ -8,11 +8,13 @@ import axios from 'axios';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
 import Toast from '../Toast/Toast';
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 export default function RequestsForDiplomaDrafts(){
     const user = useSelector((state) => state.auth.login?.currentUser);
 
     //State để ẩn hiện form điền dữ liệu tạo yêu cầu
-    const [showFormAddYC, setShowFormAddYC] = useState(false);
+    const [showFormAddEIR, setShowFormAddEIR] = useState(false);
 
     //State chứa all đơn vị quản lý và lưu tên đơn vị quản lý của người dùng
     const [allMU, setAllMU] = useState([]);
@@ -298,6 +300,83 @@ export default function RequestsForDiplomaDrafts(){
         }
     }, [danhSachTrungCCCD])
 
+    //Phần dưới chứa state và logic xử lý phần hiển thị các yêu cầu cấp phôi văn bằng
+    const [selectedSelectDiplomaNameSearchRFDD, setSelectedSelectDiplomaNameSearchRFDD] = useState("");
+    const handleChangeSelectedSelectDiplomaNameSearchRFDD = (selectedOption) => {
+        setSelectedSelectDiplomaNameSearchRFDD(selectedOption);
+    }
+
+    const [showRequestDetail, setShowRequestDetail] = useState(false);
+
+    const convertToImage = async () => {
+        const element = document.getElementById("file-name-EGAF"); // Thay "your-element-id" bằng ID của phần muốn chuyển đổi
+        const canvas = await html2canvas(element);
+        const imgData = canvas.toDataURL("image/png");
+        // Bây giờ bạn có một hình ảnh dưới dạng dữ liệu chuỗi, có thể lưu nó hoặc sử dụng nó dựa trên nhu cầu.
+        const pdf = new jsPDF("p", "mm", "a4");
+        pdf.addImage(imgData, "PNG", 10, 10, 190, 277); // Chèn hình ảnh vào PDF
+    
+        pdf.save("your-file-name.pdf");
+    };
+
+    //Hàm call api lấy danh sách các yêu cầu xin cấp phôi văn bằng
+    const [allEIR, setAllEIR] = useState([]);
+    //Sửa lại hàm dưới (đã sửa)
+    const getAllEIR = async (allDiplomaNameByMU) => {
+        try{
+            let result = [];
+            for(let i = 0; i<allDiplomaNameByMU.length; i++){
+                const res = await axios.get(`http://localhost:8000/v1/embryo_issuance_request/get_yccp_by_list_diploma_name_id/${allDiplomaNameByMU[i].diploma_name_id}`);
+                result = [...result, ...res.data];
+            }
+            setAllEIR(result);
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+    useEffect(()=>{
+        getAllEIR(allDiplomaNameByMU);
+    }, [allDiplomaNameByMU])
+    
+    const processSeri = (seriNumber) => {
+        let seriAfterProcessing = seriNumber.toString();
+        switch(seriAfterProcessing.length){
+            case 1:
+                seriAfterProcessing = `00000${seriAfterProcessing}`;
+                break;
+            case 2:
+                seriAfterProcessing = `0000${seriAfterProcessing}`;  
+                break;
+            case 3:
+                seriAfterProcessing = `000${seriAfterProcessing}`;  
+                break;      
+            case 4:
+                seriAfterProcessing = `00${seriAfterProcessing}`;  
+                break;    
+            case 5:
+                seriAfterProcessing = `0${seriAfterProcessing}`;  
+                break;   
+            case 6:
+                seriAfterProcessing = `${seriAfterProcessing}`;  
+                break;   
+        }
+        return seriAfterProcessing;
+    }
+
+    const processDateToYMD = (date) => {
+        let splitDate = date.split("-");
+        const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
+        return result;
+    }
+
+    //State để lấy dữ liệu điền vào form
+    const [managementUnitPhieuYC, setManagementUnitPhieuYC] = useState("");
+    const [diplomaNameInPhieuYC, setDiplomaNameInPhieuYC] = useState("");
+    const [examinationsInPhieuYC, setExaminationsInPhieuYC] = useState("");
+    const [numberOfEmbryosInPhieuYC, setNumberOfEmbryosInPhieuYC] = useState();
+    const [seriStartInPhieuYC, setSeriStartInPhieuYC] = useState("");
+    const [seriEndInPhieuYC, setSeriEndInPhieuYC] = useState("");
     return(
         <>
             <Header/>
@@ -312,7 +391,7 @@ export default function RequestsForDiplomaDrafts(){
                                     className='btn'
                                     type='button'
                                     onClick={(e)=>{
-                                        setShowFormAddYC(!showFormAddYC)
+                                        setShowFormAddEIR(!showFormAddEIR)
                                     }}
                                     >Tạo mới yêu cầu</button>
                                 </div>
@@ -331,7 +410,7 @@ export default function RequestsForDiplomaDrafts(){
                         </div>
 
                         {
-                            showFormAddYC ? (
+                            showFormAddEIR ? (
                                 <>
                                     <div className="row mt-2 p-3">
                                         <div className="col-6">
@@ -406,6 +485,184 @@ export default function RequestsForDiplomaDrafts(){
                                 </>
                             ) : ("")
                         }
+                        <hr />
+                        <div className="row p-3 mt-1">
+                            <div className='col-6'>
+                                <Select
+                                    id='select-diploma-name-search-RFDD'
+                                    options={optionSelectDiplomaNameRFDD}
+                                    onChange={handleChangeSelectedSelectDiplomaNameSearchRFDD}
+                                    value={selectedSelectDiplomaNameSearchRFDD}
+                                    placeholder="Chọn tên văn bằng"
+                                />
+                            </div>
+                        </div>
+                        <div className='title-list-yc-xin-cap-phoi'>
+                            DANH SÁCH CÁC YÊU CẦU XIN CẤP PHÔI
+                        </div>
+                        <div className='row p-5'>
+                            <div id='contain-table-show-yc-xin-cap-phoi'>
+                                <table className="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style={{textAlign: 'center'}} scope="col"></th>
+                                            <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
+                                            <th style={{textAlign: 'center'}} scope="col">Đợt thi</th>
+                                            <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
+                                            <th style={{textAlign: 'center'}} scope="col">Số seri</th>
+                                            <th style={{textAlign: 'center'}} scope="col">Trạng thái</th>
+                                            <th style={{textAlign: 'center'}} scope="col">Xem chi tiết</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            allEIR?.map((currentValue, index)=>{
+                                                let seriStartAfterProcess = processSeri(currentValue.seri_number_start);
+                                                let seriEndAfterProcess = processSeri(currentValue.seri_number_end);
+                                                return(
+                                                    <tr key={index}>
+                                                        <th scope="row">{index+1}</th>
+                                                        <td>{currentValue.diploma_name_name}</td>
+                                                        <td>{currentValue.examination}</td>
+                                                        <td>{currentValue.numberOfEmbryos}</td>
+                                                        <td>{seriStartAfterProcess} - {seriEndAfterProcess}</td>
+                                                        <td>{currentValue.status}</td>
+                                                        <td style={{textAlign: 'center'}}>
+                                                            <i 
+                                                                style={{ backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                className="fa-solid fa-eye"
+                                                                onClick={(e)=>{
+                                                                    let MUName = "";
+                                                                    allMU.forEach((management_unit)=>{
+                                                                        if(management_unit.management_unit_id == currentValue.management_unit_id){
+                                                                            MUName = management_unit.management_unit_name;
+                                                                        }
+                                                                    })
+                                                                    setShowRequestDetail(true);
+                                                                    setManagementUnitPhieuYC(MUName);
+                                                                    setDiplomaNameInPhieuYC(currentValue.diploma_name_name);
+                                                                    setExaminationsInPhieuYC(processDateToYMD(currentValue.examination));
+                                                                    setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos)
+                                                                    setSeriStartInPhieuYC(seriStartAfterProcess);
+                                                                    setSeriEndInPhieuYC(seriEndAfterProcess);
+                                                                }}
+                                                                >
+                                                            </i>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {
+                            showRequestDetail ? (
+                                <>
+                                    <div className="row">
+                                        <p style={{textAlign:'center', fontSize: '27px', color:"#1b95a2", fontWeight: 'bold'}}>CHI TIẾT YÊU CẦU</p>
+                                        <div className="d-flex justify-content-center">                
+                                            <div id="show-file-name-EGAF">
+                                                <div id="file-name-EGAF">
+                                                    <div className="d-flex justify-content-between">
+                                                        <p style={{fontSize:'21px'}}>TRƯỜNG ĐẠI HỌC CẦN THƠ</p><p style={{fontSize:'21px', fontWeight: 'bold'}}>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
+                                                    </div>
+                                                    <div className="d-flex" style={{marginTop:'-10px'}}>  
+                                                        <p style={{fontSize:'21px', fontWeight: 'bold'}}>{managementUnitPhieuYC.toUpperCase()}</p>
+                                                        <p style={{textDecoration: 'underline',marginLeft: '270px', fontWeight: 'bold', fontSize:'21px'}}>Độc lập - Tự do- Hạnh phúc</p>
+                                                    </div>
+                                                    <div style={{fontSize: '21px', marginTop:'-10px', marginLeft: '20px'}}>
+                                                        Số:        /TTĐT&TH-BPĐT
+                                                    </div>
+                                                    <div className="d-flex justify-content-between" style={{marginTop: '45px'}}>
+                                                        <div className="col-5" style={{fontSize: '21px', fontStyle:'italic'}}>
+                                                            V/v xin mua phôi <span style={{fontWeight:'bold'}}>{diplomaNameInPhieuYC}</span> đợt thi {examinationsInPhieuYC}
+                                                        </div>
+                                                        <div className="col-1"></div>
+                                                        <div className="col-4" style={{fontSize: '21px', fontStyle:'italic'}}>
+                                                            Cần Thơ, ngày  tháng … năm 2023
+                                                        </div>
+                                                    </div>
+                                                    <div style={{textAlign:'center', fontSize: '21px', marginTop:'65px'}}>
+                                                        <span style={{fontStyle:'italic'}}>Kính gửi: 	</span><span style={{fontWeight:'bold'}}>TỔ QUẢN LÝ CẤP PHÁT PHÔI VBCC</span>
+                                                    </div>
+                                                    <div style={{textAlign:'center', fontSize:'21px', fontWeight:'bold'}}>
+                                                        TRƯỜNG ĐẠI HỌC CẦN THƠ
+                                                    </div>
+                                                    <div style={{fontSize: '21px', textIndent:'40px', marginTop: '50px', textAlign:'justify'}}>
+                                                        {managementUnitPhieuYC} xin báo tình hình sử dụng phôi và xin cấp phôi cho đợt thi {diplomaNameInPhieuYC} đợt thi tháng {examinationsInPhieuYC}
+                                                    </div>
+                                                    <div style={{fontSize:'21px', textIndent: '40px', marginTop: '40px', textAlign:'justify'}}>
+                                                        Đề nghị Tổ Quản lý VBCC - Trường Đại học Cần Thơ cấp <span style={{fontStyle:'italic'}}>{numberOfEmbryosInPhieuYC}</span> <span style={{fontWeight:'bold'}}>phôi {diplomaNameInPhieuYC}</span> để in chứng nhận cho các thí sinh thi đạt vào đợt thi như sau:
+                                                    </div>
+                                                    <div>
+                                                        <table id="table-file-name-EGAF">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th style={{textAlign: 'center'}}>Chứng nhận</th>
+                                                                    <th style={{textAlign: 'center'}}>Đợt thi</th>
+                                                                    <th style={{textAlign: 'center'}}>Số lượng thí sinh thi đạt</th>
+                                                                    <th style={{textAlign: 'center'}}>Số seri</th>
+                                                                    <th style={{textAlign: 'center'}}>Số cần cấp</th>
+                                                                </tr>
+                                                            </thead>    
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>{diplomaNameInPhieuYC}</td>
+                                                                    <td>{examinationsInPhieuYC}</td>
+                                                                    <td>{numberOfEmbryosInPhieuYC}</td>
+                                                                    <td>{`${seriStartInPhieuYC}-${seriEndInPhieuYC}`}</td>
+                                                                    <td>{numberOfEmbryosInPhieuYC}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style={{fontWeight: 'bold'}} colSpan={4}>Tổng cộng</td>
+                                                                    <td style={{fontWeight: 'bold'}}>{numberOfEmbryosInPhieuYC}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div style={{textIndent: '30px', fontSize: '21px', marginTop:'35px'}}>Trân trọng kính chào.</div>
+                                                    <div style={{marginTop: '40px', fontSize: '21px', marginLeft: '700px'}}>GIÁM ĐỐC</div>
+                                                    <div style={{marginTop: '30px', textIndent: '40px', fontSize: '21px', fontWeight: 'bold', fontStyle: 'italic'}}>Nơi nhận</div>
+                                                    <div style={{fontSize: '21px', textIndent: '25px'}}>- Như trên;</div>
+                                                    <div style={{fontSize: '21px', textIndent: '25px'}}>- Lưu VP.</div>
+                                                </div>            
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex mt-4">
+                                        <div>
+                                            <button
+                                                className="btn btn-primary"
+                                                    onClick={(e) => {
+                                                    convertToImage();
+                                                    }}
+                                                style={{width: '100px', marginLeft: '85px'}}    
+                                                >
+                                                    Xuất file
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button
+                                                className='btn btn-danger ms-3'  
+                                                onClick={(e)=>{
+                                                    setShowRequestDetail(false);
+                                                }}
+                                            >
+                                                Hủy bỏ
+                                            </button>
+                                        </div>
+                                    </div>
+                                     
+                                </>
+                            ) : (
+                                <></>
+                            )
+                        }
+                        <div className='title-list-yc-xin-cap-phoi'>
+                            DANH SÁCH SINH VIÊN KÈM THEO
+                        </div>
                     </div>
                 </div>
             </div>

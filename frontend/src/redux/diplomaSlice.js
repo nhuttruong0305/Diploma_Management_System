@@ -8,7 +8,8 @@ const diplomaTypeSlice = createSlice({
             isFetching: false,
             error: false
         },
-        msg: ''
+        msg: '',
+        msgDelete: ''
     },
     reducers:{
         getAllDiplomaTypeStart: (state) => {
@@ -66,6 +67,21 @@ const diplomaTypeSlice = createSlice({
         searchDiplomaTypeFailed: (state) => {
             state.diplomaTypes.isFetching = false;
             state.diplomaTypes.error = true;
+        },
+        deleteDiplomaTypeStart:(state) => {
+            state.diplomaTypes.isFetching = true;
+            state.diplomaTypes.error = false;
+            state.msgDelete = '';
+        },
+        deleteDiplomaTypeSuccess: (state) => {
+            state.diplomaTypes.isFetching = false;
+            state.diplomaTypes.error = false;
+            state.msgDelete = 'Xóa loại văn bằng thành công';
+        },
+        deleteDiplomaTypeFailed: (state, action) => {
+            state.diplomaTypes.isFetching = false;
+            state.diplomaTypes.error = true;
+            state.msgDelete = action.payload;
         }
     }
 })
@@ -82,7 +98,10 @@ export const {
     editDiplomaTypeFailed,
     searchDiplomaTypeStart,
     searchDiplomaTypeSuccess,
-    searchDiplomaTypeFailed
+    searchDiplomaTypeFailed,
+    deleteDiplomaTypeStart,
+    deleteDiplomaTypeSuccess,
+    deleteDiplomaTypeFailed
 } = diplomaTypeSlice.actions;
 
 export default diplomaTypeSlice.reducer;

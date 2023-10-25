@@ -1,5 +1,5 @@
 const DiplomaTypeModel = require("../models/DiplomaType");
-
+const DiplomaNameModel = require("../models/DiplomaName");
 const diplomaTypeControllers = {
     getAllDiplomaType: async (req, res) => {
         try{
@@ -65,6 +65,27 @@ const diplomaTypeControllers = {
             const keyword = req.query.keyword;
             const listOfDiplomaType = await DiplomaTypeModel.find({diploma_type_name:{ $regex: `${keyword}`, $options: 'i'}});
             return res.status(200).json(listOfDiplomaType);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    deleteDiplomaType: async (req, res) => {
+        try{
+            //_id của diploma type cần xóa
+            const _IdOfDiplomaType = req.params._id;
+            //Lấy ra thông tin về diploma type cần xóa
+            const currentDiplomaType = await DiplomaTypeModel.findById(_IdOfDiplomaType);
+
+            //Lấy ra các document trong collection diplomanames,  nếu ko có document nào có diploma_type_id thì được xóa
+            const allDiplomaNameByDiplomaTypeID = await DiplomaNameModel.find({diploma_type_id: currentDiplomaType.diploma_type_id});
+
+            if(allDiplomaNameByDiplomaTypeID.length>0){
+                return res.status(400).json("Đã có tên văn bằng thuộc loại này tồn tại, không thể xóa");
+            }
+
+            const deleteDiplomaType = await DiplomaTypeModel.findByIdAndDelete(_IdOfDiplomaType);
+
+            return res.status(200).json(deleteDiplomaType);
         }catch(error){
             return res.status(500).json(error);
         }

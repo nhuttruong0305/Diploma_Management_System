@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import './DiplomaType.css';
 import Header from '../Header/Header';
-import {getAllDiplomaType, addDiplomaType, editDiplomaType, searchDiplomaType} from '../../redux/apiRequest';
+import {getAllDiplomaType, addDiplomaType, editDiplomaType, searchDiplomaType, deleteDiplomaType} from '../../redux/apiRequest';
 import { useDispatch, useSelector } from 'react-redux';
 import Toast from '../Toast/Toast';
 import Footer from '../Footer/Footer';
@@ -56,6 +56,17 @@ export default function DiplomaType(){
         searchDiplomaType(dispatch, inputSearch);
     }
 
+    //Hàm xóa diploma Type
+    const noti2 = useRef();
+    const msgDelete = useSelector((state) => state.diplomaType?.msgDelete);
+    const isErrorDelete = useSelector((state) => state.diplomaType.diplomaTypes?.error);
+
+    const handleDeleteDiplomaType = async (_id) => {
+        await deleteDiplomaType(dispatch, user.accessToken, _id);
+        noti2.current.showToast();
+        searchDiplomaType(dispatch, inputSearch);
+    }
+
     return(
         <>
             <Header/>
@@ -102,7 +113,8 @@ export default function DiplomaType(){
                                         <tr>
                                             <th scope="col"></th>
                                             <th scope="col">Tên loại văn bằng</th>
-                                            <th scope="col"></th>
+                                            <th scope="col" style={{width: '50px'}}></th>
+                                            <th scope="col" style={{width: '50px'}}></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -122,7 +134,21 @@ export default function DiplomaType(){
                                                                     data-bs-target="#modalEditDiplomaType" 
                                                                     className="fa-solid fa-eye"
                                                                     style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
-                                                                ></i>
+                                                                >
+                                                                </i>
+                                                            </td>
+                                                            <td>
+                                                                <button
+                                                                    className='btn'
+                                                                    style={{backgroundColor:'red', width:'32px', height: '30px'}}
+                                                                    onClick={(e)=>{
+                                                                        handleDeleteDiplomaType(currentValue._id)
+                                                                    }}
+                                                                >
+                                                                    <i
+                                                                        className="fa-solid fa-trash text-center d-block"
+                                                                        style={{marginLeft: '-4px', color: 'white'}}
+                                                                    ></i></button>
                                                             </td>
                                                         </tr>
                                                     )
@@ -243,6 +269,11 @@ export default function DiplomaType(){
                 message={msg}
                 type={isError ? "error" : "success"}
                 ref={noti}
+            />
+            <Toast
+                message={msgDelete}
+                type={isErrorDelete ? "error" : "success"}
+                ref={noti2}
             />
             <Footer/>
         </>

@@ -23,7 +23,10 @@ import {
     editDiplomaTypeFailed,
     searchDiplomaTypeStart,
     searchDiplomaTypeSuccess,
-    searchDiplomaTypeFailed
+    searchDiplomaTypeFailed,
+    deleteDiplomaTypeStart,
+    deleteDiplomaTypeSuccess,
+    deleteDiplomaTypeFailed
 } from './diplomaSlice';
 
 import {
@@ -47,7 +50,10 @@ import {
     transferDiplomaNameFailed,
     searchDiplomaNameForDNMHStart,
     searchDiplomaNameForDNMHSuccess,
-    searchDiplomaNameForDNMHFailed
+    searchDiplomaNameForDNMHFailed,
+    deleteDiplomaNameStart,
+    deleteDiplomaNameSuccess,
+    deleteDiplomaNameFailed
 } from './diplomaNameSlice';
 
 import {
@@ -59,7 +65,10 @@ import {
     addDiplomaIssuanceByMUFailed,
     editDiplomaIssuanceByMUStart,
     editDiplomaIssuanceByMUSuccess,
-    editDiplomaIssuanceByMUFailed
+    editDiplomaIssuanceByMUFailed,
+    deleteDiplomaIssuanceStart,
+    deleteDiplomaIssuanceSuccess,
+    deleteDiplomaIssuanceFailed
 } from './diplomaIssuanceSlice';
 
 import {
@@ -163,6 +172,18 @@ export const searchDiplomaType = async (dispatch, keyword) => {
     }
 }
 
+export const deleteDiplomaType = async (dispatch, accessToken, _id) => {
+    dispatch(deleteDiplomaTypeStart());
+    try{
+        const result = await axios.delete(`http://localhost:8000/v1/diploma_type/delete_diploma_type/${_id}`,{
+            headers: {token: `Bearer ${accessToken}`}
+        })
+        dispatch(deleteDiplomaTypeSuccess());
+    }catch(error){
+        dispatch(deleteDiplomaTypeFailed(error.response.data));
+    }
+}
+
 //Request for DiplomaName API
 export const getAllDiplomaName = async (dispatch) => {
     dispatch(getAllDiplomaNameStart());
@@ -242,6 +263,18 @@ export const transferDiplomaName = async (dispatch, accessToken, _id, diplomaNam
     }
 }
 
+export const deleteDiplomaName = async(dispatch, accessToken, diploma_name_id) => {
+    dispatch(deleteDiplomaNameStart());
+    try{
+        const res = await axios.delete(`http://localhost:8000/v1/diploma_name/delete_diploma_name/${diploma_name_id}`,{
+            headers: {token: `Bearer ${accessToken}`}
+        })
+        dispatch(deleteDiplomaNameSuccess(res.data));
+    }catch(error){
+        dispatch(deleteDiplomaNameFailed(error.response.data));
+    }
+}
+
 //Request for DNMH API
 export const searchDiplomaNameForDNMH = async (dispatch, keyword, idMU) =>{
     dispatch(searchDiplomaNameForDNMHStart());
@@ -300,6 +333,17 @@ export const editDiplomaIssuanceByMU = async (dispatch, accessToken, DiplomaIssu
     }
 }
 
+export const deleteDiplomaIssuance = async (dispatch, accessToken, _id) => {
+    dispatch(deleteDiplomaIssuanceStart());
+    try{
+        const res = await axios.delete(`http://localhost:8000/v1/diploma_issuance/delete_diploma_issuance/${_id}`,{
+            headers: {token: `Bearer ${accessToken}`}
+        });
+        dispatch(deleteDiplomaIssuanceSuccess());
+    }catch(error){
+        dispatch(deleteDiplomaIssuanceFailed(error.response.data));
+    }
+}
 
 //Request for Diploma
 export const addDiploma = async (dispatch, accessToken, diplomaInfor) => {

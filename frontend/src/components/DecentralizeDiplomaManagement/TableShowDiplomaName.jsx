@@ -149,6 +149,7 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
                                             type='button'
                                             data-bs-toggle="modal"
                                             data-bs-target="#modalShow_MU_OfDiplomaName"
+                                            style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
                                             onClick={()=>{
                                                 setInputShowDiplomaName(dataValue.diploma_name_name);
                                                 setIdDiplomaName(dataValue._id);

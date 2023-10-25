@@ -10,7 +10,8 @@ const diplomaNameSlice = createSlice({
         },
         msg:'', //msg này để thông báo cho component DiplomaName.jsx
         msgForDDM: '', //msg này để thông báo cho component DecentralizeDiplomaManagement.jsx và component TableShowDiplomaName.jsx
-        msgPQ: ''   //msg dùng để phân quyền
+        msgPQ: '',   //msg dùng để phân quyền
+        msgDelete: ''
     },
     reducers:{
         getAllDiplomaNameStart: (state) => { //lấy để hiện ra màn hình
@@ -110,6 +111,21 @@ const diplomaNameSlice = createSlice({
         searchDiplomaNameForDNMHFailed: (state) => {
             state.diplomaNames.isFetching = false;
             state.diplomaNames.error = true;
+        },
+        deleteDiplomaNameStart: (state)=>{
+            state.diplomaNames.isFetching = true;
+            state.diplomaNames.error = false;
+            state.msgDelete = '';
+        },
+        deleteDiplomaNameSuccess:(state, action)=>{
+            state.diplomaNames.isFetching = false;
+            state.diplomaNames.error = false;
+            state.msgDelete = action.payload;
+        },
+        deleteDiplomaNameFailed: (state, action) => {
+            state.diplomaNames.isFetching = false;
+            state.diplomaNames.error = true;
+            state.msgDelete = action.payload;
         }
     }
 })  
@@ -135,7 +151,10 @@ export const {
     transferDiplomaNameFailed,
     searchDiplomaNameForDNMHStart,
     searchDiplomaNameForDNMHSuccess,
-    searchDiplomaNameForDNMHFailed
+    searchDiplomaNameForDNMHFailed,
+    deleteDiplomaNameStart,
+    deleteDiplomaNameSuccess,
+    deleteDiplomaNameFailed
 } = diplomaNameSlice.actions;
 
 export default diplomaNameSlice.reducer;

@@ -37,11 +37,13 @@ export default function ManageUserPermission(){
     useEffect(()=>{
         let resultOption = [];
         allManagementUnit.forEach((currentValue) => {
-            const newOption = { 
-                value: currentValue.management_unit_id, 
-                label: currentValue.management_unit_name 
-            };
-            resultOption = [...resultOption, newOption];
+            if(currentValue.management_unit_id != 13){
+                const newOption = { 
+                    value: currentValue.management_unit_id, 
+                    label: currentValue.management_unit_name 
+                };
+                resultOption = [...resultOption, newOption];
+            }
         })
         setOtionAllManagementUnit(resultOption);
     }, [allManagementUnit]);

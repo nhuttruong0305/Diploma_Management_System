@@ -1,6 +1,8 @@
 const DiplomaNameModel = require("../models/DiplomaName");
 const UserAccountModel = require("../models/User");
-
+const DiplomaModel = require("../models/Diploma");
+const EmbryoIssuanceRequestModel = require("../models/EmbryoIssuanceRequest");
+const DiplomaIssuanceModel = require("../models/DiplomaIssuance");
 const diplomaNameControllers = {
     addDiplomaName: async (req, res) => { //done
         try{
@@ -137,7 +139,7 @@ const diplomaNameControllers = {
     searchDiplomaName: async (req, res) => {
         try{
             const keyword = req.query.keyword;
-            const listOfDiplomaName = await DiplomaNameModel.find({diploma_name_name:{ $regex: `${keyword}`, $options: 'i'}, to: ""});
+            const listOfDiplomaName = await DiplomaNameModel.find({diploma_name_name:{ $regex: `${keyword}`, $options: 'i'}, to: ""});//chỗ này đã đúng  vì nếu 1 loại văn bằng mà trường to rỗng thì 1 là chưa phân quyền, 2 là đã phân quyền, nếu to có giá trị là đã bị chuyển
             return res.status(200).json(listOfDiplomaName);
         }catch(error){
             return res.status(500).json(error);
@@ -233,6 +235,62 @@ const diplomaNameControllers = {
             return res.status(200).json(result);
         }catch(error){  
             return res.status(500).json(error);
+        }
+    },
+    //Hàm xóa tên văn bằng
+    deleteDiplomaName: async (req, res) => {
+        try{
+            //Lấy ra các văn bằng trong collection diploma, nếu không có văn bằng nào thuộc loại cần xóa trong collection diploma mới xóa được
+            const listOfDiplomaByDiplomaName = await DiplomaModel.find({diploma_name_id: parseInt(req.params.diploma_name_id)});
+            if(listOfDiplomaByDiplomaName.length>0){
+                return res.status(400).json("Đã có văn bằng thuộc loại này tồn tại, không thể xóa được");
+            }         
+            
+            //Lấy ra các document trong collection embryoissuancerequests, nếu ko có document nào mới dc xóa
+            const listEIRByDiplomaName = await EmbryoIssuanceRequestModel.find({diploma_name_id: parseInt(req.params.diploma_name_id)});
+            if(listEIRByDiplomaName.length>0){
+                return res.status(400).json("Đã có yêu cầu cấp phôi văn bằng thuộc loại này tồn tại, không thể xóa được");
+            }
+
+            //Xóa đợt cấp văn bằng của tên văn bằng cần xóa
+            const deleteDiplomaIssuance = await DiplomaIssuanceModel.deleteMany({diploma_name_id: parseInt(req.params.diploma_name_id)});
+            //Xóa tên văn bằng trong diploma_names
+            const deleteDiplomaName = await DiplomaNameModel.deleteMany({diploma_name_id: parseInt(req.params.diploma_name_id)});
+            
+            //Xóa diploname_id của loại văn bằng cần xóa trong các listOfDiplomaNameImport và listOfDiplomaNameReview
+            //Đầu tiên lấy ra all user
+            const allUser = await UserAccountModel.find();
+            //Chạy vòng lặp
+            for(let i = 0; i<allUser.length; i++){
+                const isExistImport = allUser[i].listOfDiplomaNameImport.includes(parseInt(req.params.diploma_name_id));
+                const isExistReview = allUser[i].listOfDiplomaNameReview.includes(parseInt(req.params.diploma_name_id));
+                if(isExistImport){
+                    const indexOfDiplomaName = allUser[i].listOfDiplomaNameImport.indexOf(parseInt(req.params.diploma_name_id));
+                    const removed = allUser[i].listOfDiplomaNameImport.splice(indexOfDiplomaName,1);
+
+                    const options = {returnDocument: "after"};
+                    const updateDoc = {
+                        listOfDiplomaNameImport: allUser[i].listOfDiplomaNameImport
+                    }
+
+                    const updateUser = await UserAccountModel.findByIdAndUpdate(allUser[i]._id, updateDoc, options);
+                }
+
+                if(isExistReview){
+                    const indexOfDiplomaName = allUser[i].listOfDiplomaNameReview.indexOf(parseInt(req.params.diploma_name_id));
+                    const removed = allUser[i].listOfDiplomaNameReview.splice(indexOfDiplomaName,1);
+
+                    const options = {returnDocument: "after"};
+                    const updateDoc = {
+                        listOfDiplomaNameReview: allUser[i].listOfDiplomaNameReview
+                    }
+
+                    const updateUser = await UserAccountModel.findByIdAndUpdate(allUser[i]._id, updateDoc, options);
+                }
+            }
+            return res.status(200).json("Xóa tên văn bằng thành công");
+        }catch(error){
+            return res.status(500).json(error); 
         }
     }
 }

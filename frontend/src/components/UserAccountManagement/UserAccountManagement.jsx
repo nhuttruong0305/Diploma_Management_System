@@ -599,7 +599,7 @@ export default function UserAccountManagement() {
                                                         htmlFor="fullname"
                                                         className="col-form-label text-end d-block"
                                                         style={{ fontSize: '12px', fontStyle: 'italic' }}
-                                                    >Chức vụ</label>
+                                                    >Loại tài khoản</label>
                                                 </div>
                                                 <div className="col-10">
                                                     <input 

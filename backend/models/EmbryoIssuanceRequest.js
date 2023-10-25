@@ -15,10 +15,10 @@ const embryoIssuanceRequestSchema = new mongoose.Schema(
             type: Number,
             required: true
         },
-        diploma_name_name: { //Lưu tên của văn bằng, đề phòng trường hợp khi văn bằng ko còn do đơn vị này quản lý thì vẫn lấy được tên văn bằng
-            type: String,
-            required: true
-        },
+        // diploma_name_name: { //Lưu tên của văn bằng, đề phòng trường hợp khi văn bằng ko còn do đơn vị này quản lý thì vẫn lấy được tên văn bằng
+        //     type: String,
+        //     required: true
+        // },
         examination: { //đợt thi (ngày tháng năm nào)
             type: String,
             required: true
