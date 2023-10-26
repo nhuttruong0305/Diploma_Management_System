@@ -53,7 +53,7 @@ const diplomaControllers = {
             return res.status(500).json(error);
         }
     },
-    //Hàm này lấy ra all diploma của 1 đơn vị quản lý của tài khoản
+    //Hàm này lấy ra all diploma của 1 đơn vị quản lý của tài khoản (HÀM NÀY KHÔNG XÀI NỮA)
     getAllDiplomaByMU: async (req, res) => {
         try{
             const result = await DiplomaModel.find({management_unit_id: parseInt(req.params.management_unit_id)});

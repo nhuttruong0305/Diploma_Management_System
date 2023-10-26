@@ -32,18 +32,8 @@ const diplomaSchema = new mongoose.Schema(
         address: { //nơi sinh
             type: String
         },
-        test_day:{ //ngày kiểm tra
+        cccd: {
             type: String
-        },
-        council: {
-            type: String,
-            default: ""
-        },
-        classification:{ //xếp loại
-            type: String
-        },
-        graduationYear:{//năm tốt nghiệp
-            type: Number
         },
         sign_day:{//ngày ký
             type: String
@@ -55,6 +45,52 @@ const diplomaSchema = new mongoose.Schema(
         numbersIntoTheNotebook:{//số vào sổ
             type: String,
             required: true
+        },
+
+        //Các thông tin ở dưới là thông tin thêm
+        diem_tn: {
+            type: Number,
+            default: null
+        },
+        diem_th: {
+            type: Number,
+            default: null
+        },
+        nghe: {
+            type: Number,
+            default: null
+        },
+        noi: {
+            type: Number,
+            default: null
+        },
+        doc: {
+            type: Number,
+            default: null
+        },
+        viet: {
+            type: Number,
+            default: null
+        },
+        test_day:{ //ngày thi
+            type: String,
+            default: ""
+        },
+        graduationYear:{//năm tốt nghiệp
+            type: Number,
+            default: null
+        },
+        classification:{ //xếp loại
+            type: String,
+            default: ""
+        },
+        nganh_dao_tao:{ //Lưu ngành, dựa trên majors_id
+            type: Number,
+            default: null
+        },
+        council: { //Hội đồng thi
+            type: String,
+            default: ""
         },
         status:{ //trạng thái
             type: String,
@@ -73,6 +109,19 @@ const diplomaSchema = new mongoose.Schema(
             default: ""
         },
         explain: { //diễn giải
+            type: String,
+            default: ""
+        },
+        //Các trường bên dưới lưu thông tin người nhập
+        mscb_import: {
+            type: String,
+            default: ""
+        },
+        officer_name_import: {
+            type: String,
+            default: ""
+        },
+        time_import: {
             type: String,
             default: ""
         }

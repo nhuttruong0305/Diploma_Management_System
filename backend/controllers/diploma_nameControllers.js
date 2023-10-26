@@ -43,6 +43,7 @@ const diplomaNameControllers = {
                     diploma_name_id: allDiplomaName[allDiplomaName.length-1].diploma_name_id + 1,
                     diploma_name_name:req.body.diploma_name_name,
                     diploma_type_id:req.body.diploma_type_id,
+                    options: req.body.options
                 });
                 const diplomaNameSaved = await newDiplomaName.save();
                 return res.status(200).json(diplomaNameSaved);   
@@ -52,7 +53,8 @@ const diplomaNameControllers = {
                 const newDiplomaName = new DiplomaNameModel({
                     diploma_name_id: diplomaNameNow.diploma_name_id,
                     diploma_name_name: diplomaNameNow.diploma_name_name,
-                    diploma_type_id: diplomaNameNow.diploma_type_id
+                    diploma_type_id: diplomaNameNow.diploma_type_id,
+                    options: diplomaNameNow.options
                 });
                 const diplomaNameSaved = await newDiplomaName.save();
                 return res.status(200).json(diplomaNameSaved);
@@ -124,7 +126,8 @@ const diplomaNameControllers = {
             const filter = {diploma_name_id: parseInt(req.params.diploma_name_id)};
             const updateDoc = {
                 diploma_name_name: req.body.diploma_name_name,    
-                diploma_type_id: req.body.diploma_type_id
+                diploma_type_id: req.body.diploma_type_id,
+                options: req.body.options
             };
 
             const diplomaNameUpdate = await DiplomaNameModel.updateMany(filter, updateDoc);
