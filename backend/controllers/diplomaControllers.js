@@ -49,26 +49,27 @@ const diplomaControllers = {
                 management_unit_id: req.body.management_unit_id, //(2)
                 diploma_name_id: req.body.diploma_name_id, //(3)
                 diploma_issuance_id: req.body.diploma_issuance_id, //(4)
-                fullname: req.body.fullname, //(5)
-                sex: req.body.sex, //(6)
-                dateofbirth: req.body.dateofbirth, //(7)
-                address: req.body.address, //(8)
-                cccd: req.body.cccdAdd, //(9)
-                sign_day: req.body.sign_day, //(10)
-                diploma_number: req.body.diploma_number, //(11)
-                numbersIntoTheNotebook:req.body.numbersIntoTheNotebook, //(12)
+                fullname: req.body.fullname, //(5)  có
+                sex: req.body.sex, //(6) có
+                dateofbirth: req.body.dateofbirth, //(7) có
+                address: req.body.address, //(8) có
+                cccd: req.body.cccdAdd, //(9) có
+                sign_day: req.body.sign_day, //(10) có
+                diploma_number: req.body.diploma_number, //(11) có
+                numbersIntoTheNotebook:req.body.numbersIntoTheNotebook, //(12) có
 
-                diem_tn: req.body.diemTNAdd, //(13)
-                diem_th: req.body.diemTHAdd, //14
-                nghe: req.body.ngheAdd,//15
-                noi: req.body.noiAdd,//16
-                doc: req.body.docAdd,//17
-                viet: req.body.vietAdd,//18
-                test_day: req.body.test_day,//19
-                graduationYear: req.body.graduationYear,//20
-                classification: req.body.classification,//21
-                nganh_dao_tao: req.body.majorAdd,//22
-                council: req.body.council,//23
+                diem_tn: req.body.diemTNAdd, //(13) có
+                diem_th: req.body.diemTHAdd, //14 có
+                nghe: req.body.ngheAdd,//15 có
+                noi: req.body.noiAdd,//16 có
+                doc: req.body.docAdd,//17 có
+                viet: req.body.vietAdd,//18 có
+                test_day: req.body.test_day,//19 có
+                graduationYear: req.body.graduationYear,//20 có
+                classification: req.body.classification,//21 có
+
+                nganh_dao_tao: req.body.majorAdd,//22 có
+                council: req.body.council,//23 có
                 
                 mscb_import: req.body.mscb_import,
                 officer_name_import: req.body.officer_name_import,
@@ -124,14 +125,18 @@ const diplomaControllers = {
             let isExistDiplomaNumber = false;
             //Biến kiểm tra trùng số vào sổ văn bằng
             let isExistNumberNoteBook = false;
+            //Biến kiểm tra trùng số CCCD của người được cấp
+            let isExistCCCD = false;
             
             diplomasOfTheSameDiplomaNameID.forEach((currentValue)=>{
-                if(currentValue.diploma_number == req.body.diplomaNumberEdit){
+                if(currentValue.diploma_number == req.body.diploma_number){
                     isExistDiplomaNumber = true;
                 }
-
-                if(currentValue.numbersIntoTheNotebook == req.body.numberInNoteEdit){
+                if(currentValue.numbersIntoTheNotebook == req.body.numbersIntoTheNotebook){
                     isExistNumberNoteBook = true;
+                }
+                if(currentValue.cccd == req.body.cccd){
+                    isExistCCCD = true;
                 }
             })
             if(isExistDiplomaNumber){
@@ -140,21 +145,12 @@ const diplomaControllers = {
             if(isExistNumberNoteBook){
                 return res.status(400).json("Số vào sổ của văn bằng đã tồn tại");
             }
+            if(isExistCCCD){
+                return res.status(400).json("Số CCCD đã tồn tại");
+            }
 
             const options = {returnDocument: "after"};
-            const updateDoc = {
-                fullname: req.body.nameOfTheGranteeEdit,
-                sex: req.body.sexEdit,
-                dateofbirth: req.body.dateofbirthEdit,
-                address: req.body.addressEdit,
-                test_day: req.body.testDayEdit,
-                council: req.body.councilEdit,
-                classification: req.body.classificationEdit,
-                graduationYear: req.body.graduationYearEdit,
-                sign_day: req.body.signDayEdit,
-                diploma_number: req.body.diplomaNumberEdit,
-                numbersIntoTheNotebook: req.body.numberInNoteEdit
-            }
+            const updateDoc = req.body;
 
             const diplomaUpdate = await DiplomaModel.findByIdAndUpdate(req.params._id, updateDoc, options);
 
