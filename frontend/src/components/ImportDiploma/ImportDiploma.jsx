@@ -563,7 +563,7 @@ export default function ImportDiploma(){
             test_day: testDayEdit,
             graduationYear: graduationYearEdit,
             classification: classificationEdit,
-            nganh_dao_tao: majorEdit,
+            nganh_dao_tao: majorEdit?.value,
             council: councilEdit,
         }
 
@@ -1125,6 +1125,12 @@ export default function ImportDiploma(){
                                                                     }
                                                                 })
 
+                                                                allMajorInDB?.forEach((element)=>{
+                                                                    if(element.majors_id == currentValue.nganh_dao_tao){
+                                                                        setMajorEdit({value: currentValue.nganh_dao_tao, label: element.majors_name});
+                                                                    }
+                                                                })
+
                                                                 setNameOfTheGranteeEdit(currentValue.fullname);
                                                                 setSexEdit(currentValue.sex);
                                                                 setDateofbirthEdit(currentValue.dateofbirth);
@@ -1144,7 +1150,7 @@ export default function ImportDiploma(){
                                                                 setTestDayEdit(currentValue.test_day);
                                                                 setGraduationYearEdit(currentValue.graduationYear);
                                                                 setClassificationEdit(currentValue.classification);
-                                                                setMajorEdit(currentValue.nganh_dao_tao);
+                                                                
                                                                 setCouncilEdit(currentValue.council);
                                                                 
                                                                 set_IdDiplomaEdit(currentValue._id);

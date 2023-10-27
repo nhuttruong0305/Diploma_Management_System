@@ -499,6 +499,24 @@ export default function DiplomaName(){
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div className="row mt-3">
+                                                    <div className="col-2"></div>
+                                                    <div className="col-5">
+                                                        <div className="form-check">  
+                                                            <input 
+                                                                className="form-check-input" 
+                                                                type="checkbox" 
+                                                                checked={checkOptionDiplomaNameAdd.includes(11)}
+                                                                onChange={(e)=>{
+                                                                    handleCheckOptionDiplomaNameAdd(11)
+                                                                }}
+                                                            />
+                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                Hội đồng thi
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </form>    
                                         </div>
                                         <div className="modal-footer">
