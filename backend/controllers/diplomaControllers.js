@@ -26,25 +26,53 @@ const diplomaControllers = {
             if(isExist2){
                 return res.status(400).json("Số vào sổ văn bằng đã tồn tại");
             }
+            
+            //Cuối cùng check xem có trùng CCCD không
+            let isExist3 = false;
+            listDiplomaByDiplomaNameID.forEach((currentValue)=>{
+                if(currentValue.cccd == req.body.cccdAdd){
+                    isExist3 = true;
+                }
+            })
+            if(isExist3){
+                return res.status(400).json("Số CCCD đã tồn tại");
+            }
 
+            const today = new Date();
+            const day = today.getDate();
+            const month = today.getMonth() + 1;
+            const year = today.getFullYear();
             //Lấy văn bằng cuối cùng trong DB ra để lấy diploma_id + 1 làm id cho diploma tiếp theo
             const lastedDiploma = await DiplomaModel.findOne({}, {}, { sort: { 'createdAt': -1 } });
             const newDiploma = new DiplomaModel({
-                diploma_id: lastedDiploma.diploma_id + 1,
-                management_unit_id: req.body.management_unit_id,
-                diploma_name_id: req.body.diploma_name_id,
-                diploma_issuance_id: req.body.diploma_issuance_id,
-                fullname: req.body.fullname,
-                sex: req.body.sex,
-                dateofbirth: req.body.dateofbirth,
-                address: req.body.address,
-                test_day: req.body.test_day,
-                council: req.body.council,
-                classification: req.body.classification,
-                graduationYear: req.body.graduationYear,
-                sign_day: req.body.sign_day,
-                diploma_number: req.body.diploma_number,
-                numbersIntoTheNotebook:req.body.numbersIntoTheNotebook
+                diploma_id: lastedDiploma.diploma_id + 1, //(1)
+                management_unit_id: req.body.management_unit_id, //(2)
+                diploma_name_id: req.body.diploma_name_id, //(3)
+                diploma_issuance_id: req.body.diploma_issuance_id, //(4)
+                fullname: req.body.fullname, //(5)
+                sex: req.body.sex, //(6)
+                dateofbirth: req.body.dateofbirth, //(7)
+                address: req.body.address, //(8)
+                cccd: req.body.cccdAdd, //(9)
+                sign_day: req.body.sign_day, //(10)
+                diploma_number: req.body.diploma_number, //(11)
+                numbersIntoTheNotebook:req.body.numbersIntoTheNotebook, //(12)
+
+                diem_tn: req.body.diemTNAdd, //(13)
+                diem_th: req.body.diemTHAdd, //14
+                nghe: req.body.ngheAdd,//15
+                noi: req.body.noiAdd,//16
+                doc: req.body.docAdd,//17
+                viet: req.body.vietAdd,//18
+                test_day: req.body.test_day,//19
+                graduationYear: req.body.graduationYear,//20
+                classification: req.body.classification,//21
+                nganh_dao_tao: req.body.majorAdd,//22
+                council: req.body.council,//23
+                
+                mscb_import: req.body.mscb_import,
+                officer_name_import: req.body.officer_name_import,
+                time_import: `${year}-${month}-${day}`
             })
 
             const diplomaSaved = await newDiploma.save();
