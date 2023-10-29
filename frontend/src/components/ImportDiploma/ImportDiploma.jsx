@@ -593,18 +593,26 @@ export default function ImportDiploma(){
         // Tạo dữ liệu bạn muốn đưa vào tệp Excel
         const data = [
             {
-                stt: "",
-                name:"",
+                stt:'',
+                fullname:"",
                 sex:"",
                 dateofbirth:"",
                 address:"",
-                testDay:"",
-                Council:"",
-                classification:"",
+                cccd:"",
+                sign_day:"",
+                diploma_number:"",
+                numbersIntoTheNotebook:"",
+                diem_tn:"",
+                diem_th:"",
+                nghe:"",
+                noi:"",
+                doc:"",
+                viet:"",
+                test_day:"",
                 graduationYear:"",
-                signDay:"",
-                diplomaNumber:"",
-                numberInNote:""
+                classification:"",
+                nganh_dao_tao:"",
+                council:""
             }
         ];
         // Tạo một Workbook và một Worksheet
@@ -616,13 +624,21 @@ export default function ImportDiploma(){
         worksheet['C1'] = { v: 'Giới tính', t: 's' };
         worksheet['D1'] = { v: 'Ngày sinh', t: 's' };
         worksheet['E1'] = { v: 'Nơi sinh', t: 's' };
-        worksheet['F1'] = { v: 'Ngày kiểm tra', t: 's' };
-        worksheet['G1'] = { v: 'Hội đồng thi', t: 's' };
-        worksheet['H1'] = { v: 'Xếp loại', t: 's' };
-        worksheet['I1'] = { v: 'Năm tốt nghiệp', t: 's' };
-        worksheet['J1'] = { v: 'Ngày ký', t: 's' };
-        worksheet['K1'] = { v: 'Số hiệu', t: 's' };
-        worksheet['L1'] = { v: 'Số vào sổ', t: 's' };
+        worksheet['F1'] = { v: 'CCCD', t: 's' };
+        worksheet['G1'] = { v: 'Ngày ký', t: 's' };
+        worksheet['H1'] = { v: 'Số hiệu', t: 's' };
+        worksheet['I1'] = { v: 'Số vào sổ', t: 's' };
+        worksheet['J1'] = { v: 'Điểm trắc nghiệm', t: 's' };
+        worksheet['K1'] = { v: 'Điểm thực hành', t: 's' };
+        worksheet['L1'] = { v: 'Điểm kỹ năng nghe', t: 's' };
+        worksheet['M1'] = { v: 'Điểm kỹ năng nói', t: 's' };
+        worksheet['N1'] = { v: 'Điểm kỹ năng đọc', t: 's' };
+        worksheet['O1'] = { v: 'Điểm kỹ năng viết', t: 's' };
+        worksheet['P1'] = { v: 'Ngày thi', t: 's' };
+        worksheet['Q1'] = { v: 'Năm tốt nghiệp', t: 's' };
+        worksheet['R1'] = { v: 'Xếp loại', t: 's' };
+        worksheet['S1'] = { v: 'Ngành đào tạo', t: 's' };
+        worksheet['T1'] = { v: 'Hội đồng thi', t: 's' };
 
         // Thêm Worksheet vào Workbook
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
@@ -789,22 +805,28 @@ export default function ImportDiploma(){
             }else{
                 dayOfdateOfBirthExcel = dateOfBirthExcel.getDate();
             }
-            //Xử lý ngày kiểm tra
-            const dateTestDay = new Date((data[i][5] - 25569) * 86400 * 1000);
-            let monthOfdateTestDay;
-            if(dateTestDay.getMonth() + 1 < 10){
-                monthOfdateTestDay = `0${dateTestDay.getMonth() + 1}`;
+            //Xử lý ngày thi
+            let resultTestDay;
+            if(data[i][15] != undefined){
+                const dateTestDay = new Date((data[i][15] - 25569) * 86400 * 1000);
+                let monthOfdateTestDay="";
+                if(dateTestDay.getMonth() + 1 < 10){
+                    monthOfdateTestDay = `0${dateTestDay.getMonth() + 1}`;
+                }else{
+                    monthOfdateTestDay = dateTestDay.getMonth() + 1;
+                }
+                let dayOfdateTestDay="";
+                if(dateTestDay.getDate() < 10){
+                    dayOfdateTestDay = `0${dateTestDay.getDate()}`;
+                }else{
+                    dayOfdateTestDay = dateTestDay.getDate();
+                }
+                resultTestDay=`${dateTestDay.getFullYear()}-${monthOfdateTestDay}-${dayOfdateTestDay}`;
             }else{
-                monthOfdateTestDay = dateTestDay.getMonth() + 1;
+                resultTestDay="";
             }
-            let dayOfdateTestDay;
-            if(dateTestDay.getDate() < 10){
-                dayOfdateTestDay = `0${dateTestDay.getDate()}`;
-            }else{
-                dayOfdateTestDay = dateTestDay.getDate();
-            }
-            //Xử lý ngày kỳ
-            const signDayExcel = new Date((data[i][9] - 25569) * 86400 * 1000);
+            //Xử lý ngày ký
+            const signDayExcel = new Date((data[i][6] - 25569) * 86400 * 1000);
             let monthOfSignDay;
             if(signDayExcel.getMonth() + 1 < 10){
                 monthOfSignDay = `0${signDayExcel.getMonth() + 1}`;
@@ -818,8 +840,15 @@ export default function ImportDiploma(){
                 dayOfSignDay = signDayExcel.getDate();
             }
 
+            //Xử lý ngành đào tạo
+            let nganh_dao_tao;
+            allMajorInDB?.forEach((currentValue)=>{
+                if(data[i][18] == currentValue.majors_name){
+                    nganh_dao_tao = currentValue.majors_id;
+                }
+            })
             allDiplomaByDiplomaNameID.forEach((currentValue)=>{
-                if(currentValue.diploma_number == data[i][10]){
+                if(currentValue.diploma_number == data[i][7]){
                     listDiplomaTrungSoHieu = [...listDiplomaTrungSoHieu, i];
                     isFault = true;
                 }
@@ -827,7 +856,7 @@ export default function ImportDiploma(){
             setDanhSachTrungSoHieu(listDiplomaTrungSoHieu);
             
             allDiplomaByDiplomaNameID.forEach((currentValue)=>{
-                if(currentValue.numbersIntoTheNotebook == data[i][11]){
+                if(currentValue.numbersIntoTheNotebook == data[i][8]){
                     listDiplomaTrungSoVaoSo = [...listDiplomaTrungSoVaoSo, i];
                     isFault = true;
                 }
@@ -842,13 +871,23 @@ export default function ImportDiploma(){
                 sex: gioiTinh,
                 dateofbirth: `${dateOfBirthExcel.getFullYear()}-${monthOfdateOfBirthExcel}-${dayOfdateOfBirthExcel}`,
                 address: data[i][4],
-                test_day: `${dateTestDay.getFullYear()}-${monthOfdateTestDay}-${dayOfdateTestDay}`,
-                council: data[i][6],
-                classification: data[i][7],
-                graduationYear: parseInt(data[i][8]), //ép kiểu thành number
+                cccdAdd: data[i][5],
                 sign_day: `${signDayExcel.getFullYear()}-${monthOfSignDay}-${dayOfSignDay}`,
-                diploma_number: data[i][10],
-                numbersIntoTheNotebook: data[i][11]
+                diploma_number: data[i][7],
+                numbersIntoTheNotebook: data[i][8],
+                diemTNAdd: data[i][9],
+                diemTHAdd: data[i][10],
+                ngheAdd: data[i][11],
+                noiAdd: data[i][12],
+                docAdd: data[i][13],
+                vietAdd: data[i][14],
+                test_day: resultTestDay,
+                graduationYear: parseInt(data[i][16]), //ép kiểu thành number
+                classification: data[i][17],
+                majorAdd: nganh_dao_tao,
+                council: data[i][19],
+                mscb_import: user.mssv_cb,
+                officer_name_import: user.fullname
             }
             allDataInExcel = [...allDataInExcel, newDiplomaObject];
         }     
@@ -864,6 +903,7 @@ export default function ImportDiploma(){
                 searchDiplomaWithMultiCondition(dispatch, user.management_unit, nameSearch, numberDiplomaNumberSearch, numberInNoteBookSearch, selectedOptionDiplomaName?.value, selectedOptionDiplomaIssuance?.value,user.listOfDiplomaNameImport, statusDiplomaSearch?.value);
             },3000);    
             setFile(null);
+            console.log((allDataInExcel));
         }
     }
     useLayoutEffect(()=>{
@@ -1093,6 +1133,7 @@ export default function ImportDiploma(){
                                         <tr>
                                             <th style={{width: '50px'}} scope="col"></th>
                                             <th scope="col">STT</th>
+                                            <th scope="col">Tên văn bằng</th>
                                             <th scope="col">Họ tên</th>
                                             <th scope="col">Giới tính</th>
                                             <th scope="col">Ngày sinh</th>
@@ -1112,6 +1153,13 @@ export default function ImportDiploma(){
                                                 }else{
                                                     gioiTinhInTable = "Nữ"
                                                 }
+
+                                                let ten_van_bang = "";
+                                                allDiplomaNameByMU?.forEach((element)=>{
+                                                    if(element.diploma_name_id == currentValue.diploma_name_id){
+                                                        ten_van_bang = element.diploma_name_name;
+                                                    }
+                                                })
                                                 return(
                                                     <tr key={index}>
                                                         <td 
@@ -1165,6 +1213,7 @@ export default function ImportDiploma(){
                                                             style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
                                                             className="fa-solid fa-eye"></i></td>
                                                         <th scope="row" style={{textAlign: 'center'}}>{index + 1}</th>
+                                                        <td>{ten_van_bang}</td>
                                                         <td>{currentValue.fullname}</td>
                                                         <td>{gioiTinhInTable}</td>
                                                         <td>{currentValue.dateofbirth}</td>
@@ -1547,7 +1596,7 @@ export default function ImportDiploma(){
                                                             <label 
                                                                 className='col-form-label text-end d-block'
                                                                 style={{ fontStyle: 'italic' }}
-                                                            >Ngày kiểm tra</label>
+                                                            >Ngày thi</label>
                                                         </div>
                                                         <div className="col-9">
                                                             <input 
@@ -2300,7 +2349,7 @@ export default function ImportDiploma(){
                 ref={noti6}
             />
             <Toast
-                message="Vui lòng chọn ngày kiểm tra"
+                message="Vui lòng chọn ngày thi"
                 type="warning"
                 ref={noti7}
             />

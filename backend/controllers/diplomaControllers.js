@@ -60,16 +60,16 @@ const diplomaControllers = {
 
                 diem_tn: req.body.diemTNAdd, //(13) có
                 diem_th: req.body.diemTHAdd, //14 có
-                nghe: req.body.ngheAdd,//15 có
-                noi: req.body.noiAdd,//16 có
-                doc: req.body.docAdd,//17 có
-                viet: req.body.vietAdd,//18 có
-                test_day: req.body.test_day,//19 có
-                graduationYear: req.body.graduationYear,//20 có
-                classification: req.body.classification,//21 có
+                nghe: req.body.ngheAdd,//15 
+                noi: req.body.noiAdd,//16 
+                doc: req.body.docAdd,//17 
+                viet: req.body.vietAdd,//18 
+                test_day: req.body.test_day,//19 
+                graduationYear: req.body.graduationYear,//20 
+                classification: req.body.classification,//21 
 
-                nganh_dao_tao: req.body.majorAdd,//22 có
-                council: req.body.council,//23 có
+                nganh_dao_tao: req.body.majorAdd,//22 
+                council: req.body.council,//23 
                 
                 mscb_import: req.body.mscb_import,
                 officer_name_import: req.body.officer_name_import,

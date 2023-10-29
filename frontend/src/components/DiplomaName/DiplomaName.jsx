@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { searchDiplomaName, getAllDiplomaName, getAllDiplomaType, addDiplomaName, editDiplomaName, deleteDiplomaName } from '../../redux/apiRequest';
 import Toast from '../Toast/Toast';
 import Footer from '../Footer/Footer';
-
+import axios from 'axios';
 export default function DiplomaName(){
     const dispatch = useDispatch();
     const allDiplomaName = useSelector((state) => state.diplomaName.diplomaNames?.allDiplomaName); //state lấy ra all diploma name
@@ -145,7 +145,30 @@ export default function DiplomaName(){
         noti4.current.showToast();
         searchDiplomaName(dispatch, inputSearch, "");  
     }
-    
+
+    //State để quyết định xem có hiển thị phần thông tin thêm khi chỉnh sửa văn bằng không
+    const [showMoreInfor, setShowMoreInfor] = useState(false);
+    //State lấy ra các diploma trong collection diplomas để xem loại văn bằng đang chọn để chỉnh sửa đã có tồn tại các văn bằng trong csdl chưa
+    const [allDiplomaByDiplomaNameID, setAllDiplomaByDiplomaNameID] = useState([]);
+    //Hàm call api lấy ra các diploma theo 1 diploma_name_id
+    const getAllDiplomaByDiplomaNameId = async (diploma_name_id) => {
+        try{
+            const res = await axios.get(`http://localhost:8000/v1/diploma/get_all_diploma_by_diploma_name_id/${diploma_name_id}`)
+            setAllDiplomaByDiplomaNameID(res.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    useEffect(()=>{
+        if(allDiplomaByDiplomaNameID.length > 0){
+            setShowMoreInfor(false);
+        }else{
+            setShowMoreInfor(true);
+        }
+    }, [allDiplomaByDiplomaNameID])
+
+    console.log(allDiplomaByDiplomaNameID);
     return(
         <>
             <Header/>
@@ -225,6 +248,7 @@ export default function DiplomaName(){
                                                                         setChoose_diplomaTypeIdEdit(currentValue.diploma_type_id);
                                                                         setDiplomaNameIdEdit(currentValue.diploma_name_id);
                                                                         setCheckOptionDiplomaNameEdit(currentValue.options);
+                                                                        getAllDiplomaByDiplomaNameId(currentValue.diploma_name_id);
                                                                     }}
                                                                     type='button' 
                                                                     data-bs-toggle="modal"
@@ -607,179 +631,201 @@ export default function DiplomaName(){
                                                     </div>
                                                 </div>
                                                 {/* Xử lý phần thông tin thêm trong modal chỉnh sửa */}
-                                                <hr />
-                                                <p style={{textAlign:'center', fontStyle: 'italic'}}>Hãy chọn các thông tin cần thêm cho tên văn bằng này</p>
-                                                <div className="row mt-3">
-                                                    <div className="col-2"></div>
-                                                    <div className="col-5">
-                                                        <div className="form-check">  
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="checkbox" 
-                                                                checked={checkOptionDiplomaNameEdit.includes(1)}
-                                                                onChange={(e)=>{
-                                                                    handleCheckOptionDiplomaNameEdit(1)
-                                                                }}
-                                                            />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Điểm trắc nghiệm
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-5">
-                                                        <div className="form-check">  
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="checkbox" 
-                                                                checked={checkOptionDiplomaNameEdit.includes(2)}
-                                                                onChange={(e)=>{
-                                                                    handleCheckOptionDiplomaNameEdit(2)
-                                                                }}
-                                                            />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Điểm thực hành
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                {
+                                                    showMoreInfor ? (
+                                                        <>
+                                                            <hr />
+                                                            <p style={{textAlign:'center', fontStyle: 'italic'}}>Hãy chọn các thông tin cần thêm cho tên văn bằng này</p>
+                                                            <div className="row mt-3">
+                                                                <div className="col-2"></div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(1)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(1)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Điểm trắc nghiệm
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(2)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(2)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Điểm thực hành
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                                                <div className="row mt-3">
-                                                    <div className="col-2"></div>
-                                                    <div className="col-5">
-                                                        <div className="form-check">  
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="checkbox" 
-                                                                checked={checkOptionDiplomaNameEdit.includes(3)}
-                                                                onChange={(e)=>{
-                                                                    handleCheckOptionDiplomaNameEdit(3)
-                                                                }}
-                                                            />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Điểm nghe
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-5">
-                                                        <div className="form-check">  
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="checkbox" 
-                                                                checked={checkOptionDiplomaNameEdit.includes(4)}
-                                                                onChange={(e)=>{
-                                                                    handleCheckOptionDiplomaNameEdit(4)
-                                                                }}
-                                                            />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Điểm nói
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                            <div className="row mt-3">
+                                                                <div className="col-2"></div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(3)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(3)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Điểm nghe
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(4)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(4)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Điểm nói
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                                                <div className="row mt-3">
-                                                    <div className="col-2"></div>
-                                                    <div className="col-5">
-                                                        <div className="form-check">  
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="checkbox" 
-                                                                checked={checkOptionDiplomaNameEdit.includes(5)}
-                                                                onChange={(e)=>{
-                                                                    handleCheckOptionDiplomaNameEdit(5)
-                                                                }}
-                                                            />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Điểm đọc
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-5">
-                                                        <div className="form-check">  
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="checkbox" 
-                                                                checked={checkOptionDiplomaNameEdit.includes(6)}
-                                                                onChange={(e)=>{
-                                                                    handleCheckOptionDiplomaNameEdit(6)
-                                                                }}
-                                                            />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Điểm viết
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                            <div className="row mt-3">
+                                                                <div className="col-2"></div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(5)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(5)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Điểm đọc
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(6)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(6)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Điểm viết
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                                                <div className="row mt-3">
-                                                    <div className="col-2"></div>
-                                                    <div className="col-5">
-                                                        <div className="form-check">  
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="checkbox" 
-                                                                checked={checkOptionDiplomaNameEdit.includes(7)}
-                                                                onChange={(e)=>{
-                                                                    handleCheckOptionDiplomaNameEdit(7)
-                                                                }}
-                                                            />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Ngày thi
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-5">
-                                                        <div className="form-check">  
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="checkbox" 
-                                                                checked={checkOptionDiplomaNameEdit.includes(8)}
-                                                                onChange={(e)=>{
-                                                                    handleCheckOptionDiplomaNameEdit(8)
-                                                                }}
-                                                            />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Năm tốt nghiệp
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="row mt-3">
-                                                    <div className="col-2"></div>
-                                                    <div className="col-5">
-                                                        <div className="form-check">  
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="checkbox" 
-                                                                checked={checkOptionDiplomaNameEdit.includes(9)}
-                                                                onChange={(e)=>{
-                                                                    handleCheckOptionDiplomaNameEdit(9)
-                                                                }}
-                                                            />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Xếp loại
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-5">
-                                                        <div className="form-check">  
-                                                            <input 
-                                                                className="form-check-input" 
-                                                                type="checkbox" 
-                                                                checked={checkOptionDiplomaNameEdit.includes(10)}
-                                                                onChange={(e)=>{
-                                                                    handleCheckOptionDiplomaNameEdit(10)
-                                                                }}
-                                                            />
-                                                            <label className="form-check-label" htmlFor="flexCheckDefault">
-                                                                Ngành đào tạo
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-
-
+                                                            <div className="row mt-3">
+                                                                <div className="col-2"></div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(7)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(7)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Ngày thi
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(8)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(8)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Năm tốt nghiệp
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="row mt-3">
+                                                                <div className="col-2"></div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(9)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(9)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Xếp loại
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(10)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(10)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Ngành đào tạo
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="row mt-3">
+                                                                <div className="col-2"></div>
+                                                                <div className="col-5">
+                                                                    <div className="form-check">  
+                                                                        <input 
+                                                                            className="form-check-input" 
+                                                                            type="checkbox" 
+                                                                            checked={checkOptionDiplomaNameEdit.includes(11)}
+                                                                            onChange={(e)=>{
+                                                                                handleCheckOptionDiplomaNameEdit(11)
+                                                                            }}
+                                                                        />
+                                                                        <label className="form-check-label" htmlFor="flexCheckDefault">
+                                                                            Hội đồng thi
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    ) : ("")
+                                                }
+                                                
                                             </form>    
                                         </div>
                                         <div className="modal-footer">
