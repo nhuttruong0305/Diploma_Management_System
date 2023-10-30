@@ -28,20 +28,28 @@ const diplomaControllers = {
             }
             
             //Cuối cùng check xem có trùng CCCD không
-            let isExist3 = false;
-            listDiplomaByDiplomaNameID.forEach((currentValue)=>{
-                if(currentValue.cccd == req.body.cccdAdd){
-                    isExist3 = true;
-                }
-            })
-            if(isExist3){
-                return res.status(400).json("Số CCCD đã tồn tại");
-            }
+            // let isExist3 = false;
+            // listDiplomaByDiplomaNameID.forEach((currentValue)=>{
+            //     if(currentValue.cccd == req.body.cccdAdd){
+            //         isExist3 = true;
+            //     }
+            // })
+            // if(isExist3){
+            //     return res.status(400).json("Số CCCD đã tồn tại");
+            // }
 
             const today = new Date();
-            const day = today.getDate();
-            const month = today.getMonth() + 1;
+            let day = today.getDate();
+            let month = today.getMonth() + 1;
             const year = today.getFullYear();
+            if(day<10){
+                day = `0${day}`;
+            }
+
+            if(month<10){
+                month = `0${month}`;
+            }
+
             //Lấy văn bằng cuối cùng trong DB ra để lấy diploma_id + 1 làm id cho diploma tiếp theo
             const lastedDiploma = await DiplomaModel.findOne({}, {}, { sort: { 'createdAt': -1 } });
             const newDiploma = new DiplomaModel({

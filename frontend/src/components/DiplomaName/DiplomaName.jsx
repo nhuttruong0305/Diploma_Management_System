@@ -143,7 +143,9 @@ export default function DiplomaName(){
     const handleDeleteDiplomaName = async (diploma_name_id) => {
         await deleteDiplomaName(dispatch, user.accessToken, diploma_name_id);
         noti4.current.showToast();
-        searchDiplomaName(dispatch, inputSearch, "");  
+        setTimeout(()=>{
+            searchDiplomaName(dispatch, inputSearch, "");  
+        }, 2000)
     }
 
     //State để quyết định xem có hiển thị phần thông tin thêm khi chỉnh sửa văn bằng không

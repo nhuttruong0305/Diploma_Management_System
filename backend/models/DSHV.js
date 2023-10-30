@@ -7,34 +7,67 @@ const DSSVSchema = new mongoose.Schema(
             type: Number,
             required: true
         },
-        diploma_name_id:{ //lưu diploma_name_id để kiểm tra điều kiện 1 loại văn bằng thì ko dc trùng CCCD
-            type: Number
-        },
         fullname:{
-            type: String,
-            required: true
+            type: String
         },
-        sex:{
+        sex: {
             type: String
         },
         dateOfBirth: {
             type: String
         },
-        address:{
+        address: {
             type: String
         },
-        CCCD:{
-            type: String
-        },
-        test_day:{
+        CCCD: {
             type:String
         },
-        council:{
-            type: String
+
+        //Thông tin thêm
+        diem_tn:{
+            type: Number,
+            default: null
+        },
+        diem_th:{
+            type: Number,
+            default: null
+        },
+        nghe: {
+            type: Number,
+            default: null
+        },
+        noi:{
+            type: Number,
+            default: null
+        },
+        doc:{
+            type: Number,
+            default: null
+        },
+        viet:{
+            type: Number,
+            default: null
+        },
+        test_day: {
+            type: String,
+            default: ""
+        },
+        graduationYear: {
+            type: Number,
+            default: null
         },
         classification:{
-            type: String
+            type: String,
+            default: ""
         },
+        nganh_dao_tao:{
+            type: Number,
+            default: null
+        },
+        council: {
+            type: String,
+            default: ""
+        }
     },
     {timestamps: true}
 );

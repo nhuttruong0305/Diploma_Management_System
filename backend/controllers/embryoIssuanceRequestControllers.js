@@ -19,35 +19,49 @@ const embryoIssuanceRequestController = {
             //Lấy yêu cầu cấp phôi cuối cùng của loại văn bằng được thêm để quản lý số seri
             const lastedEIRByDiplomaNameID = await EmbryoIssuanceRequestModel.findOne({diploma_name_id: req.body.diploma_name_id}, {}, { sort: { 'createdAt': -1 } })
             
+            //Lấy ngày hiện tại để điền time tạo yêu cầu
+            const today = new Date();
+            let day = today.getDate();
+            let month = today.getMonth() + 1;
+            const year = today.getFullYear();
+
+            if(day<10){
+                day = `0${day}`;
+            }
+
+            if(month<10){
+                month = `0${month}`;
+            }
+
             if(lastedEIRByDiplomaNameID!=null){
                 const newEIR = new EmbryoIssuanceRequestModel({
-                    embryoIssuanceRequest_id: lastedEIR.embryoIssuanceRequest_id + 1,
-                    management_unit_id: req.body.management_unit_id,
-                    diploma_name_id: req.body.diploma_name_id,
-                    diploma_name_name: req.body.diploma_name_name,
-                    examination: req.body.examination,
-                    numberOfEmbryos: req.body.numberOfEmbryos,
-                    seri_number_start: lastedEIRByDiplomaNameID.seri_number_end+1,
-                    seri_number_end: parseInt(lastedEIRByDiplomaNameID.seri_number_end)+parseInt(req.body.numberOfEmbryos) 
+                    embryoIssuanceRequest_id: lastedEIR.embryoIssuanceRequest_id + 1, //
+                    management_unit_id: req.body.management_unit_id, //có
+                    diploma_name_id: req.body.diploma_name_id, //có
+                    examination: req.body.examination, //có
+                    numberOfEmbryos: req.body.numberOfEmbryos, //có
+                    seri_number_start: lastedEIRByDiplomaNameID.seri_number_end+1,//
+                    seri_number_end: parseInt(lastedEIRByDiplomaNameID.seri_number_end)+parseInt(req.body.numberOfEmbryos), //
+                    mscb: req.body.mscb, //có
+                    time: `${year}-${month}-${day}`
                 });
                 const EIRSaved = await newEIR.save();
                 return res.status(200).json(EIRSaved);
             }else{
                 const newEIR = new EmbryoIssuanceRequestModel({
-                    embryoIssuanceRequest_id: lastedEIR.embryoIssuanceRequest_id + 1,
-                    management_unit_id: req.body.management_unit_id,
-                    diploma_name_id: req.body.diploma_name_id,
-                    diploma_name_name: req.body.diploma_name_name,
-                    examination: req.body.examination,
-                    numberOfEmbryos: req.body.numberOfEmbryos,
+                    embryoIssuanceRequest_id: lastedEIR.embryoIssuanceRequest_id + 1, //có
+                    management_unit_id: req.body.management_unit_id, //có
+                    diploma_name_id: req.body.diploma_name_id, //có
+                    examination: req.body.examination, // có
+                    numberOfEmbryos: req.body.numberOfEmbryos, //có
                     seri_number_start: 1,
-                    seri_number_end: req.body.numberOfEmbryos
+                    seri_number_end: req.body.numberOfEmbryos,
+                    mscb: req.body.mscb,
+                    time: `${year}-${month}-${day}`
                 });
                 const EIRSaved = await newEIR.save();
                 return res.status(200).json(EIRSaved);
-            }     
-            // return res.status(200).json(lastedEIRByDiplomaNameID);
-            
+            }                 
         }catch(error){
             return res.status(500).json(error);
         }

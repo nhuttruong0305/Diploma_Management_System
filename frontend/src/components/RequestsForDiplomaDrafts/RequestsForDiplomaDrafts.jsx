@@ -1,7 +1,6 @@
 import './RequestsForDiplomaDrafts.css';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
-import EmbryoGrantApplicationForm from './EmbryoGrantApplicationForm';
 import Select from "react-select";
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -33,6 +32,7 @@ export default function RequestsForDiplomaDrafts(){
     useEffect(()=>{
         getAllManagementUnit();
         getAllDiplomaNameByMU(user?.management_unit);
+        getAllMajorsShowModal();
     }, [])
 
     useEffect(()=>{
@@ -80,14 +80,23 @@ export default function RequestsForDiplomaDrafts(){
         const data = [
             {
                 stt: "",
-                name:"",
+                fullname:"",
                 sex:"",
                 dateofbirth:"",
                 address:"",
                 CCCD:"",
-                testDay:"",
-                Council:"",
-                classification:""
+                
+                diem_tn:"",
+                diem_th:"",
+                nghe:"",
+                noi:"",
+                doc:"",
+                viet:"",
+                test_day:"",
+                graduationYear:"",
+                classification:"",
+                nganh_dao_tao:"",
+                council:""
             }
         ];
         // Tạo một Workbook và một Worksheet
@@ -100,10 +109,18 @@ export default function RequestsForDiplomaDrafts(){
         worksheet['D1'] = { v: 'Ngày sinh', t: 's' };
         worksheet['E1'] = { v: 'Nơi sinh', t: 's' };
         worksheet['F1'] = { v: 'CCCD', t: 's' };
-        worksheet['G1'] = { v: 'Ngày kiểm tra', t: 's' };
-        worksheet['H1'] = { v: 'Hội đồng thi', t: 's' };
-        worksheet['I1'] = { v: 'Xếp loại', t: 's' };
-
+        
+        worksheet['G1'] = { v: 'Điểm trắc nghiệm', t: 's' };
+        worksheet['H1'] = { v: 'Điểm thực hành', t: 's' };
+        worksheet['I1'] = { v: 'Điểm kỹ năng nghe', t: 's' };
+        worksheet['J1'] = { v: 'Điểm kỹ năng nói', t: 's' };
+        worksheet['K1'] = { v: 'Điểm kỹ năng đọc', t: 's' };
+        worksheet['L1'] = { v: 'Điểm kỹ năng viết', t: 's' };
+        worksheet['M1'] = { v: 'Ngày thi', t: 's' };
+        worksheet['N1'] = { v: 'Năm tốt nghiệp', t: 's' };
+        worksheet['O1'] = { v: 'Xếp loại', t: 's' };
+        worksheet['P1'] = { v: 'Ngành đào tạo', t: 's' };
+        worksheet['Q1'] = { v: 'Hội đồng thi', t: 's' };
         // Thêm Worksheet vào Workbook
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
 
@@ -164,27 +181,18 @@ export default function RequestsForDiplomaDrafts(){
     const noti5 = useRef();
     const noti6 = useRef();
 
-    //State để lưu các học viên được lấy ra từ collection dshvs để kiểm tra trùng CCCD
-    const [dshvByDiplomaName, setDSHVByDiplomaName] = useState([]);
+    //State chứa all ngành đào tạo
+    const [allMajorInDB, setAllMajorInDB] = useState([]);
 
-    //Hàm lấy ra danh sách học viên từ collection dshvs theo trường diploma_name_id
-    const getDSHVByDiplomaNameID = async (diploma_name_id) => {
+    //Hàm lấy ra all majors
+    const getAllMajorsShowModal = async () =>{
         try{
-            const result = await axios.get(`http://localhost:8000/v1/DSHV/get_DSHV_by_diplomaNameId/${diploma_name_id}`);
-            setDSHVByDiplomaName(result.data);
+            const result = await axios.get("http://localhost:8000/v1/majors/get_all_majors_show_modal");
+            setAllMajorInDB(result.data); 
         }catch(error){
             console.log(error);
-        }        
-    }
-
-    useEffect(()=>{
-        if(selectedSelectDiplomaNameRFDD != ""){
-            getDSHVByDiplomaNameID(selectedSelectDiplomaNameRFDD?.value);
         }
-    }, [selectedSelectDiplomaNameRFDD])
-    
-    //state lưu mảng các dòng trùng CCCD trong file excel
-    const [danhSachTrungCCCD, setdanhSachTrungCCCD] = useState([]);
+    }
 
     const handleSubmitCreateRequest = async () => {
         if(selectedSelectDiplomaNameRFDD =="" || selectedSelectDiplomaNameRFDD ==undefined){
@@ -204,11 +212,6 @@ export default function RequestsForDiplomaDrafts(){
             noti4.current.showToast();
             return;
         }
-        
-        //Biến này sẽ là true nếu có 1 dòng trong file excel bị trùng CCCD
-        let isFault = false;
-        //Danh sách STT dòng bị trùng CCCD
-        let listTrungCCCD = [];
 
         let allDataInExcel = [];   
         for(let i = 1; i<data.length; i++){
@@ -226,29 +229,36 @@ export default function RequestsForDiplomaDrafts(){
             }else{
                 daydateOfBirthExcel=dateOfBirthExcel.getDate();
             }
-            //Xử lý ngày kiểm tra
-            const dateTestDay = new Date((data[i][6] - 25569) * 86400 * 1000);
-            let monthDateTestDay;
-            if(dateTestDay.getMonth()+1<10){
-                monthDateTestDay = `0${dateTestDay.getMonth()+1}`;
-            }else{
-                monthDateTestDay = dateTestDay.getMonth()+1;
-            }
-            let dayDateTestDay;
-            if(dateTestDay.getDate()<10){
-                dayDateTestDay=`0${dateTestDay.getDate()}`;
-            }else{
-                dayDateTestDay = dateTestDay.getDate();
-            }
+            //Xử lý ngày thi
+            let resultTestday;
+            if(data[i][12]!=undefined){
+                const dateTestDay = new Date((data[i][12] - 25569) * 86400 * 1000);
 
-            //Kiểm tra xem có dòng nào trong file excel trùng CCCD không
-            dshvByDiplomaName?.forEach((currentValue)=>{
-                if(currentValue.CCCD == data[i][5]){
-                    listTrungCCCD = [...listTrungCCCD, i];
-                    isFault = true;
+                let monthDateTestDay;
+                if(dateTestDay.getMonth()+1<10){
+                    monthDateTestDay = `0${dateTestDay.getMonth()+1}`;
+                }else{
+                    monthDateTestDay = dateTestDay.getMonth()+1;
+                }
+                let dayDateTestDay;
+
+                if(dateTestDay.getDate()<10){
+                    dayDateTestDay=`0${dateTestDay.getDate()}`;
+                }else{
+                    dayDateTestDay = dateTestDay.getDate();
+                }
+
+                resultTestday=`${dateTestDay.getFullYear()}-${monthDateTestDay}-${dayDateTestDay}`
+            }else{
+                resultTestday="";
+            }
+            
+            let nganh_dao_tao;
+            allMajorInDB?.forEach((element)=>{
+                if(data[i][15] == element.majors_name){
+                    nganh_dao_tao = element.majors_id;
                 }
             })
-            setdanhSachTrungCCCD(listTrungCCCD);
 
             const newHVObject = {
                 fullname: data[i][1],
@@ -256,49 +266,48 @@ export default function RequestsForDiplomaDrafts(){
                 dateOfBirth: `${dateOfBirthExcel.getFullYear()}-${monthdateOfBirthExcel}-${daydateOfBirthExcel}`,
                 address: data[i][4],
                 CCCD: data[i][5],
-                test_day: `${dateTestDay.getFullYear()}-${monthDateTestDay}-${dayDateTestDay}`,
-                council: data[i][7],
-                classification: data[i][8]
+                diem_tn: data[i][6],
+                diem_th: data[i][7],
+                nghe: data[i][8],
+                noi: data[i][9],
+                doc: data[i][10],
+                viet: data[i][11],
+                test_day: resultTestday,
+                graduationYear: data[i][13],
+                classification: data[i][14],
+                nganh_dao_tao: nganh_dao_tao,
+                council: data[i][16]
             }
             allDataInExcel = [...allDataInExcel, newHVObject];
         }
 
-        if(isFault){
-            return;
-        }else{
-            const newYCCapPhoi = {
-                management_unit_id: user?.management_unit,
-                diploma_name_id: selectedSelectDiplomaNameRFDD?.value,
-                diploma_name_name: selectedSelectDiplomaNameRFDD?.label,
-                examination: examination,
-                numberOfEmbryos: numberOfEmbryos
-            }
+        const newYCCapPhoi = {
+            management_unit_id: user?.management_unit,
+            diploma_name_id: selectedSelectDiplomaNameRFDD?.value,
+            examination: examination,
+            numberOfEmbryos: numberOfEmbryos,
+            mscb: user.mssv_cb
+        }
 
+        try{
+            const result1 = await axios.post("http://localhost:8000/v1/embryo_issuance_request/add_new_embryoIssuanceRequest", newYCCapPhoi, {
+                headers: {token: `Bearer ${user.accessToken}`}
+            })
+        }catch(error){
+            console.log(error);
+        }
+
+        for(let j = 0; j<allDataInExcel.length; j++){
             try{
-                const result1 = await axios.post("http://localhost:8000/v1/embryo_issuance_request/add_new_embryoIssuanceRequest", newYCCapPhoi, {
+                const result2 = await axios.post(`http://localhost:8000/v1/DSHV/add_student`, allDataInExcel[j],{
                     headers: {token: `Bearer ${user.accessToken}`}
                 })
             }catch(error){
                 console.log(error);
             }
-
-            for(let j = 0; j<allDataInExcel.length; j++){
-                try{
-                    const result2 = await axios.post(`http://localhost:8000/v1/DSHV/add_student/${selectedSelectDiplomaNameRFDD?.value}`, allDataInExcel[j],{
-                        headers: {token: `Bearer ${user.accessToken}`}
-                    })
-                }catch(error){
-                    console.log(error);
-                }
-            }
-            noti6.current.showToast();
         }
+        noti6.current.showToast(); 
     }
-    useLayoutEffect(()=>{
-        if(danhSachTrungCCCD.length>0){
-            noti5.current.showToast();
-        }
-    }, [danhSachTrungCCCD])
 
     //Phần dưới chứa state và logic xử lý phần hiển thị các yêu cầu cấp phôi văn bằng
     const [selectedSelectDiplomaNameSearchRFDD, setSelectedSelectDiplomaNameSearchRFDD] = useState("");
@@ -432,7 +441,7 @@ export default function RequestsForDiplomaDrafts(){
                                                     </div> 
                                                 </div>
                                                 <div className="row mt-3">
-                                                    <div className="col-4">Đợt thi</div>
+                                                    <div className="col-4">Đợt thi/Đợt cấp văn bằng</div>
                                                     <div className="col-8">
                                                         <input 
                                                             type="date" 
@@ -686,11 +695,6 @@ export default function RequestsForDiplomaDrafts(){
                 message="Vui lòng thêm danh sách học viên kèm theo"
                 type="warning"
                 ref={noti4}
-            />
-            <Toast
-                message={`Số CCCD của học viên có STT ${danhSachTrungCCCD} trong file excel đã tồn tại`}
-                type="warning"
-                ref={noti5}
             />
             <Toast
                 message="Tạo yêu cầu thành công"
