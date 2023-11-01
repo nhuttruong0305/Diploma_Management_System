@@ -32,14 +32,14 @@ const DSHVController = {
             return res.status(500).json(error);
         }
     },
-    // getDSHVByDiplomaNameID: async (req, res) => {
-    //     try{
-    //         const result = await DSHVModel.find({diploma_name_id: parseInt(req.params.diploma_name_id)});
-    //         return res.status(200).json(result);
-    //     }catch(error){
-    //         return res.status(500).json(error);
-    //     }
-    // }
+    getDSHV: async (req, res) => {
+        try{
+            const result = await DSHVModel.find({embryoIssuanceRequest_id: parseInt(req.params.embryoIssuanceRequest_id)});
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    }
 }
 
 module.exports = DSHVController;

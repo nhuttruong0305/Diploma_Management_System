@@ -35,7 +35,7 @@ const embryoIssuanceRequestController = {
 
             if(lastedEIRByDiplomaNameID!=null){
                 const newEIR = new EmbryoIssuanceRequestModel({
-                    embryoIssuanceRequest_id: lastedEIR.embryoIssuanceRequest_id + 1, //
+                    embryoIssuanceRequest_id:lastedEIR.embryoIssuanceRequest_id + 1, //
                     management_unit_id: req.body.management_unit_id, //có
                     diploma_name_id: req.body.diploma_name_id, //có
                     examination: req.body.examination, //có
@@ -49,7 +49,7 @@ const embryoIssuanceRequestController = {
                 return res.status(200).json(EIRSaved);
             }else{
                 const newEIR = new EmbryoIssuanceRequestModel({
-                    embryoIssuanceRequest_id: lastedEIR.embryoIssuanceRequest_id + 1, //có
+                    embryoIssuanceRequest_id:lastedEIR.embryoIssuanceRequest_id + 1, //có
                     management_unit_id: req.body.management_unit_id, //có
                     diploma_name_id: req.body.diploma_name_id, //có
                     examination: req.body.examination, // có
