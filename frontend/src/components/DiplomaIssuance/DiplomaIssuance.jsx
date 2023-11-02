@@ -143,7 +143,9 @@ export default function DiplomaIssuance(){
         }
         await deleteDiplomaIssuance(dispatch, user.accessToken, _idOfDiplomaIssuance);
         noti5.current.showToast();
-        await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
+        setTimeout( async ()=>{
+            await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
+        },2000);
     }
 
     return(

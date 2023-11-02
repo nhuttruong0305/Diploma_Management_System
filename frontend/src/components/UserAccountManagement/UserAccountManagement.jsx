@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import Select from "react-select";
-
+import * as XLSX from 'xlsx';
 //Các import bên dưới là để validate form
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -27,7 +27,6 @@ export default function UserAccountManagement() {
     const handleChangeSelectRole = (selectedOption) => {
         setRole(selectedOption);
     }
-    console.log(role);
 
     const [inputSearch, setInputSearch] = useState(''); //state dùng để tìm kiếm user account theo tên
     const [inputMSSV_CB, setInputMSSV_CB] = useState(''); //state dùng để tìm kiếm user account theo MSSV_CB
@@ -52,7 +51,7 @@ export default function UserAccountManagement() {
         if(!user){
             navigate("/");
         }
-
+        getAllUserAccount();
     },[])
 
     //Hàm xử lý khi click chọn chức vụ
@@ -86,12 +85,6 @@ export default function UserAccountManagement() {
     const getMajorsBasedOnFaculty = async () => {
         let faculty_id;
         if(choose_faculty != undefined && faculty.length != 0){
-            //Lấy ra faculty_id trước
-            // faculty.forEach((currentValue, index) => {
-            //     if(currentValue.faculty_name == choose_faculty){
-            //         faculty_id = currentValue.faculty_id;    
-            //     }
-            // });
             faculty_id = choose_faculty;
         
             try{
@@ -104,15 +97,7 @@ export default function UserAccountManagement() {
         }
     }
 
-    //Hàm gọi api lấy all user trong DB
-    const getAllUserAccount = async () => {
-        try{
-            const res = await axios.get("http://localhost:8000/v1/user_account/get_all_useraccount");
-            setAllUserAccount(res.data);
-        }catch(error){
-            console.log(error);
-        }
-    }
+    
 
     //Hàm gọi api để tìm user account theo tên
     const searchUserAccountByName = async (inputName, inputMSSV_CB, position) => {
@@ -149,11 +134,6 @@ export default function UserAccountManagement() {
     useEffect(() => {
         const allManagementUnit = getAllManagementUnit();
     }, [])
-
-    // //Gọi useEffect để lấy về danh sách tất cả user account trong DB
-    // useEffect(()=> {
-    //     getAllUserAccount();
-    // }, [])
 
     //Gọi useEffect để lấy danh sách các ngành dựa theo khoa
     useEffect(() => {
@@ -273,7 +253,7 @@ export default function UserAccountManagement() {
             console.log(error);
         }
     }
-    // console.log(allMajorsShowModal);
+    
     const [fullNameShowModal, setFullNameShowModal] = useState("");
     const [MSSV_CBShowModal, setMSSV_CBShowModal] = useState("");
     const [emailShowModal,setEmailShowModal] = useState("");
@@ -289,6 +269,355 @@ export default function UserAccountManagement() {
     const [courseShowModal, setCourseShowModal] = useState("");
     const [managementUnitShowModal, setManagementUnitShowModal] = useState("");
     const [roleShowModal, setRoleShowModal] = useState("");
+    
+    //Phần dưới xử lý việc import và tạo nhiều user bằng file excel
+    //State lưu trữ loại tài khoản được chọn để import
+    const [positionImport, setPositionImport] = useState("Student");
+    const handlePositionImport = (position) => {
+        setPositionImport(position);
+    }
+
+    //State để ẩn hiện form import
+    const [showImport, setShowImport] = useState(false);
+    
+    //Hàm tạo mẫu file excel để import
+    function createAndDownloadExcel() {
+
+        let data = [];
+        // Tạo dữ liệu bạn muốn đưa vào tệp Excel
+        if(positionImport == "Student"){
+            data = [
+                {
+                    stt:'',
+                    fullname: '',
+                    mssv_cb: '',
+                    email: '',
+                    password: '',
+                    dateofbirth: '',
+                    address: '',
+                    cccd: '',
+                    sex: '',
+                    phonenumber: '',
+                    class: '',
+                    faculty: '',
+                    majors: '',
+                    course: ''
+                }
+            ];
+        }else{
+            data = [
+                {
+                    stt:'',
+                    fullname: '',
+                    mssv_cb: '',
+                    email: '',
+                    password: '',
+                    dateofbirth: '',
+                    address: '',
+                    cccd: '',
+                    sex: '',
+                    phonenumber: '',
+                    management_unit: '',
+                    role: ''
+                }
+            ]
+        }
+        
+        // Tạo một Workbook và một Worksheet
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(data);
+
+        if(positionImport == "Student"){
+            worksheet['A1'] = { v: 'STT', t: 's' };
+            worksheet['B1'] = { v: 'Họ tên', t: 's' };
+            worksheet['C1'] = { v: 'MSSV/CB', t: 's' };
+            worksheet['D1'] = { v: 'Email', t: 's' };
+            worksheet['E1'] = { v: 'Mật khẩu', t: 's' };
+            worksheet['F1'] = { v: 'Ngày sinh', t: 's' };
+            worksheet['G1'] = { v: 'Địa chỉ', t: 's' };
+            worksheet['H1'] = { v: 'CCCD', t: 's' };
+            worksheet['I1'] = { v: 'Giới tính', t: 's' };
+            worksheet['J1'] = { v: 'Số điện thoại', t: 's' };
+            worksheet['K1'] = { v: 'Mã lớp', t: 's' };
+            worksheet['L1'] = { v: 'Khoa', t: 's' };
+            worksheet['M1'] = { v: 'Ngành', t: 's' };
+            worksheet['N1'] = { v: 'Khóa', t: 's' };
+            
+        }else{
+            worksheet['A1'] = { v: 'STT', t: 's' };
+            worksheet['B1'] = { v: 'Họ tên', t: 's' };
+            worksheet['C1'] = { v: 'MSSV/CB', t: 's' };
+            worksheet['D1'] = { v: 'Email', t: 's' };
+            worksheet['E1'] = { v: 'Mật khẩu', t: 's' };
+            worksheet['F1'] = { v: 'Ngày sinh', t: 's' };
+            worksheet['G1'] = { v: 'Địa chỉ', t: 's' };
+            worksheet['H1'] = { v: 'CCCD', t: 's' };
+            worksheet['I1'] = { v: 'Giới tính', t: 's' };
+            worksheet['J1'] = { v: 'Số điện thoại', t: 's' };
+            worksheet['K1'] = { v: 'Đơn vị quản lý', t: 's' };
+            worksheet['L1'] = { v: 'Chức vụ', t: 's' };
+        }
+        
+        // Thêm Worksheet vào Workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+        // Chuyển đổi Workbook thành dạng binary
+        var wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'binary' });
+        // Chuyển đổi dạng binary thành ArrayBuffer
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i = 0; i < s.length; i++) {
+                view[i] = s.charCodeAt(i) & 0xff;
+            }
+            return buf;
+        }
+        // Tạo một Blob từ ArrayBuffer
+        var blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+
+        // Tạo một URL cho Blob
+        var url = URL.createObjectURL(blob);
+
+        // Tạo một đường link tải xuống
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = 'dstk.xlsx';
+
+        // Thêm đường link vào DOM và tự động kích hoạt sự kiện click để tải xuống
+        // export_excel_btn.append(link);
+        link.click();
+        // document.body.removeChild(link);
+    }
+
+    //Xử lý việc import file để thêm tài khoản người dùng
+    const [file, setFile] = useState(null);
+    const [data, setData] = useState(null);
+    const handleFileChange = (e) => {
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+
+        if (selectedFile) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const fileData = event.target.result;
+                const workbook = XLSX.read(fileData, { type: 'binary' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const parsedData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });                
+                setData(parsedData);
+            };
+            reader.readAsBinaryString(selectedFile);
+        }
+    };
+    
+    //Xử lý việc submit thêm tài khoản bằng cách import file
+    const noti1 = useRef();
+    const noti2 = useRef();
+    const noti3 = useRef();
+    const noti4 = useRef();
+    const noti5 = useRef();
+    //State để lưu all user trong DB để kiểm tra trùng lặp trong file excel
+    const [allUserAccountInDB, setAllUserAccountInDB] = useState([]);
+
+    //State lưu trữ STT của các dòng dữ liệu trùng MSSV/CB trong file excel
+    const [dsTrungMSSV, setDsTrungMSSV] = useState([]);
+    //State lưu trữ STT của các dòng dữ liệu trùng email trong file excel
+    const [dsTrungEmail, setDsTrungEmail] = useState([]);
+    //State lưu trữ STT của các dòng dữ liệu trùng CCCD trong file excel
+    const [dsTrungCCCD, setDsTrungCCCD] = useState([]);
+
+    //Hàm gọi api lấy all user trong DB
+    const getAllUserAccount = async () => {
+        try{
+            const res = await axios.get("http://localhost:8000/v1/user_account/get_all_useraccount");
+            setAllUserAccountInDB(res.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    //Hàm xử lý submit thêm user account bằng file excel
+    const handleSubmitImportAddUserAccount = async () => {
+        //Nếu chưa chọn file thì thông báo lỗi        
+        if(file == null){
+            noti1.current.showToast();
+            return;
+        }
+        
+        //Biến này là true nếu có CCCD, email, MSSV_CB bị trùng
+        let isFault = false;
+
+        //Kiểm tra trùng MSSV_CB
+        let listTrungMSSV_CB = [];
+        //Kiểm tra trùng email
+        let listTrungEmail = [];
+        //Kiểm tra trung CCCD
+        let listTrungCCCD = [];
+        
+        let allDataExcel = [];
+
+        for(let i = 1; i<data.length; i++){
+            //Xử lý cột giới tính
+            let gioiTinh = false;
+            if(data[i][8] == "Nam"){
+                gioiTinh = true;
+            }
+
+            //Xử lý ngày sinh
+            let ngaySinh = '';
+            const dateOfBirthExcel = new Date((data[i][5] - 25569) * 86400 * 1000);
+            let monthOfdateOfBirthExcel;
+            if(dateOfBirthExcel.getMonth() + 1 < 10){
+                monthOfdateOfBirthExcel = `0${dateOfBirthExcel.getMonth() + 1}`;
+            }else{
+                monthOfdateOfBirthExcel = dateOfBirthExcel.getMonth() + 1;
+            }
+            let dayOfdateOfBirthExcel;
+            if(dateOfBirthExcel.getDate() < 10){
+                dayOfdateOfBirthExcel = `0${dateOfBirthExcel.getDate()}`;
+            }else{
+                dayOfdateOfBirthExcel = dateOfBirthExcel.getDate();
+            }
+            ngaySinh = `${dateOfBirthExcel.getFullYear()}-${monthOfdateOfBirthExcel}-${dayOfdateOfBirthExcel}`;
+
+            //Xử lý trùng mssv_cb, email, cccd
+            allUserAccountInDB?.forEach((user)=>{
+                if(user.mssv_cb == data[i][2]){
+                    listTrungMSSV_CB = [...listTrungMSSV_CB, i];
+                    isFault = true;
+                }
+
+                if(user.email == data[i][3]){
+                    listTrungEmail = [...listTrungEmail, i];
+                    isFault = true;
+                }
+
+                if(user.cccd == data[i][7]){
+                    listTrungCCCD = [...listTrungCCCD, i];
+                    isFault = true;
+                }
+            })
+
+            setDsTrungMSSV(listTrungMSSV_CB);
+            setDsTrungEmail(listTrungEmail);
+            setDsTrungCCCD(listTrungCCCD);
+
+            if(positionImport == "Student"){
+                //Xử lý khoa
+                let khoa;
+                faculty?.forEach((currentValue)=>{
+                    if(currentValue.faculty_name == data[i][11]){
+                        khoa = currentValue.faculty_id;
+                    }
+                })
+    
+                //Xử lý ngành
+                let nganh;
+                allMajorsShowModal?.forEach((currentValue)=>{
+                    if(data[i][12] == currentValue.majors_name){
+                        nganh = currentValue.majors_id;
+                    }
+                })
+                const newUserAccountObject = {
+                    fullname: data[i][1], 
+                    mssv_cb: data[i][2],
+                    email: data[i][3],
+                    password: data[i][4],
+                    dateofbirth: ngaySinh,
+                    address: data[i][6],
+                    cccd: data[i][7],
+                    sex: gioiTinh,
+                    phonenumber: data[i][9],
+                    position: "Student",
+                    class: data[i][10],
+                    faculty: khoa,
+                    majors: nganh,
+                    course: data[i][13],
+                    management_unit: null,
+                    role: []
+                }
+                allDataExcel = [...allDataExcel, newUserAccountObject];
+            }else{
+                //Xử lý đơn vị quản lý
+                let don_vi_ql;
+                managementUnit?.forEach((currentValue)=>{
+                    if(data[i][10] == currentValue.management_unit_name){
+                        don_vi_ql = currentValue.management_unit_id;
+                    }
+                })
+                //Xử lý chức vụ
+                let chuc_vu;
+                switch(data[i][11]){
+                    case "Cán bộ nhập văn bằng":
+                        chuc_vu = "Diploma importer";
+                        break;
+                    case "Cán bộ duyệt văn bằng":
+                        chuc_vu = "Diploma reviewer";
+                        break;
+                    case "Trưởng phòng/Giám đốc Trung tâm": 
+                        chuc_vu = "Center Director_Head of Department";
+                        break;
+                    case "Thư ký":
+                        chuc_vu = "Secretary";
+                        break;
+                    case "Thủ kho":
+                        chuc_vu = "Stocker";
+                        break;    
+                }
+
+                const newUserAccountObject = {
+                    fullname: data[i][1],
+                    mssv_cb: data[i][2],
+                    email: data[i][3],
+                    password: data[i][4],
+                    dateofbirth: ngaySinh,
+                    address: data[i][6],
+                    cccd: data[i][7],
+                    sex: gioiTinh,
+                    phonenumber: data[i][9],
+                    position: "Officer",
+                    class: "",
+                    faculty: null,
+                    majors: null,
+                    course: null,
+                    management_unit: don_vi_ql,
+                    role: chuc_vu
+                }
+                allDataExcel = [...allDataExcel, newUserAccountObject];
+            }   
+        }
+        if(isFault){
+            return;
+        }else{
+            for(let j = 0; j<allDataExcel.length; j++){
+                await registerUser(allDataExcel[j], dispatch, user.accessToken);
+            }
+            noti2.current.showToast();
+            setTimeout(async()=>{
+                await searchUserAccountByName(inputSearch, inputMSSV_CB, inputPosition);
+            }, 2000);
+            setFile(null);
+        }
+    }
+
+    useLayoutEffect(()=>{
+        if(dsTrungMSSV.length>0){
+            noti3.current.showToast();
+        }
+    }, [dsTrungMSSV])
+
+    useLayoutEffect(()=>{
+        if(dsTrungEmail.length>0){
+            noti4.current.showToast();
+        }
+    }, [dsTrungEmail])
+    
+    useLayoutEffect(()=>{
+        if(dsTrungCCCD.length>0){
+            noti5.current.showToast();
+        }
+    }, [dsTrungCCCD])
+
     return (
         <>
             <Header />
@@ -310,9 +639,105 @@ export default function UserAccountManagement() {
                         </div>
                         <div className="col-md-9">
                             <div className="card p-3">
-                                <div>
-                                    <button type="button" id='add-user-account-useraccountmanagement' data-bs-toggle="modal" data-bs-target="#exampleModalAddUserAccount">Thêm mới tài khoản</button>
+                                <div className='d-flex'>
+                                    <div>
+                                        <button 
+                                            type="button" 
+                                            id='add-user-account-useraccountmanagement' 
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#exampleModalAddUserAccount"
+                                        >Thêm mới tài khoản</button>
+                                    </div>
+                                    <div>
+                                        <button 
+                                            className='btn btn-info'
+                                            id='import-btn-user-account-useraccountmanagement'
+                                            onClick={(e)=>{
+                                                setShowImport(!showImport);
+                                            }}
+                                        >Import</button>
+                                    </div>
                                 </div>
+
+                                {
+                                    showImport ? (
+                                        <>
+                                            <div className='mt-3 row'>
+                                                <div className="col-8">
+                                                    <div className='card p-3'>
+                                                        <div className="row">
+                                                            <div className="col-4">
+                                                                Chọn loại tài khoản
+                                                            </div>
+                                                            <div className="col-8">
+
+                                                                <input 
+                                                                    className="form-check-input" 
+                                                                    type="radio" 
+                                                                    checked={positionImport == "Student"}
+                                                                    onChange={() => {
+                                                                        handlePositionImport("Student")
+                                                                    }}
+                                                                    id="checked-loai-tk-student-import" 
+                                                                />&nbsp;
+                                                                <label 
+                                                                    className="form-check-label" 
+                                                                    htmlFor="checked-loai-tk-student-import">
+                                                                    Sinh viên
+                                                                </label>&nbsp;
+
+                                                                <input 
+                                                                    style={{marginLeft:"20px"}}
+                                                                    className="form-check-input" 
+                                                                    type="radio" 
+                                                                    checked={positionImport == "Officer"}
+                                                                    onChange={() => {
+                                                                        handlePositionImport("Officer")
+                                                                    }}
+                                                                    id="checked-loai-tk-officer-import" 
+                                                                />&nbsp;
+                                                                <label 
+                                                                    className="form-check-label" 
+                                                                    htmlFor="checked-loai-tk-officer-import">
+                                                                    Cán bộ
+                                                                </label>&nbsp;
+                                                            </div>
+                                                        </div>
+                                                        <div className='mt-2'>
+                                                            <button 
+                                                                className='btn' 
+                                                                style={{backgroundColor: '#fed25c'}}
+                                                                onClick={(e)=>{
+                                                                    createAndDownloadExcel()
+                                                                }}
+                                                            >Mẫu import</button>
+                                                        </div>
+                                                        <div className="mt-4">
+                                                            <div className="input-group">
+                                                                <input 
+                                                                    type="file" className="form-control" 
+                                                                    id="inputFileAddUserAccount" 
+                                                                    aria-describedby="inputFileAddUserAccount01" 
+                                                                    aria-label="Upload"
+                                                                    accept=".xlsx" 
+                                                                    onChange={handleFileChange}
+                                                                />
+                                                                <button 
+                                                                    className="btn btn-outline-secondary" 
+                                                                    type="button" 
+                                                                    id="inputFileAddUserAccount01"
+                                                                    onClick={(e)=>{
+                                                                        handleSubmitImportAddUserAccount()
+                                                                    }}
+                                                                >Thêm tài khoản</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : ("")
+                                }                                
                                 <div className='mt-3'>
                                     <div className="row">
                                         <div className="col-4">
@@ -345,7 +770,7 @@ export default function UserAccountManagement() {
                                                     setInputPosition(e.target.value);
                                                 }}
                                             >
-                                                <option value="">Lọc theo chức vụ</option>
+                                                <option value="">Lọc theo loại tài khoản</option>
                                                 <option value="Student">Sinh viên</option>
                                                 <option value="Officer">Cán bộ</option>
                                             </select>
@@ -359,7 +784,7 @@ export default function UserAccountManagement() {
                                                 <th scope="col"></th>
                                                 <th scope="col">Họ tên</th>
                                                 <th scope="col">MSSV/CB</th>
-                                                <th scope="col">Chức vụ</th>
+                                                <th scope="col">Loại tài khoản</th>
                                                 <th scope="col"></th>
                                             </tr>
                                         </thead>
@@ -1319,6 +1744,31 @@ export default function UserAccountManagement() {
                         isError ? "error" : "success"
                     }
                     ref={noti}
+                />
+                <Toast
+                    message="Vui lòng chọn file excel chứa thông tin tài khoản để thêm tài khoản"
+                    type="warning"
+                    ref={noti1}
+                />
+                <Toast
+                    message="Thêm tài khoản người dùng thành công"
+                    type="success"
+                    ref={noti2}
+                />
+                <Toast
+                    message={`MSSV/CB có STT ${dsTrungMSSV} trong file excel đã tồn tại`}
+                    type="warning"
+                    ref={noti3}
+                />
+                <Toast
+                    message={`Email có STT ${dsTrungEmail} trong file excel đã tồn tại`}
+                    type="warning"
+                    ref={noti4}
+                />
+                <Toast
+                    message={`Số CCCD có STT ${dsTrungCCCD} trong file excel đã tồn tại`}
+                    type="warning"
+                    ref={noti5}
                 />
             </div>
             <Footer/>
