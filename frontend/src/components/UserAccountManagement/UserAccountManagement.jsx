@@ -805,6 +805,8 @@ export default function UserAccountManagement() {
                                                         quyen = "Cán bộ duyệt văn bằng"
                                                     }else if(currentValue.role[0] == "Center Director_Head of Department"){
                                                         quyen = "Giám đốc Trung tâm/Trưởng phòng"
+                                                    }else if(currentValue.role[0] == "Leader"){
+                                                        quyen = "Tổ trưởng"
                                                     }
                                                     return(
                                                         <tr key={index}>
@@ -1667,53 +1669,38 @@ export default function UserAccountManagement() {
                                                                         style={{ fontSize: '12px', fontStyle: 'italic' }}>Chức vụ</label>
                                                                 </div>
                                                                 <div className="col-10">
-                                                                    {/* <input 
-                                                                        className="form-check-input"
-                                                                        checked={role=="Diploma importer"} 
-                                                                        onChange={()=>{
-                                                                            setRole("Diploma importer")
-                                                                        }}
-                                                                        type="radio" 
-                                                                        id="enter-diploma-user-account-useraccountmanagement" />&nbsp;
-                                                                    <label className="form-check-label" htmlFor="enter-diploma-user-account-useraccountmanagement">
-                                                                        Cán bộ nhập văn bằng
-                                                                    </label>&nbsp;
-                                                                
-                                                                    <input 
-                                                                        className="form-check-input" 
-                                                                        checked={role=="Diploma reviewer"} 
-                                                                        onChange={()=>{
-                                                                            setRole("Diploma reviewer")
-                                                                        }}
-                                                                        type="radio" 
-                                                                        id="diploma-approval-user-account-useraccountmanagement" />&nbsp;
-                                                                    <label className="form-check-label" htmlFor="diploma-approval-user-account-useraccountmanagement">
-                                                                        Cán bộ duyệt văn bằng
-                                                                    </label>
+                                                                    {
+                                                                        choose_managementUnit!=13 ? (
+                                                                            <Select
+                                                                                options = {[
+                                                                                    {value: "Diploma importer", label: "Cán bộ nhập văn bằng"},
+                                                                                    {value: "Diploma reviewer", label: "Cán bộ duyệt văn bằng"},
+                                                                                    {value: "Center Director_Head of Department", label: "Trưởng phòng/Giám đốc Trung tâm"},
+                                                                                    // {value: "Secretary", label: "Thư ký"},
+                                                                                    // {value: "Stocker", label: "Thủ kho"},
+                                                                                ]}
+                                                                                value={role}
+                                                                                onChange={handleChangeSelectRole}
+                                                                                placeholder="Chọn chức vụ tài khoản"
+                                                                            />
+                                                                        ) : (
+                                                                            <Select
+                                                                                options = {[
+                                                                                    // {value: "Diploma importer", label: "Cán bộ nhập văn bằng"},
+                                                                                    // {value: "Diploma reviewer", label: "Cán bộ duyệt văn bằng"},
+                                                                                    // {value: "Center Director_Head of Department", label: "Trưởng phòng/Giám đốc Trung tâm"},
+                                                                                    {value: "Leader", label: "Tổ trưởng"},
+                                                                                    {value: "Secretary", label: "Thư ký"},
+                                                                                    {value: "Stocker", label: "Thủ kho"},
+                                                                                ]}
+                                                                                value={role}
+                                                                                onChange={handleChangeSelectRole}
+                                                                                placeholder="Chọn chức vụ tài khoản"
+                                                                            />
+                                                                        )
+                                                                    }
 
-                                                                    <input 
-                                                                        className="form-check-input" 
-                                                                        checked={role=="Center Director_Head of Department"} 
-                                                                        onChange={()=>{
-                                                                            setRole("Center Director_Head of Department")
-                                                                        }}
-                                                                        type="radio" 
-                                                                        id="diploma-approval-user-account-useraccountmanagement" />&nbsp;
-                                                                    <label className="form-check-label" htmlFor="diploma-approval-user-account-useraccountmanagement">
-                                                                        Trưởng phòng/Giám đốc Trung tâm
-                                                                    </label> */}
-                                                                    <Select
-                                                                        options = {[
-                                                                            {value: "Diploma importer", label: "Cán bộ nhập văn bằng"},
-                                                                            {value: "Diploma reviewer", label: "Cán bộ duyệt văn bằng"},
-                                                                            {value: "Center Director_Head of Department", label: "Trưởng phòng/Giám đốc Trung tâm"},
-                                                                            {value: "Secretary", label: "Thư ký"},
-                                                                            {value: "Stocker", label: "Thủ kho"},
-                                                                        ]}
-                                                                        value={role}
-                                                                        onChange={handleChangeSelectRole}
-                                                                        placeholder="Chọn chức vụ tài khoản"
-                                                                    />
+                                                                    
                                                                 </div>
                                                             </div>
                                                         </>

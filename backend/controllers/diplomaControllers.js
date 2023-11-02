@@ -209,7 +209,7 @@ const diplomaControllers = {
             return res.status(500).json(error);
         }
     },
-    searchDiplomaTraCuu: async(req, res) => {
+    searchDiplomaTraCuu: async(req, res) => { //controller này dùng cho trang chủ tra cứu với quyền người dùng != người dùng khách và student
         try{
             const diploma_name_id = parseInt(req.query.diploma_name_id);
             const fullname = req.query.fullname;
@@ -229,6 +229,28 @@ const diplomaControllers = {
             return res.status(500).json(error);
         }
     },
+    searchDiplomaTraCuuForStudentAndClientUser: async (req, res) => { //controller này dùng cho trang chủ tra cứu với loại tài khoản student và người dùng khách
+        try{
+            const diploma_name_id = parseInt(req.query.diploma_name_id);
+            const fullname = req.query.fullname;
+            const diploma_number = req.query.diploma_number;
+            const number_in_note = req.query.number_in_note;
+
+            const result = await DiplomaModel.find({
+                diploma_name_id: diploma_name_id,
+                fullname: { $regex: `${fullname}`, $options: 'i'},
+                diploma_number: diploma_number,
+                numbersIntoTheNotebook: number_in_note,
+                status: "Đã duyệt"
+            })
+
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+
+
     getAllDiplomaByDiplomaNameId: async (req,res) => {
         try{
             const result = await DiplomaModel.find({diploma_name_id: parseInt(req.params.diploma_name_id)});  

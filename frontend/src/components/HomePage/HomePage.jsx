@@ -8,11 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import Toast from '../Toast/Toast';
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import ReactPaginate from 'react-paginate';
+
 export default function HomePage() {
+    const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
     //State dùng để chứa all tên(loại) văn bằng
     const allDiplomaName = useSelector((state) => state.diplomaName.diplomaNames?.allDiplomaName); //state lấy ra all diploma name
@@ -24,7 +24,22 @@ export default function HomePage() {
 
     useEffect(()=>{
         getAllDiplomaName(dispatch);
+        getAllMajorsShowModal();
     }, [])
+
+
+    //State chứa all ngành đào tạo
+    const [allMajorInDB, setAllMajorInDB] = useState([]);
+
+    //Hàm lấy ra all majors
+    const getAllMajorsShowModal = async () =>{
+        try{
+            const result = await axios.get("http://localhost:8000/v1/majors/get_all_majors_show_modal");
+            setAllMajorInDB(result.data); 
+        }catch(error){
+            console.log(error);
+        }
+    }
 
     useEffect(()=>{
         let optionResult = [];
@@ -55,7 +70,12 @@ export default function HomePage() {
             noti.current.showToast();
         }
         try{
-            const result = await axios.get(`http://localhost:8000/v1/diploma/search_diploma_tracuu?diploma_name_id=${selectedDiplomaName?.value}&fullname=${fullname}&diploma_number=${diplomaNumber}&number_in_note=${numberInNote}`);
+            let result;
+            if(user==null || user.position=="Student"){
+                result = await axios.get(`http://localhost:8000/v1/diploma/search_diploma_tracuu_for_student_and_client_user?diploma_name_id=${selectedDiplomaName?.value}&fullname=${fullname}&diploma_number=${diplomaNumber}&number_in_note=${numberInNote}`)
+            }else{
+                result = await axios.get(`http://localhost:8000/v1/diploma/search_diploma_tracuu?diploma_name_id=${selectedDiplomaName?.value}&fullname=${fullname}&diploma_number=${diplomaNumber}&number_in_note=${numberInNote}`);
+            }
             setAllDIplomaSearch(result.data);
             setPage(1);
         }catch(error){
@@ -84,7 +104,7 @@ export default function HomePage() {
                 setAllDiplomaShow(allDiplomaSearch);
             }   
         }       
-    });
+    }, [page, allDiplomaSearch]);
 
     const noti = useRef();
 
@@ -94,12 +114,26 @@ export default function HomePage() {
     const [sexShowModal, setSexShowModal] = useState("");
     const [dateofbirthShowModal,setDateofbirthShowModal] = useState("");
     const [addressShowModal, setAddressShowModal] = useState("");
-    const [testDayShowModal, setTestDayShowModal] = useState("");
-    const [classificationShowModal, setClassificationShowModal] = useState("");
-    const [graduationYearShowModal, setGraduationYear] = useState("");
+    const [cccdShowModal, setCCCDShowModal] = useState("");
     const [signDayShowModal, setSignDayShowModal] = useState("");
     const [diplomaNumberShowModal, setDiplomaNumberShowModal] = useState("");
     const [numberInNoteShowModal, setNumberInNoteShowModal] = useState("");
+
+    const [diemTNShowModal, setDiemTNShowModal] = useState("");
+    const [diemTHShowModal, setDiemTHShowModal] = useState("");
+    const [ngheShowModal, setNgheShowModal] = useState("");
+    const [noiShowModal, setNoiShowModal] = useState("");
+    const [docShowModal, setDocShowModal] = useState("");
+    const [vietShowModal, setVietShowModal] = useState("");
+    const [testDayShowModal, setTestDayShowModal] = useState("");
+    const [graduationYearShowModal, setGraduationYear] = useState("");
+    const [classificationShowModal, setClassificationShowModal] = useState("");
+    const [nganhDaoTaoShowModal, setNganhDaoTaoShowModal] = useState("");
+    const [councilShowModal, setCouncilShowModal] = useState("");
+    
+    //State chứa options của diplomaName được chọn khi xem chi tiết diploma
+    const [optionsOfDiplomaName, setOptionsOfDiplomaName] = useState([]);
+    
     return (
         <>
             <Header />
@@ -234,6 +268,7 @@ export default function HomePage() {
                                                     allDiplomaName?.forEach((diplomaName)=>{
                                                         if(currentValue.diploma_name_id == diplomaName.diploma_name_id){
                                                             setDiplomaNameShowModal(diplomaName.diploma_name_name);
+                                                            setOptionsOfDiplomaName(diplomaName.options);
                                                         }
                                                     })
                                                     setFullnameShowModal(currentValue.fullname);
@@ -244,12 +279,27 @@ export default function HomePage() {
                                                     }
                                                     setDateofbirthShowModal(currentValue.dateofbirth);
                                                     setAddressShowModal(currentValue.address);
-                                                    setTestDayShowModal(currentValue.test_day);
-                                                    setClassificationShowModal(currentValue.classification);
-                                                    setGraduationYear(currentValue.graduationYear);
+                                                    setCCCDShowModal(currentValue.cccd);
                                                     setSignDayShowModal(currentValue.sign_day);
                                                     setDiplomaNumberShowModal(currentValue.diploma_number);
                                                     setNumberInNoteShowModal(currentValue.numbersIntoTheNotebook);
+
+                                                    setDiemTNShowModal(currentValue.diem_tn);
+                                                    setDiemTHShowModal(currentValue.diem_th);
+                                                    setNgheShowModal(currentValue.nghe);
+                                                    setNoiShowModal(currentValue.noi);
+                                                    setDocShowModal(currentValue.doc);
+                                                    setVietShowModal(currentValue.viet);
+                                                    setTestDayShowModal(currentValue.test_day);
+                                                    setGraduationYear(currentValue.graduationYear);
+                                                    setClassificationShowModal(currentValue.classification);
+
+                                                    allMajorInDB?.forEach((major)=>{
+                                                        if(major.majors_id == currentValue.nganh_dao_tao){
+                                                            setNganhDaoTaoShowModal(major.majors_name);
+                                                        }
+                                                    })
+                                                    setCouncilShowModal(currentValue.council);
                                                 }}
                                                 className="fa-solid fa-eye"
                                                 data-bs-toggle="modal" 
@@ -357,30 +407,12 @@ export default function HomePage() {
                                     </div>
                                 </div>
                                 <div className="row mt-2">
-                                     <div className="col-3">
-                                        <label 
-                                            className='col-form-label text-end d-block'
-                                            style={{ fontStyle: 'italic' }}
-                                        >
-                                            Ngày kiểm tra
-                                        </label>
-                                    </div>
-                                    <div className="col-9">
-                                        <input 
-                                            type="text" 
-                                            readOnly={true} 
-                                            className='form-control'  
-                                            value={testDayShowModal} 
-                                        /> 
-                                    </div>
-                                </div>
-                                <div className="row mt-2">
                                     <div className="col-3">
                                         <label 
                                             className='col-form-label text-end d-block'
                                             style={{ fontStyle: 'italic' }}
                                         >
-                                            Xếp loại
+                                            CCCD
                                         </label>
                                     </div>
                                     <div className="col-9">
@@ -388,25 +420,7 @@ export default function HomePage() {
                                             type="text" 
                                             readOnly={true} 
                                             className='form-control'  
-                                            value={classificationShowModal} 
-                                        /> 
-                                    </div>
-                                </div>
-                                <div className="row mt-2">
-                                    <div className="col-3">
-                                        <label 
-                                            className='col-form-label text-end d-block'
-                                            style={{ fontStyle: 'italic' }}
-                                        >
-                                            Năm tốt nghiệp
-                                        </label>
-                                    </div>
-                                    <div className="col-9">
-                                        <input 
-                                            type="text" 
-                                            readOnly={true} 
-                                            className='form-control'  
-                                            value={graduationYearShowModal} 
+                                            value={cccdShowModal} 
                                         /> 
                                     </div>
                                 </div>
@@ -464,6 +478,254 @@ export default function HomePage() {
                                         /> 
                                     </div>
                                 </div>
+
+                                {
+                                    optionsOfDiplomaName.includes(1) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Điểm trắc nghiệm
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={diemTNShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+                                {
+                                    optionsOfDiplomaName.includes(2) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Điểm thực hành
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={diemTHShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+                                {
+                                    optionsOfDiplomaName.includes(3) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Điểm kỹ năng nghe
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={ngheShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+                                {
+                                    optionsOfDiplomaName.includes(4) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Điểm kỹ năng nói
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={noiShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+                                {
+                                    optionsOfDiplomaName.includes(5) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Điểm kỹ năng đọc
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={docShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+                                {
+                                    optionsOfDiplomaName.includes(6) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Điểm kỹ năng viết
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={vietShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+                                {
+                                    optionsOfDiplomaName.includes(7) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Ngày thi
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={testDayShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+                                {
+                                    optionsOfDiplomaName.includes(8) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Năm tốt nghiệp
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={graduationYearShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+                                {
+                                    optionsOfDiplomaName.includes(9) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Xếp loại
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={classificationShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+                                {
+                                    optionsOfDiplomaName.includes(10) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Ngành đào tạo
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={nganhDaoTaoShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+                                {
+                                    optionsOfDiplomaName.includes(11) ? (
+                                        <div className="row mt-2">
+                                            <div className="col-3">
+                                                <label 
+                                                    className='col-form-label text-end d-block'
+                                                    style={{ fontStyle: 'italic' }}
+                                                >
+                                                    Hội đồng thi
+                                                </label>
+                                            </div>
+                                            <div className="col-9">
+                                                <input 
+                                                    type="text" 
+                                                    readOnly={true} 
+                                                    className='form-control'  
+                                                    value={councilShowModal} 
+                                                /> 
+                                            </div>
+                                        </div>
+                                    ) : ("")
+                                }
+
+                                
+                                
+                                
+                                
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>

@@ -12,7 +12,6 @@ export default function Navbar() {
     var currentElement = document.querySelector(".trang-chu");
     useEffect(()=>{
         let currentURL = window.location.pathname;
-        // console.log(currentURL);
         switch(currentURL) {
             case '/': 
                 if(role == 'System administrator'){
@@ -40,8 +39,13 @@ export default function Navbar() {
                         currentElement.classList.add("active-nav-navbar");  
                     }
                     break;
-                }
-                else{
+                }else if(role == "Leader"){
+                    var currentElement = document.querySelector("#trang-chu6");
+                    if(currentElement!=null){
+                        currentElement.classList.add("active-nav-navbar");  
+                    }
+                    break;
+                }else{
                     var currentElement = document.querySelector("#trang-chu4");
                     if(currentElement!=null){
                         currentElement.classList.add("active-nav-navbar");  
@@ -78,6 +82,10 @@ export default function Navbar() {
                 break;  
             case '/manage_requests_for_diploma_drafts':
                 var currentElement = document.querySelector("#quan-ly-yc-cap-phoi");
+                currentElement.classList.add("active-nav-navbar");
+                break;
+            case '/approve_request_for_issuance_of_embryos':
+                var currentElement = document.querySelector("#duyet-yc-cap-phoi");
                 currentElement.classList.add("active-nav-navbar");
                 break;
             }
@@ -164,6 +172,15 @@ export default function Navbar() {
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/manage_requests_for_diploma_drafts" id='quan-ly-yc-cap-phoi'>Quản lý yêu cầu xin cấp phôi văn bằng</Link>
+                                </li>
+                            </ul>
+                        ) : role == "Leader" ? (
+                            <ul className="navbar-nav">
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/" id='trang-chu6'>Tra cứu</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/approve_request_for_issuance_of_embryos" id='duyet-yc-cap-phoi'>Duyệt yêu cầu xin cấp phôi văn bằng</Link>
                                 </li>
                             </ul>
                         ) : (

@@ -17,6 +17,19 @@ export default function DiplomaReview(){
     const [optionForSelectDiplomaNameDR, setOptionForSelectDiplomaNameDR] = useState([]);
     const [selectedForSelectDiplomaNameDR, setSelectedForSelectDiplomaNameDR] = useState();
 
+    //State chứa all ngành đào tạo
+    const [allMajorInDB, setAllMajorInDB] = useState([]);
+
+    //Hàm lấy ra all majors
+    const getAllMajorsShowModal = async () =>{
+        try{
+            const result = await axios.get("http://localhost:8000/v1/majors/get_all_majors_show_modal");
+            setAllMajorInDB(result.data); 
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     //Hàm lấy ra các tên (loại văn bằng) được quản lý bởi đơn vị quản lý của tài khoản Diploma reviewer dùng cho select
     const getAllDiplomaNameByMU = async (management_unit_id) => {
         try{
@@ -36,6 +49,7 @@ export default function DiplomaReview(){
     useEffect(()=>{
         getAllDiplomaNameByMU(user.management_unit);
         getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
+        getAllMajorsShowModal();
     }, [])
 
     useEffect(()=>{
@@ -96,13 +110,24 @@ export default function DiplomaReview(){
     const [sexModalReview, setSexModalReview] = useState();
     const [dateofbirthModalReview, setDateofBirthModalReview] = useState("");
     const [addressModalReview, setAddressModalReview] = useState("");
-    const [testDayModalReview, setTestdayModalReview] = useState("");
-    const [councilModalReview, setCouncilModalReview] = useState("");
-    const [classificationModalReview, setClassificationModalReview] = useState("");
-    const [graduationYearModalReview, setGraduationYearModalReview] = useState("");
+    const [CCCDModalReview, setCCCDModalReview] = useState("");
     const [signDayModalReview, setSignDayModalReview] = useState("");
     const [diplomaNumberModalReview, setDiplomaNumberModalReview] = useState("");
     const [numberInNoteModalReview, setNumberInNoteModalReview] = useState("");
+
+    const [diemTNModalReview, setDiemTNModalReview] = useState("");
+    const [diemTHModalReview, setDiemTHModalReview] = useState("");
+    const [ngheModalReview, setNgheModalReview] = useState("");
+    const [noiModalReview, setNoiModalReview] = useState("");
+    const [docModalReview, setDocModalReview] = useState("");
+    const [vietModalReview, setVietModalReview] = useState("");
+    const [testDayModalReview, setTestdayModalReview] = useState("");
+    const [graduationYearModalReview, setGraduationYearModalReview] = useState("");
+    const [classificationModalReview, setClassificationModalReview] = useState("");
+    const [nganhDaoTaoModalReview, setNganhDaoTaoModalReview] = useState("");
+    const [councilModalReview, setCouncilModalReview] = useState("");
+    
+    const [optionsOfDiplomaNameModalReview, setOptionsOfDiplomaNameModalReview] = useState("");
     const [statusModalReview, setStatusModalReview] = useState("");
 
     //Phần diễn giải sẽ được thêm vào DB khi duyệt hoặc không duyệt
@@ -198,7 +223,7 @@ export default function DiplomaReview(){
                 setAllDiplomaByListOfDiplomaNameShow(allDiplomaByListOfDiplomaName);
             }         
         }
-    });
+    },[allDiplomaByListOfDiplomaName, page]);//nếu chạy lỗi thì bỏ depen này
 
     return(
         <>
@@ -293,15 +318,13 @@ export default function DiplomaReview(){
                                         <tr>
                                             <th style={{width: '50px'}} scope="col"></th>
                                             <th scope="col">STT</th>
+                                            <th scope="col">Tên văn bằng</th>
                                             <th scope='col'>Trạng thái</th>
                                             <th scope="col">Họ tên</th>
                                             <th scope="col">Giới tính</th>
                                             <th scope="col">Ngày sinh</th>
                                             <th scope="col">Nơi sinh</th>
-                                            <th scope="col">Ngày kiểm tra</th>
-                                            <th scope="col">Hội đồng</th>
-                                            <th scope="col">Xếp loại</th>
-                                            <th scope="col">Năm tốt nghiệp</th>
+                                            <th scope="col">CCCD</th>
                                             <th scope="col">Ngày ký</th>
                                             <th scope="col">Số hiệu</th>
                                             <th scope="col">Số vào sổ</th>
@@ -310,6 +333,33 @@ export default function DiplomaReview(){
                                     <tbody>
                                         {
                                             allDiplomaByListOfDiplomaNameShow?.map((currentValue, index)=>{
+                                                //Xử lý giới tính
+                                                let sex;
+                                                if(currentValue.sex){
+                                                    sex = "Nam"
+                                                }else{
+                                                    sex = "Nữ"
+                                                }
+
+                                                //Lấy ra tên văn bằng
+                                                let ten_van_bang;
+
+                                                //Lấy ra options của diplomaName
+                                                let options;
+                                                allDiplomaNameByMU?.forEach((diplomaName)=>{
+                                                    if(diplomaName.diploma_name_id == currentValue.diploma_name_id){
+                                                        ten_van_bang = diplomaName.diploma_name_name;
+                                                        options = diplomaName.options;
+                                                    }
+                                                })
+
+                                                let nganh_dao_tao;  
+                                                //Lấy ra ngành đào tạo
+                                                allMajorInDB?.forEach((major)=>{
+                                                    if(major.majors_id == currentValue.nganh_dao_tao){
+                                                        nganh_dao_tao = major.majors_name;
+                                                    }
+                                                })
                                                 return(
                                                 <tr key={index}>
                                                     <td
@@ -324,13 +374,24 @@ export default function DiplomaReview(){
                                                                 setSexModalReview(currentValue.sex);
                                                                 setDateofBirthModalReview(currentValue.dateofbirth);
                                                                 setAddressModalReview(currentValue.address);
-                                                                setTestdayModalReview(currentValue.test_day);
-                                                                setCouncilModalReview(currentValue.council);
-                                                                setClassificationModalReview(currentValue.classification);
-                                                                setGraduationYearModalReview(currentValue.graduationYear);
+                                                                setCCCDModalReview(currentValue.cccd);
                                                                 setSignDayModalReview(currentValue.sign_day);
                                                                 setDiplomaNumberModalReview(currentValue.diploma_number);
                                                                 setNumberInNoteModalReview(currentValue.numbersIntoTheNotebook);
+
+                                                                setDiemTNModalReview(currentValue.diem_tn);
+                                                                setDiemTHModalReview(currentValue.diem_th);
+                                                                setNgheModalReview(currentValue.nghe);
+                                                                setNoiModalReview(currentValue.noi);
+                                                                setDocModalReview(currentValue.doc);
+                                                                setVietModalReview(currentValue.viet);
+                                                                setTestdayModalReview(currentValue.test_day);
+                                                                setGraduationYearModalReview(currentValue.graduationYear);
+                                                                setClassificationModalReview(currentValue.classification);
+                                                                setNganhDaoTaoModalReview(nganh_dao_tao)
+                                                                setCouncilModalReview(currentValue.council);
+                                                                
+                                                                setOptionsOfDiplomaNameModalReview(options);
                                                                 set_IDDiplomaModalReview(currentValue._id);
                                                                 setExplainModalReview("");
                                                                 setStatusModalReview(currentValue.status);
@@ -338,15 +399,13 @@ export default function DiplomaReview(){
                                                         ></i>
                                                     </td>
                                                     <th scope="row" style={{textAlign: 'center'}}>{index+1}</th>
+                                                    <td>{ten_van_bang}</td>
                                                     <td>{currentValue.status}</td>
                                                     <td>{currentValue.fullname}</td>
-                                                    <td>{currentValue.sex}</td>
+                                                    <td>{sex}</td>
                                                     <td>{currentValue.dateofbirth}</td>
                                                     <td>{currentValue.address}</td>
-                                                    <td>{currentValue.test_day}</td>
-                                                    <td>{currentValue.council}</td>
-                                                    <td>{currentValue.classification}</td>
-                                                    <td>{currentValue.graduationYear}</td>
+                                                    <td>{currentValue.cccd}</td>
                                                     <td>{currentValue.sign_day}</td>
                                                     <td>{currentValue.diploma_number}</td>
                                                     <td>{currentValue.numbersIntoTheNotebook}</td>
@@ -414,37 +473,12 @@ export default function DiplomaReview(){
                                     </div>
                                     <div className="row mt-2 inForDiploma-DR">
                                         <div className="col-4 text-end fst-italic">
-                                            Ngày kiểm tra
+                                            CCCD
                                         </div>
                                         <div className="col-8 fw-bold">
-                                            {testDayModalReview}
+                                            {CCCDModalReview}
                                         </div>
                                     </div>
-                                    <div className="row mt-2 inForDiploma-DR">
-                                        <div className="col-4 text-end fst-italic">
-                                            Hội đồng kiểm tra
-                                        </div>
-                                        <div className="col-8 fw-bold">
-                                            {councilModalReview}
-                                        </div>
-                                    </div>
-                                    <div className="row mt-2 inForDiploma-DR">
-                                        <div className="col-4 text-end fst-italic">
-                                            Xếp loại
-                                        </div>
-                                        <div className="col-8 fw-bold">
-                                            {classificationModalReview}
-                                        </div>
-                                    </div>
-                                    <div className="row mt-2 inForDiploma-DR">
-                                        <div className="col-4 text-end fst-italic">
-                                            Năm tốt nghiệp
-                                        </div>
-                                        <div className="col-8 fw-bold">
-                                            {graduationYearModalReview}
-                                        </div>
-                                    </div>
-
                                     <div className="row mt-2 inForDiploma-DR">
                                         <div className="col-4 text-end fst-italic">
                                             Ngày ký
@@ -469,6 +503,149 @@ export default function DiplomaReview(){
                                             {numberInNoteModalReview}
                                         </div>
                                     </div>
+                                    
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(1) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Điểm trắc nghiệm
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {diemTNModalReview}
+                                                </div>
+                                            </div>
+                                        ) : ("")
+                                    }
+
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(2) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Điểm thực hành
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {diemTHModalReview}
+                                                </div>
+                                            </div>
+                                        ) : ("")
+                                    }
+
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(3) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Điểm kỹ năng nghe
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {ngheModalReview}
+                                                </div>
+                                            </div>
+                                        ) : ("")
+                                    }
+
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(4) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Điểm kỹ năng nói
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {noiModalReview}
+                                                </div>
+                                            </div>
+                                        ) : ("")
+                                    }
+
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(5) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Điểm kỹ năng đọc
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {docModalReview}
+                                                </div>
+                                            </div>
+                                        ) : ("")
+                                    }
+
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(6) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Điểm kỹ năng viết
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {vietModalReview}
+                                                </div>
+                                            </div>
+                                        ) : ("")
+                                    }
+
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(7) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Ngày thi
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {testDayModalReview}
+                                                </div>
+                                            </div>
+                                        ) : ("")
+                                    }
+
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(8) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Năm tốt nghiệp
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {graduationYearModalReview}
+                                                </div>
+                                            </div>
+                                        ) : ("")
+                                    }
+
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(9) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Xếp loại
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {classificationModalReview}
+                                                </div>
+                                            </div>
+                                        ) : ("")
+                                    }
+
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(10) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Ngành đào tạo
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {nganhDaoTaoModalReview}
+                                                </div>
+                                            </div>
+                                        ) : ("")
+                                    }
+
+                                    {
+                                        optionsOfDiplomaNameModalReview.includes(11) ? (
+                                            <div className="row mt-2 inForDiploma-DR">
+                                                <div className="col-4 text-end fst-italic">
+                                                    Hội đồng thi
+                                                </div>
+                                                <div className="col-8 fw-bold">
+                                                    {councilModalReview}
+                                                </div>
+                                            </div> 
+                                        ) : ("")
+                                    }                                       
                                 </div>
                                 <div id='footer-modal-review-DR'>
                                     <div className="row">

@@ -60,6 +60,8 @@ export default function UserAccountInfo(){
             setRoleOfUser("Cán bộ duyệt văn bằng");
         }else if(user?.role[0] == "Center Director_Head of Department"){
             setRoleOfUser("Giám đốc Trung tâm/Trưởng phòng");
+        }else if(user?.role[0] == "Leader"){
+            setRoleOfUser("Tổ trưởng");
         }
     }, [])
 

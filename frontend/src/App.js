@@ -19,6 +19,7 @@ import DiplomaDiary from './components/DiplomaDiary/DiplomaDiary';
 import UserAccountInfo from './components/UserAccountInfo/UserAccountInfo';
 import ChangePassword from './components/ChangePassword/ChangePassword';
 import RequestsForDiplomaDrafts from './components/RequestsForDiplomaDrafts/RequestsForDiplomaDrafts';
+import ApproveRequestForIssuanceOfEmbryos from './components/ApproveRequestForIssuanceOfEmbryos/ApproveRequestForIssuanceOfEmbryos';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -42,6 +43,11 @@ const ProtectedRouteUserAccountInfo = ({ isAuthenticated, role, children }) => {
 //Bảo vệ route chỉ cho phép tài khoản có quyền Center Director_Head of Department mới vào dc các trang này
 const ProtectedRouteCenterDirectorHeadOfDepartment = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'Center Director_Head of Department' ? children : <Navigate to="/"/>;
+}
+
+//Bảo vệ route chỉ cho phép tài khoản có quyền Leader mới vào được trang này
+const ProtectedRouteLeader = ({ isAuthenticated, role, children }) => {
+  return isAuthenticated && role == 'Leader' ? children : <Navigate to="/"/>;
 }
 
 function App() {
@@ -193,6 +199,17 @@ function App() {
           >
             <RequestsForDiplomaDrafts/>
           </ProtectedRouteCenterDirectorHeadOfDepartment>
+        )
+      },
+      {
+        path: '/approve_request_for_issuance_of_embryos',
+        element: (
+          <ProtectedRouteLeader
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <ApproveRequestForIssuanceOfEmbryos/>
+          </ProtectedRouteLeader>
         )
       }
     ])

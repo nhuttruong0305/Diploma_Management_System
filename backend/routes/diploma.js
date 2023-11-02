@@ -9,6 +9,8 @@ router.put("/edit_diploma/:_id/:diploma_name_id", middlewareController.verifyTok
 router.delete("/delete_diploma/:_id", middlewareController.verifyTokenAndDiplomaImporter, diplomaControllers.deleteDiploma);
 router.put("/review_diploma/:_id", middlewareController.verifyTokenAndDiplomaReviewer, diplomaControllers.reviewDiploma);
 router.get("/search_diploma_for_diploma_diary", diplomaControllers.searchDiplomaForDiplomaDiary);
-router.get("/search_diploma_tracuu", diplomaControllers.searchDiplomaTraCuu);
+router.get("/search_diploma_tracuu", diplomaControllers.searchDiplomaTraCuu);//route này dùng cho trang chủ tra cứu với quyền người dùng != người dùng khách và student
+router.get("/search_diploma_tracuu_for_student_and_client_user", diplomaControllers.searchDiplomaTraCuuForStudentAndClientUser);//route này dùng cho trang chủ tra cứu với loại tài khoản cán bộ
+
 router.get("/get_all_diploma_by_diploma_name_id/:diploma_name_id", diplomaControllers.getAllDiplomaByDiplomaNameId);
 module.exports = router;
