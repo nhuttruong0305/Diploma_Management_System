@@ -10,6 +10,8 @@ import Toast from '../Toast/Toast';
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import {getAllDiplomaType} from '../../redux/apiRequest';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 export default function RequestsForDiplomaDrafts(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -418,9 +420,42 @@ export default function RequestsForDiplomaDrafts(){
     //state chứa danh sách học viên kèm theo dựa trên yêu cầu cấp phôi
     const [allDSHVByEIR, setAllDSHVByEIR] = useState([]);
 
+    //Phân trang danh sách học viên kèm theo
+    const [page, setPage] = useState(1);
+    const handleChange = (event, value) => {
+        setPage(value);
+    };
+
+    //state lưu danh sách học viên kèm theo được hiện lên màn hình khi phân trang
+    const [allDSHVByEIRShow, setAllDSHVByEIRShow] = useState([]);
+
+    useEffect(()=>{
+        if(page!=undefined && allDSHVByEIR!=undefined){
+            if(allDSHVByEIR.length>5){
+                const numberOfPage = Math.ceil(allDSHVByEIR?.length/5);
+                const startElement = (page - 1) * 5;
+                let endElement = 0;
+                if(page == numberOfPage){
+                    endElement = allDSHVByEIR.length-1;
+                }else{
+                    endElement = page * 5-1;
+                }
+
+                let result = [];
+                for(let i = startElement; i <= endElement; i++){
+                    result = [...result, allDSHVByEIR[i]];
+                }
+                setAllDSHVByEIRShow(result);
+            }else{
+                setAllDSHVByEIRShow(allDSHVByEIR);
+            }         
+        }
+    }, [page, allDSHVByEIR])
+
+
+    //Hàm call api lấy danh sách học viên kèm theo
     const getAllDSHVByEIR = async (embryoIssuanceRequest_id, optionsOfDiplomaName) => {
         const ascending = optionsOfDiplomaName?.slice().sort((a, b) => a - b);
-        console.log("ascending: ",ascending);
         let dshv = [];
         try{
             const res = await axios.get(`http://localhost:8000/v1/DSHV/get_DSHV/${embryoIssuanceRequest_id}`);
@@ -495,11 +530,9 @@ export default function RequestsForDiplomaDrafts(){
             }
             data = [...data, newData];
         }
-        console.log("data: ", data);
         setAllDSHVByEIR(data);
     }
 
-    //Hàm call api lấy danh sách học viên kèm theo
     const downloadDSHV = () => {
         // Tạo dữ liệu bạn muốn đưa vào tệp Excel
         const alphabet = ["G1", "H1", "I1", "J1", "K1", "L1", "M1", "N1", "O1", "P1", "Q1"];
@@ -693,7 +726,7 @@ export default function RequestsForDiplomaDrafts(){
                                 <table className="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th style={{textAlign: 'center'}} scope="col"></th>
+                                            <th style={{textAlign: 'center'}} scope="col">STT</th>
                                             <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
                                             <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
                                             <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
@@ -723,7 +756,7 @@ export default function RequestsForDiplomaDrafts(){
                                                 })
                                                 return(
                                                     <tr key={index}>
-                                                        <th scope="row">{index+1}</th>
+                                                        <th style={{textAlign: 'center'}} scope="row">{index+1}</th>
                                                         <td>{diplomaName}</td>
                                                         <td>{processDateToDMY(currentValue.examination)}</td>
                                                         <td>{currentValue.numberOfEmbryos}</td>
@@ -796,7 +829,7 @@ export default function RequestsForDiplomaDrafts(){
                                                         TRƯỜNG ĐẠI HỌC CẦN THƠ
                                                     </div>
                                                     <div style={{fontSize: '21px', textIndent:'40px', marginTop: '50px', textAlign:'justify'}}>
-                                                        {managementUnitPhieuYC} xin báo cáo tình hình sử dụng phôi và xin cấp phôi {diplomaNameInPhieuYC} đợt thi/đợt cấp bằng tháng {examinationsInPhieuYC}
+                                                        {managementUnitPhieuYC} xin báo cáo tình hình sử dụng phôi và xin cấp phôi {diplomaNameInPhieuYC} đợt thi/đợt cấp bằng {examinationsInPhieuYC}
                                                     </div>
                                                     <div style={{fontSize:'21px', textIndent: '40px', marginTop: '40px', textAlign:'justify'}}>
                                                         Đề nghị Tổ Quản lý VBCC - Trường Đại học Cần Thơ cấp <span style={{fontStyle:'italic'}}>{numberOfEmbryosInPhieuYC}</span> <span style={{fontWeight:'bold'}}>phôi {diplomaNameInPhieuYC}</span> để in {diplomaType.toLowerCase()} cho các thí sinh vào đợt thi/đợt cấp văn bằng như sau:
@@ -870,7 +903,7 @@ export default function RequestsForDiplomaDrafts(){
                                                         <th scope="col">STT</th>
                                                         <th scope="col">Họ tên người được cấp</th>
                                                         <th scope="col">Giới tính</th>
-                                                        <th scope="col">Ngày sinh</th>
+                                                        <th scope="col">Ngày sinh (M/D/Y)</th>
                                                         <th scope="col">Nơi sinh</th>
                                                         <th scope="col">CCCD</th>
                                                         {
@@ -917,7 +950,7 @@ export default function RequestsForDiplomaDrafts(){
                                                         }
                                                         {
                                                             optionsOfDiplomaName?.includes(7) ? (
-                                                                <th scope="col">Ngày thi</th>
+                                                                <th scope="col">Ngày thi (M/D/Y)</th>
                                                             ) : (
                                                                 ""
                                                             )
@@ -954,10 +987,10 @@ export default function RequestsForDiplomaDrafts(){
                                                 </thead>
                                                 <tbody>
                                                     {
-                                                        allDSHVByEIR?.map((currentValue, index)=>{
+                                                        allDSHVByEIRShow?.map((currentValue, index)=>{
                                                             return(
                                                                 <tr key={index}>
-                                                                    <th scope="row">{index + 1}</th>
+                                                                    <th style={{textAlign: 'center'}} scope="row">{index + 1}</th>
                                                                     <td>{currentValue.fullname}</td>
                                                                     <td>{currentValue.sex}</td>
                                                                     <td>{currentValue.dateOfBirth}</td>
@@ -1047,16 +1080,28 @@ export default function RequestsForDiplomaDrafts(){
                                                     
                                                 </tbody>
                                             </table>
+                                        </div>
+                                        <div className="d-flex justify-content-center mt-3">
+                                                <Stack spacing={2}>
+                                                    <Pagination 
+                                                        count={Math.ceil(allDSHVByEIR?.length/5)}
+                                                        variant="outlined"
+                                                        page={page}
+                                                        onChange={handleChange}
+                                                        color="info"
+                                                        />
+                                                </Stack>
+                                            </div>
+
                                             <div className='d-flex justify-content-end'>
                                                 <button 
                                                     onClick={(e)=>{
                                                         downloadDSHV()
                                                     }}
                                                     className='btn'
-                                                    style={{backgroundColor: '#1b95a2'}}
+                                                    style={{backgroundColor: '#1b95a2', marginRight:'40px'}}
                                                 >Xuất file</button>
                                             </div>
-                                        </div>
                                     </div>
                                 </>
                             ) : (

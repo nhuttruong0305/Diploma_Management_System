@@ -1,7 +1,7 @@
 const EmbryoIssuanceRequestModel = require("../models/EmbryoIssuanceRequest");
-
-//Sửa lại hàm này (đã sửa)
+    
 const embryoIssuanceRequestController = {
+    //Hàm này dùng để lấy yc cấp phôi theo từng diploma_name_id
     getAllembryoIssuanceRequestByListDiplomaNameId: async (req, res) => {
         try{
             const result = await EmbryoIssuanceRequestModel.find({diploma_name_id: req.params.diploma_name_id});            
@@ -65,8 +65,33 @@ const embryoIssuanceRequestController = {
         }catch(error){
             return res.status(500).json(error);
         }
-    }
+    },
+    //Hàm lấy ra tất cả yêu cầu xin cấp phôi trong DB
+    getAllembryoIssuanceRequest: async (req, res) => {
+        try{
+            const result = await EmbryoIssuanceRequestModel.find();
+            return res.status(200).json(result);            
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    //Hàm cập nhật trạng thái cho yêu cầu xin cấp phôi
+    updateStatusEmbryoIssuanceRequest: async (req, res) => {
+        try{
+            //_id của yêu cầu cấp phôi sẽ được cập nhật status
+            const _id = req.params._id;
 
+            const options = {returnDocument: "after"};
+            const updateDoc = {
+                status: req.body.status
+            }
+
+            const resultUpdate = await EmbryoIssuanceRequestModel.findByIdAndUpdate(_id, updateDoc, options);
+            return res.status(200).json(resultUpdate);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    }
 }
 
 module.exports = embryoIssuanceRequestController;

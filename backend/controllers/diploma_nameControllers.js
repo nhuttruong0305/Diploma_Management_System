@@ -65,21 +65,8 @@ const diplomaNameControllers = {
     },
     getAllDiplomaName: async (req, res) => {
         try{
-            const allDiplomaName = await DiplomaNameModel.find();
-            let result = [];
-            allDiplomaName.forEach((currentValue1) => {
-                let isExist = false; 
-                result.forEach((currentValue2) => {
-                    if(currentValue2.diploma_name_id == currentValue1.diploma_name_id){
-                        isExist = true;
-                    }
-                })
-
-                if(!isExist){
-                    result.push(currentValue1);
-                }
-            });
-            return res.status(200).json(result);
+            const allDiplomaName = await DiplomaNameModel.find({to:""});
+            return res.status(200).json(allDiplomaName);
         }catch(error){
             return res.status(500).json(error);
         }

@@ -18,6 +18,16 @@
     overflow-y:auto;
 }
 
+#contain-table-show-dshv{
+    width: 100%;
+    overflow-y:hidden;
+    overflow-x:auto;
+}
+
+#table-show-dshv{
+    width: 1700px;
+}
+
 
 
 
