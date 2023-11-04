@@ -45,6 +45,12 @@ export default function Navbar() {
                         currentElement.classList.add("active-nav-navbar");  
                     }
                     break;
+                }else if(role == "Secretary"){
+                    var currentElement = document.querySelector("#trang-chu7");
+                    if(currentElement!=null){
+                        currentElement.classList.add("active-nav-navbar");  
+                    }
+                    break;
                 }else{
                     var currentElement = document.querySelector("#trang-chu4");
                     if(currentElement!=null){
@@ -86,6 +92,10 @@ export default function Navbar() {
                 break;
             case '/approve_request_for_issuance_of_embryos':
                 var currentElement = document.querySelector("#duyet-yc-cap-phoi");
+                currentElement.classList.add("active-nav-navbar");
+                break;
+            case '/manage_requests_for_embryo_issuance_for_secretary':
+                var currentElement = document.querySelector("#quan-ly-yc-cap-phoi-cho-thu-ky");
                 currentElement.classList.add("active-nav-navbar");
                 break;
             }
@@ -181,6 +191,15 @@ export default function Navbar() {
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/approve_request_for_issuance_of_embryos" id='duyet-yc-cap-phoi'>Duyệt yêu cầu xin cấp phôi văn bằng</Link>
+                                </li>
+                            </ul>
+                        ) : role == "Secretary" ? (
+                            <ul className="navbar-nav">
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/" id='trang-chu7'>Tra cứu</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/manage_requests_for_embryo_issuance_for_secretary" id='quan-ly-yc-cap-phoi-cho-thu-ky'>Quản lý yêu cầu xin cấp phôi văn bằng</Link>
                                 </li>
                             </ul>
                         ) : (

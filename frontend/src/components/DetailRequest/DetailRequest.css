@@ -1,25 +1,3 @@
-#body-RFDD{
-    padding-top: 10px;
-    padding-bottom: 20px;
-    background-color: #fff;
-    border-radius: 0px 0px 5px 5px;
-}
-
-.title-list-yc-xin-cap-phoi{
-    text-align: center;
-    margin-top: 12px;
-    font-size: 27px;
-    font-weight: bold;
-    color: #1b95a2;
-}
-
-#contain-table-show-yc-xin-cap-phoi{
-    height: 300px;
-    overflow-y:auto;
-}
-
-
-/* xóa từ đây xuống */
 #contain-table-show-dshv{
     width: 100%;
     overflow-y:hidden;
