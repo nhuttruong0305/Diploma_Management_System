@@ -9,9 +9,6 @@ import { getAllDiplomaName, getAllDiplomaType } from '../../redux/apiRequest';
 import axios from 'axios';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import * as XLSX from 'xlsx';
 import Toast from '../Toast/Toast';
 import DetailRequest from '../DetailRequest/DetailRequest';
 export default function ApproveRequestForIssuanceOfEmbryos(){
@@ -354,7 +351,9 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
 
             const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_approved}`,updateDoc);
             noti.current.showToast();
-            await getAllRequestForIssuanceOfEmbryos();
+            setTimeout(async()=>{
+                await getAllRequestForIssuanceOfEmbryos();
+            }, 2000)
         }catch(error){
             console.log(error);
         }
@@ -448,7 +447,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                             <td>{ten_can_bo_tao_yc}</td>
                                                             <td>{currentValue.mscb}</td>
 
-                                                            <td>{currentValue.status}</td>
+                                                            <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
                                                             <td style={{textAlign: 'center'}}>
                                                                 {
                                                                     closeButton == index ? (
@@ -500,7 +499,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                                     ) : (
                                                                         <i 
                                                                             className="fa-solid fa-check"
-                                                                            style={{backgroundColor: "#fed25c", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                            style={{backgroundColor: "grey", padding: '7px', borderRadius: '5px', color: 'white'}}
                                                                         ></i>
                                                                     )
                                                                 }  
@@ -574,7 +573,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                     </div>
                 </div>
                 <Toast
-                    message="Duyệt yêu cầu cấp phôi thành công"
+                    message="Duyệt yêu cầu xin cấp phôi thành công"
                     type="success"
                     ref={noti}
                 />

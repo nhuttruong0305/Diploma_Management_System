@@ -11,33 +11,6 @@
     overflow-x:auto;
 }
 
-
-/* css cho mẫu file yc cấp phôi */
-#file-name-ARFIOE{
-    font-family: 'Times New Roman', Times, serif;
-    padding: 80px 90px;
-    width: 1100px;
-    /* box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
-}
-
-#show-file-name-ARFIOE{
-    
-    /* width: 1100px; */
-    border: 1px solid #c1c1c1;
-}
-
-#table-file-name-ARFIOE{
-    font-size: 24px;
-    width: 100%;
-    margin-top: 70px;
-    border: 1px solid;
-}
-
-#table-file-name-ARFIOE th, #table-file-name-ARFIOE tr, #table-file-name-ARFIOE td{
-    border: 1px solid;
-    text-align: center;
-}
-
 #contain-table-show-dshv-ARFIOE{
     width: 100%;
     overflow-y:hidden;

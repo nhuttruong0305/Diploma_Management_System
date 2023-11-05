@@ -108,7 +108,9 @@ export default function DiplomaIssuance(){
         }
         await addDiplomaIssuanceByMU(dispatch, user.accessToken, DiplomaIssuanceInfor);
         noti3.current.showToast();  
-        await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
+        setTimeout(async()=>{
+            await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
+        }, 2000)
     }
 
     //Hàm submit form để cập nhật tên đợt cấp văn bằng
@@ -127,7 +129,9 @@ export default function DiplomaIssuance(){
 
         await editDiplomaIssuanceByMU(dispatch, user.accessToken, DiplomaIssuanceInfor, _idOfDiplomaIssuance);
         noti4.current.showToast();  
-        await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
+        setTimeout(async()=>{
+            await getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
+        }, 2000);
     }
 
     //xử lý logic xóa đợt cấp văn bằng
