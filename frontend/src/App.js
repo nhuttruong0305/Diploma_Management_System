@@ -21,6 +21,7 @@ import ChangePassword from './components/ChangePassword/ChangePassword';
 import RequestsForDiplomaDrafts from './components/RequestsForDiplomaDrafts/RequestsForDiplomaDrafts';
 import ApproveRequestForIssuanceOfEmbryos from './components/ApproveRequestForIssuanceOfEmbryos/ApproveRequestForIssuanceOfEmbryos';
 import ManageRequestsForEmbryoIssuanceForSecretary from './components/ManageRequestsForEmbryoIssuanceForSecretary/ManageRequestsForEmbryoIssuanceForSecretary';
+import Statistical from './components/Statistical/Statistical';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -227,6 +228,17 @@ function App() {
           >
             <ManageRequestsForEmbryoIssuanceForSecretary/>
           </ProtectedSecretary>
+        )
+      },
+      {
+        path: '/statistical',
+        element: (
+          <ProtectedRouteLeader
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <Statistical/>
+          </ProtectedRouteLeader>
         )
       }
     ])

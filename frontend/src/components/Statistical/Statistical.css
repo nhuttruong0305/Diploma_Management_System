@@ -1,0 +1,50 @@
+#body-Statistical{
+    /* padding-top: 10px; */
+    padding-bottom: 20px;
+    background-color: #fff;
+    border-radius: 0px 0px 5px 5px;
+}
+
+.info-statistical{
+    width: 100%;
+    margin: 0 auto;
+    height: 200px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.chart-img{
+    position: absolute;
+    bottom: 15px;
+    left: 23px;
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+}
+
+.count-statistical{
+    color: white; 
+    font-size: 40px;
+    position: absolute;
+    top: 20px;
+    left: 30px;
+}
+
+.count-type-statistical{
+    color: white; 
+    position: absolute; 
+    top: 80px; 
+    left: 22px; 
+    font-size: 20px;
+}
+
+.detail-count-type-statistical{
+    background-color: white;
+    width: 40px;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 20px;
+    position: absolute;
+    right: 20px;
+    top: 38px;
+}

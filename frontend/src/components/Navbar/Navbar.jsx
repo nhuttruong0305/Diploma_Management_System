@@ -98,6 +98,10 @@ export default function Navbar() {
                 var currentElement = document.querySelector("#quan-ly-yc-cap-phoi-cho-thu-ky");
                 currentElement.classList.add("active-nav-navbar");
                 break;
+            case '/statistical':
+                var currentElement = document.querySelector("#thong-ke-bao-cao");
+                currentElement.classList.add("active-nav-navbar");
+                break;
             }
     })
 
@@ -191,6 +195,9 @@ export default function Navbar() {
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/approve_request_for_issuance_of_embryos" id='duyet-yc-cap-phoi'>Duyệt yêu cầu xin cấp phôi văn bằng</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/statistical" id='thong-ke-bao-cao'>Thống kê báo cáo</Link>
                                 </li>
                             </ul>
                         ) : role == "Secretary" ? (
