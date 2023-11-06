@@ -22,6 +22,7 @@ import RequestsForDiplomaDrafts from './components/RequestsForDiplomaDrafts/Requ
 import ApproveRequestForIssuanceOfEmbryos from './components/ApproveRequestForIssuanceOfEmbryos/ApproveRequestForIssuanceOfEmbryos';
 import ManageRequestsForEmbryoIssuanceForSecretary from './components/ManageRequestsForEmbryoIssuanceForSecretary/ManageRequestsForEmbryoIssuanceForSecretary';
 import Statistical from './components/Statistical/Statistical';
+import ManageRequestsForEmbryoIssuanceForStocker from './components/ManageRequestsForEmbryoIssuanceForStocker/ManageRequestsForEmbryoIssuanceForStocker';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -55,6 +56,11 @@ const ProtectedRouteLeader = ({ isAuthenticated, role, children }) => {
 //Bảo vệ route chỉ cho phép tài khoản có quyền Secretary mới vào được trang này
 const ProtectedSecretary = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'Secretary' ? children : <Navigate to="/"/>;
+}
+
+//Bảo vệ route chỉ cho phép tài khoản có quyền Stocker mới vào được trang này
+const ProtectedStocker = ({ isAuthenticated, role, children }) => {
+  return isAuthenticated && role == 'Stocker' ? children : <Navigate to="/"/>;
 }
 
 function App() {
@@ -239,6 +245,17 @@ function App() {
           >
             <Statistical/>
           </ProtectedRouteLeader>
+        )
+      },
+      {
+        path: '/manage_requests_for_embryo_issuance_for_stocker',
+        element: (
+          <ProtectedStocker
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <ManageRequestsForEmbryoIssuanceForStocker/>
+          </ProtectedStocker>
         )
       }
     ])

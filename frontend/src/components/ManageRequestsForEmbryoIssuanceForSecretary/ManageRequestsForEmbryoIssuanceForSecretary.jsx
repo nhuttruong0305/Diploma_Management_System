@@ -282,6 +282,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
     const [showDetailRequest, setShowDetailRequest] = useState(false);
 
     //Các state cho chi tiết yêu cầu cấp phôi
+    const [embryoIssuanceRequest_id, setEmbryoIssuanceRequest_id] = useState("");
     const [managementUnitPhieuYC, setManagementUnitPhieuYC] = useState("");
     const [diplomaNameInPhieuYC, setDiplomaNameInPhieuYC] = useState("");
     const [examinationsInPhieuYC, setExaminationsInPhieuYC] = useState("");
@@ -466,7 +467,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                     </div>
                                 </div>
                                 <div className="row mt-3">
-                                    <p className='title-list-yc-xin-cap-phoi'>DANH SÁCH CÁC YÊU CẦU CẤP PHÔI ĐÃ ĐƯỢC DUYỆT</p>
+                                    <p className='title-list-yc-xin-cap-phoi'>DANH SÁCH CÁC YÊU CẦU XIN CẤP PHÔI ĐÃ ĐƯỢC DUYỆT</p>
                                 </div>
                                 <div className="row mt-3 p-3">
                                     <div id='contain-yc-cap-phoi-secretary'>
@@ -550,6 +551,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                                                 onClick={(e)=>{
                                                                                     setCloseButton(index);
                                                                                     setShowDetailRequest(true)
+                                                                                    setEmbryoIssuanceRequest_id(currentValue.embryoIssuanceRequest_id);
                                                                                     setManagementUnitPhieuYC(don_vi_quan_ly);
                                                                                     setDiplomaNameInPhieuYC(ten_van_bang);
                                                                                     setExaminationsInPhieuYC(currentValue.examination);
@@ -639,6 +641,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                             {
                                 showDetailRequest ? (
                                     <DetailRequest
+                                        embryoIssuanceRequest_id={embryoIssuanceRequest_id}
                                         managementUnitPhieuYC={managementUnitPhieuYC}
                                         diplomaNameInPhieuYC={diplomaNameInPhieuYC}
                                         examinationsInPhieuYC={examinationsInPhieuYC}

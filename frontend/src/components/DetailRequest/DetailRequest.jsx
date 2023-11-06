@@ -7,9 +7,8 @@ import jsPDF from "jspdf";
 import {getAllDiplomaType} from '../../redux/apiRequest';
 import * as XLSX from 'xlsx';
 import { useSelector } from 'react-redux';
-export default function DetailRequest({managementUnitPhieuYC, diplomaNameInPhieuYC, examinationsInPhieuYC, numberOfEmbryosInPhieuYC, seriStartInPhieuYC, seriEndInPhieuYC, diplomaType, optionsOfDiplomaName, allDSHVByEIR }) {
+export default function DetailRequest({ embryoIssuanceRequest_id, managementUnitPhieuYC, diplomaNameInPhieuYC, examinationsInPhieuYC, numberOfEmbryosInPhieuYC, seriStartInPhieuYC, seriEndInPhieuYC, diplomaType, optionsOfDiplomaName, allDSHVByEIR }) {
 
-    const allDiplomaType = useSelector((state) => state.diplomaType.diplomaTypes?.allDiplomaType); //state lấy ra all diploma type
     //Hàm tạo file pdf yêu cầu cấp phôi
     const convertToImage = async () => {
         const element = document.getElementById("file-name-EGAF"); // Thay "your-element-id" bằng ID của phần muốn chuyển đổi
@@ -17,7 +16,7 @@ export default function DetailRequest({managementUnitPhieuYC, diplomaNameInPhieu
         const imgData = canvas.toDataURL("image/png");
         // Bây giờ bạn có một hình ảnh dưới dạng dữ liệu chuỗi, có thể lưu nó hoặc sử dụng nó dựa trên nhu cầu.
         const pdf = new jsPDF("p", "mm", "a4");
-        pdf.addImage(imgData, "PNG", 10, 10, 190, 277); // Chèn hình ảnh vào PDF
+        pdf.addImage(imgData, "PNG", 10, 10, 190, 230); // Chèn hình ảnh vào PDF
     
         pdf.save("yc_cap_phoi.pdf");
     };
@@ -157,6 +156,20 @@ export default function DetailRequest({managementUnitPhieuYC, diplomaNameInPhieu
         // document.body.removeChild(link);
     }
 
+    //
+    const handleManagementUnit = (management_unit) => {
+        const resultSplit = management_unit.split(" ");
+        let finalResult = "";
+        resultSplit.forEach((currentValue) => {
+          if (currentValue == "&") {
+            finalResult += ` ${currentValue[0].toUpperCase()} `;
+          } else {
+            finalResult += currentValue[0].toUpperCase();
+          }
+        });
+        return finalResult;
+    };
+
     return (
         <>
             <div className="row">
@@ -172,7 +185,7 @@ export default function DetailRequest({managementUnitPhieuYC, diplomaNameInPhieu
                                 <p style={{ textDecoration: 'underline', marginLeft: '270px', fontWeight: 'bold', fontSize: '21px' }}>Độc lập - Tự do- Hạnh phúc</p>
                             </div>
                             <div style={{ fontSize: '21px', marginTop: '-10px', marginLeft: '20px' }}>
-                                Số:        /TTĐT&TH-BPĐT
+                                Số: {embryoIssuanceRequest_id} /{handleManagementUnit(managementUnitPhieuYC)}-BPĐT
                             </div>
                             <div className="d-flex justify-content-between" style={{ marginTop: '45px' }}>
                                 <div className="col-5" style={{ fontSize: '21px', fontStyle: 'italic' }}>

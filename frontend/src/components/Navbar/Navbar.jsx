@@ -51,7 +51,14 @@ export default function Navbar() {
                         currentElement.classList.add("active-nav-navbar");  
                     }
                     break;
-                }else{
+                }else if(role == "Stocker"){
+                    var currentElement = document.querySelector("#trang-chu8");
+                    if(currentElement!=null){
+                        currentElement.classList.add("active-nav-navbar");  
+                    }
+                    break;
+                }
+                else{
                     var currentElement = document.querySelector("#trang-chu4");
                     if(currentElement!=null){
                         currentElement.classList.add("active-nav-navbar");  
@@ -100,6 +107,10 @@ export default function Navbar() {
                 break;
             case '/statistical':
                 var currentElement = document.querySelector("#thong-ke-bao-cao");
+                currentElement.classList.add("active-nav-navbar");
+                break;
+            case "/manage_requests_for_embryo_issuance_for_stocker":
+                var currentElement = document.querySelector("#xu-ly-yc-xin-cap-phoi");
                 currentElement.classList.add("active-nav-navbar");
                 break;
             }
@@ -207,6 +218,15 @@ export default function Navbar() {
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/manage_requests_for_embryo_issuance_for_secretary" id='quan-ly-yc-cap-phoi-cho-thu-ky'>Quản lý yêu cầu xin cấp phôi văn bằng</Link>
+                                </li>
+                            </ul>
+                        ) : role == "Stocker" ? (
+                            <ul className="navbar-nav">
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/" id='trang-chu8'>Tra cứu</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/manage_requests_for_embryo_issuance_for_stocker" id='xu-ly-yc-xin-cap-phoi'>Xử lý yêu cầu xin cấp phôi văn bằng</Link>
                                 </li>
                             </ul>
                         ) : (

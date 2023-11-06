@@ -14,6 +14,7 @@ const diolomaIssuance = require('./routes/diploma_issuance');
 const diplomaRoute = require("./routes/diploma");
 const embryoIssuanceRequest = require("./routes/embryo_issuance_request");
 const DSHVRoute = require("./routes/DSHV");
+const deliveryBillRoute = require("./routes/delivery_bill");
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use("/v1/diploma_issuance", diolomaIssuance);
 app.use("/v1/diploma", diplomaRoute);
 app.use("/v1/embryo_issuance_request", embryoIssuanceRequest);
 app.use("/v1/DSHV", DSHVRoute);
+app.use("/v1/delivery_bill", deliveryBillRoute);
 
 app.listen(process.env.PORT, ()=>{
     console.log(`Server is running...`);

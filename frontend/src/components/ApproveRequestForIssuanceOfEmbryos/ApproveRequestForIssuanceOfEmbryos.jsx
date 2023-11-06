@@ -241,6 +241,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     const [closeButton, setCloseButton] = useState(null);
 
     //State để lấy dữ liệu chi tiết yêu cầu và điền vào mẫu xin cấp phôi
+    const [embryoIssuanceRequest_id, setEmbryoIssuanceRequest_id] = useState("");
     const [managementUnitPhieuYC, setManagementUnitPhieuYC] = useState("");
     const [diplomaNameInPhieuYC, setDiplomaNameInPhieuYC] = useState("");
     const [examinationsInPhieuYC, setExaminationsInPhieuYC] = useState("");
@@ -472,6 +473,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                                                         setManagementUnitPhieuYC(management_unit.management_unit_name);
                                                                                     }
                                                                                 })
+                                                                                setEmbryoIssuanceRequest_id(currentValue.embryoIssuanceRequest_id);
                                                                                 setDiplomaNameInPhieuYC(ten_van_bang);
                                                                                 setExaminationsInPhieuYC(currentValue.examination);
                                                                                 setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos);
@@ -556,6 +558,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                 showDetailRequest ? (
                                     <>
                                         <DetailRequest 
+                                            embryoIssuanceRequest_id={embryoIssuanceRequest_id}
                                             managementUnitPhieuYC={managementUnitPhieuYC}
                                             diplomaNameInPhieuYC={diplomaNameInPhieuYC}
                                             examinationsInPhieuYC={examinationsInPhieuYC}

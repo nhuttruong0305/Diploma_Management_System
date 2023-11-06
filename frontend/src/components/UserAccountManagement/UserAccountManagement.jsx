@@ -807,6 +807,10 @@ export default function UserAccountManagement() {
                                                         quyen = "Giám đốc Trung tâm/Trưởng phòng"
                                                     }else if(currentValue.role[0] == "Leader"){
                                                         quyen = "Tổ trưởng"
+                                                    }else if(currentValue.role[0] == "Secretary"){
+                                                        quyen = "Thư ký"
+                                                    }else if(currentValue.role[0] == "Stocker"){
+                                                        quyen = "Thủ kho"
                                                     }
                                                     return(
                                                         <tr key={index}>

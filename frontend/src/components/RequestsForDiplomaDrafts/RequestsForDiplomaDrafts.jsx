@@ -393,6 +393,7 @@ export default function RequestsForDiplomaDrafts(){
     }
 
     //State để lấy dữ liệu điền vào form //các state này truyền props
+    const [embryoIssuanceRequest_id, setEmbryoIssuanceRequest_id] = useState("");
     const [managementUnitPhieuYC, setManagementUnitPhieuYC] = useState("");
     const [diplomaNameInPhieuYC, setDiplomaNameInPhieuYC] = useState("");
     const [examinationsInPhieuYC, setExaminationsInPhieuYC] = useState("");
@@ -617,7 +618,7 @@ export default function RequestsForDiplomaDrafts(){
                                 <table className="table table-bordered">
                                     <thead>
                                         <tr>
-                                            <th style={{textAlign: 'center'}} scope="col">STT</th>
+                                            <th style={{textAlign: 'center'}} scope="col">Mã phiếu</th>
                                             <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
                                             <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
                                             <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
@@ -647,7 +648,7 @@ export default function RequestsForDiplomaDrafts(){
                                                 })
                                                 return(
                                                     <tr key={index}>
-                                                        <th style={{textAlign: 'center'}} scope="row">{index+1}</th>
+                                                        <td style={{textAlign: 'center'}} scope="row">{`#${currentValue.embryoIssuanceRequest_id}`}</td>
                                                         <td>{diplomaName}</td>
                                                         <td>{handleDateToDMY(currentValue.examination)}</td>
                                                         <td>{currentValue.numberOfEmbryos}</td>
@@ -677,7 +678,7 @@ export default function RequestsForDiplomaDrafts(){
                                                                             })                                                                    
                                                                             setShowRequestDetail(true);
                                                                             setCloseButton(index)
-
+                                                                            setEmbryoIssuanceRequest_id(currentValue.embryoIssuanceRequest_id);
                                                                             setDiplomaType(nameOfDiplomaType);
                                                                             setManagementUnitPhieuYC(MUName);
                                                                             setDiplomaNameInPhieuYC(diplomaName);
@@ -705,6 +706,7 @@ export default function RequestsForDiplomaDrafts(){
                             showRequestDetail ? (
                                 <>
                                     <DetailRequest 
+                                        embryoIssuanceRequest_id={embryoIssuanceRequest_id}
                                         managementUnitPhieuYC={managementUnitPhieuYC}
                                         diplomaNameInPhieuYC={diplomaNameInPhieuYC}
                                         examinationsInPhieuYC={examinationsInPhieuYC}
