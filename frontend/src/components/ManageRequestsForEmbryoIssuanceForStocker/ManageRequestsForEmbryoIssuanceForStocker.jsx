@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllDiplomaName, getAllDiplomaType } from '../../redux/apiRequest';
 import DetailRequest from '../DetailRequest/DetailRequest';
 import Toast from '../Toast/Toast';
+import DetailDeliveryBill from '../DetailDeliveryBill/DetailDeliveryBill';
 export default function ManageRequestsForEmbryoIssuanceForStocker(){
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -393,6 +394,10 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
     const [embryo_typeShow, setEmbryo_typeShow] = useState("");
     
     const [numberOfEmbryos,setNumberOfEmbryos] = useState(0);
+
+    const [seri_number_start, setSeri_number_start] = useState("");
+    const [seri_number_end, setSeri_number_end] = useState("");
+
     const [unit_price, setUnit_price] = useState(0);
 
     //_id của yêu cầu xin cấp phôi để cập nhật trạng thái
@@ -409,6 +414,8 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
             address_export_warehouse: address_export_warehouse,
             embryo_type: parseInt(embryo_type),
             numberOfEmbryos: parseInt(numberOfEmbryos),
+            seri_number_start: parseInt(seri_number_start),
+            seri_number_end: parseInt(seri_number_end),
             unit_price: parseInt(unit_price),
             mscb: user.mssv_cb
         }
@@ -432,6 +439,43 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
         }
     }
     
+    function scrollToDetailRequest(){
+        setTimeout(()=>{
+            document.body.scrollTop = 1000;
+            document.documentElement.scrollTop = 1000;
+        },200)
+    }
+
+    //Xử lý việc lấy chi tiết phiếu xuất kho
+    const [showDeliveryBill, setShowDeliveryBill] = useState(false);
+    const [detailDeliveryBill, setDetailDeliveryBill] = useState([]);
+
+    const [closeButtonDeliveryBill, setCloseButtonDeliveryBill] = useState(null);
+
+    //Hàm call api lấy chi tiết phiếu xuất kho
+    const getDetailDeliveryBill = async (embryoIssuanceRequest_id) => {
+        try{
+            const result = await axios.get(`http://localhost:8000/v1/delivery_bill/get_detail_delivery_bill/${embryoIssuanceRequest_id}`);
+            setDetailDeliveryBill(result.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+    
+    function scrollToDeliveryBill(){
+        if(showDetailRequest == false){
+            setTimeout(()=>{
+                document.body.scrollTop = 1000;
+                document.documentElement.scrollTop = 1000;
+            },200)
+        }else{
+            setTimeout(()=>{
+                document.body.scrollTop = 2850;
+                document.documentElement.scrollTop = 2850;
+            },200)
+        }
+    }
+
     return(
         <>
             <Header/>
@@ -493,7 +537,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                             <tr>
                                                 <th style={{textAlign: 'center'}} scope="col">Mã phiếu</th>
                                                 <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
+                                                <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng (D/M/Y)</th>
                                                 <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
                                                 <th style={{textAlign: 'center'}} scope="col">Số seri</th>
                                                 <th style={{textAlign: 'center'}} scope="col">Cán bộ tạo yêu cầu</th>
@@ -503,7 +547,6 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                 <th style={{textAlign: 'center'}} scope="col">
                                                     Tạo phiếu xuất kho
                                                 </th>
-                                                <th style={{textAlign: 'center'}} scope="col">Xem phiếu xuất kho</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -560,6 +603,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                                             }}
                                                                         ></i>
                                                                     ) : (
+                                                                        //nút xem chi tiết yêu cầu xin cấp phôi
                                                                         <i 
                                                                             className="fa-solid fa-eye"
                                                                             style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}                                                             
@@ -576,30 +620,59 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                                                 setSeriEndInPhieuYC(currentValue.seri_number_end);
                                                                                 setDiplomaType(loai_van_bang);
                                                                                 setOptionsOfDiplomaName(options);
-                                                                                getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, options)                                                    
+                                                                                getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, options)     
+                                                                                scrollToDetailRequest();                                               
                                                                             }}
                                                                         ></i>
                                                                     )
                                                                 }
                                                             </td>
                                                             <td style={{textAlign:'center'}}>
-                                                                <i 
-                                                                    className="fa-solid fa-pen-to-square"
-                                                                    style={{backgroundColor: "#fed25c", padding: '7px', borderRadius: '5px', color: 'white'}}
-                                                                    data-bs-toggle="modal" data-bs-target="#createDeliveryBillModal"
-                                                                    onClick={(e)=>{
-                                                                        setEmbryoIssuanceRequest_id_delivery_bill(currentValue.embryoIssuanceRequest_id);
-                                                                        setEmbryo_type(currentValue.diploma_name_id);
-                                                                        setEmbryo_typeShow(ten_van_bang);
-                                                                        set_idYCCP_approved(currentValue._id);
-                                                                        setAddress_department(currentValue.management_unit_id)
-                                                                        setAddress_departmentShow(don_vi_quan_ly);
-                                                                        setNumberOfEmbryos(currentValue.numberOfEmbryos);
-                                                                        setFullname_of_consignee(ten_can_bo_tao_yc);
-                                                                    }}
-                                                                ></i>
+                                                                {
+                                                                    currentValue.status == "Đã gửi thủ kho" ? (
+                                                                        //nút tạo phiếu xuất kho
+                                                                        <i 
+                                                                            className="fa-solid fa-pen-to-square"
+                                                                            style={{backgroundColor: "#fed25c", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                            data-bs-toggle="modal" data-bs-target="#createDeliveryBillModal"
+                                                                            onClick={(e)=>{
+                                                                                setEmbryoIssuanceRequest_id_delivery_bill(currentValue.embryoIssuanceRequest_id);
+                                                                                setEmbryo_type(currentValue.diploma_name_id);
+                                                                                setEmbryo_typeShow(ten_van_bang);
+                                                                                set_idYCCP_approved(currentValue._id);
+                                                                                setAddress_department(currentValue.management_unit_id)
+                                                                                setAddress_departmentShow(don_vi_quan_ly);
+                                                                                setNumberOfEmbryos(currentValue.numberOfEmbryos);
+                                                                                setSeri_number_start(currentValue.seri_number_start);
+                                                                                setSeri_number_end(currentValue.seri_number_end);
+                                                                                setFullname_of_consignee(ten_can_bo_tao_yc);
+                                                                            }}
+                                                                        ></i>
+                                                                        
+                                                                    ) : closeButtonDeliveryBill == index ? (
+                                                                        <i 
+                                                                            style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
+                                                                            className="fa-regular fa-circle-xmark"
+                                                                            onClick={(e)=>{
+                                                                                setShowDeliveryBill(false);
+                                                                                setCloseButtonDeliveryBill(null);
+                                                                            }}
+                                                                        ></i>
+                                                                    ) : (
+                                                                        //nút show chi tiết phiếu xuất kho
+                                                                        <i 
+                                                                            className="fa-solid fa-circle-info"
+                                                                            style={{backgroundColor: "#0dcaf0", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                            onClick={(e)=>{
+                                                                                getDetailDeliveryBill(currentValue.embryoIssuanceRequest_id);
+                                                                                setCloseButtonDeliveryBill(index);
+                                                                                setShowDeliveryBill(true);
+                                                                                scrollToDeliveryBill()
+                                                                            }}
+                                                                        ></i>
+                                                                    )
+                                                                }
                                                             </td>
-                                                            <td>Phiếu xuất kho</td>
                                                         </tr>
                                                     )
                                                 })
@@ -817,7 +890,34 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                     ></DetailRequest>
                                 ) : ("")
                             }
-
+                            {
+                                showDeliveryBill ? (
+                                    //Lưu ý mỗi yêu cầu xin cấp phôi chỉ có duy nhất 1 delivery bill trong DB
+                                    detailDeliveryBill?.map((currentValue, index) => {
+                                        return(
+                                            <div key={index}>
+                                                <DetailDeliveryBill
+                                                    delivery_bill={currentValue?.delivery_bill}
+                                                    delivery_bill_creation_time={currentValue?.delivery_bill_creation_time}
+                                                    fullname_of_consignee={currentValue?.fullname_of_consignee}
+                                                    address_department={currentValue?.address_department}
+                                                    reason={currentValue?.reason}
+                                                    export_warehouse={currentValue?.export_warehouse}
+                                                    address_export_warehouse={currentValue?.address_export_warehouse}
+                                                    embryo_type={currentValue?.embryo_type}
+                                                    numberOfEmbryos={currentValue?.numberOfEmbryos}
+                                                    seri_number_start={currentValue?.seri_number_start}
+                                                    seri_number_end={currentValue?.seri_number_end}
+                                                    unit_price={currentValue?.unit_price}
+                                                    mscb={currentValue?.mscb}
+                                                >    
+                                                </DetailDeliveryBill>
+                                            </div>
+                                        )
+                                    })
+                                ) : ("")
+                            }
+                            
                         </div>
                     </div>
                 </div>

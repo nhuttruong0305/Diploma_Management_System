@@ -4,9 +4,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import {getAllDiplomaType} from '../../redux/apiRequest';
 import * as XLSX from 'xlsx';
-import { useSelector } from 'react-redux';
 export default function DetailRequest({ embryoIssuanceRequest_id, managementUnitPhieuYC, diplomaNameInPhieuYC, examinationsInPhieuYC, numberOfEmbryosInPhieuYC, seriStartInPhieuYC, seriEndInPhieuYC, diplomaType, optionsOfDiplomaName, allDSHVByEIR }) {
 
     //Hàm tạo file pdf yêu cầu cấp phôi
@@ -249,7 +247,7 @@ export default function DetailRequest({ embryoIssuanceRequest_id, managementUnit
                     onClick={(e) => {
                         convertToImage();
                     }}
-                    style={{ width: '100px', backgroundColor: '#1b95a2', marginRight: '90px'}}
+                    style={{ width: '100px', backgroundColor: '#1b95a2', marginRight: '90px', color: 'white'}}
                 >
                     Xuất file
                 </button>
@@ -461,7 +459,7 @@ export default function DetailRequest({ embryoIssuanceRequest_id, managementUnit
                             downloadDSHV()
                         }}
                         className='btn'
-                        style={{ width: '100px', backgroundColor: '#1b95a2', marginRight: '40px'}}
+                        style={{ width: '100px', backgroundColor: '#fed25c', marginRight: '40px', color: 'white'}}
                     >Xuất file</button>
                 </div>
             </div>
