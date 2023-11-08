@@ -9,6 +9,8 @@ import * as XLSX from 'xlsx';
 import Toast from '../Toast/Toast';
 import {getAllDiplomaType} from '../../redux/apiRequest';
 import DetailRequest from '../DetailRequest/DetailRequest';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 export default function RequestsForDiplomaDrafts(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -345,7 +347,7 @@ export default function RequestsForDiplomaDrafts(){
     const [allEIRShow, setAllEIRShow] = useState([]);
     
     useEffect(()=>{
-        if(selectedSelectDiplomaNameSearchRFDD.value!=undefined){
+        if(selectedSelectDiplomaNameSearchRFDD.value!=""){
             let result = [];
             allEIR?.forEach((element)=>{
                 if(element.diploma_name_id == selectedSelectDiplomaNameSearchRFDD.value){
@@ -353,8 +355,81 @@ export default function RequestsForDiplomaDrafts(){
                 }
             })
             setAllEIRShow(result);
+        }else{
+            setAllEIRShow(allEIR);
         }
     }, [selectedSelectDiplomaNameSearchRFDD])
+
+    const [inputMaPhieuSearch, setInputMaPhieuSearch] = useState("")
+    const [statusYC, setStatusYC] = useState({value:"", label: "Tất cả trạng thái"});
+    const handleChangeStatusYC = (selectedOption) => {
+        setStatusYC(selectedOption);
+    }
+
+    //State chứa các yêu cầu xin cấp phôi sau khi lọc theo trạng thái
+    const [all_YCCP_After_filter1, setAll_YCCP_After_filter1] = useState([]);
+    //State chứa các yêu cầu xin cấp phôi sau khi lọc theo mã phiếu
+    const [all_YCCP_After_filter2, setAll_YCCP_After_filter2] = useState([]);
+    
+    useEffect(()=>{
+        if(statusYC.value!=""){
+            let result = [];
+            allEIRShow?.forEach((currentValue)=>{
+                if(currentValue.status == statusYC.value){
+                    result = [...result, currentValue];
+                }
+            })
+            setAll_YCCP_After_filter1(result);
+        }else{
+            setAll_YCCP_After_filter1(allEIRShow);
+        }
+    }, [allEIRShow, statusYC])
+
+    useEffect(()=>{
+        if(inputMaPhieuSearch!=""){
+            let result = [];
+            all_YCCP_After_filter1?.forEach((currentValue)=>{
+                if(currentValue.embryoIssuanceRequest_id == inputMaPhieuSearch){
+                    result = [...result, currentValue];
+                }
+            })
+            setAll_YCCP_After_filter2(result);
+        }else{
+            setAll_YCCP_After_filter2(all_YCCP_After_filter1);
+        }
+    }, [all_YCCP_After_filter1, inputMaPhieuSearch])
+
+    const [page, setPage] = useState(1);
+    const handleChange = (event, value) => {
+        setPage(value);
+    };
+
+    //State chứa all YCCP sẽ được hiển thị lên màn hình sau khi phân trang
+    const [all_YCCP_PT, setAll_YCCP_PT] = useState([]);
+
+    useEffect(()=>{
+        if(page!=undefined && all_YCCP_After_filter2!=undefined){
+            if(all_YCCP_After_filter2.length>5){
+                const numberOfPage = Math.ceil(all_YCCP_After_filter2?.length/5);
+                const startElement = (page - 1) * 5;
+                let endElement = 0;
+                if(page == numberOfPage){
+                    endElement = all_YCCP_After_filter2.length-1;
+                }else{
+                    endElement = page * 5-1;
+                }
+
+                let result = [];
+                for(let i = startElement; i <= endElement; i++){
+                    result = [...result, all_YCCP_After_filter2[i]];
+                }
+                setAll_YCCP_PT(result);
+            }else{
+                setAll_YCCP_PT(all_YCCP_After_filter2);
+            }         
+        }
+    }, [page, all_YCCP_After_filter2])
+
     const handleSeri = (seriNumber) => {//xóa
         let seriAfterProcessing = seriNumber.toString();
         switch(seriAfterProcessing.length){
@@ -600,13 +675,41 @@ export default function RequestsForDiplomaDrafts(){
                         }
                         <hr />
                         <div className="row p-3 mt-1">
-                            <div className='col-6'>
+                            <div className='col-md-4'>
                                 <Select
                                     id='select-diploma-name-search-RFDD'
-                                    options={optionSelectDiplomaNameRFDD}
+                                    options={[{value:"", label: "Tất cả tên văn bằng"}, ...optionSelectDiplomaNameRFDD]}
                                     onChange={handleChangeSelectedSelectDiplomaNameSearchRFDD}
                                     value={selectedSelectDiplomaNameSearchRFDD}
                                     placeholder="Chọn tên văn bằng"
+                                />
+                            </div>
+                            <div className="col-md-4">
+                                <input 
+                                    type="text" 
+                                    placeholder='Tìm kiếm theo mã phiếu'
+                                    value={inputMaPhieuSearch}
+                                    className='form-control'
+                                    onChange={(e)=>{
+                                        setInputMaPhieuSearch(e.target.value)
+                                    }}
+                                />
+                            </div>
+                            <div className="col-md-4">
+                                <Select
+                                    options={
+                                        [
+                                            {value:"", label: "Tất cả trạng thái"},
+                                            {value:"Đã gửi yêu cầu", label: "Đã gửi yêu cầu"},
+                                            {value:"Đã duyệt yêu cầu", label: "Đã duyệt yêu cầu"},
+                                            {value:"Đã gửi thủ kho", label: "Đã gửi thủ kho"},
+                                            {value:"Đã in phôi", label: "Đã in phôi"},
+                                            {value:"Đã dán tem", label: "Đã dán tem"},
+                                            {value:"Đã nhận phôi", label: "Đã nhận phôi"}
+                                        ]
+                                    }
+                                    value={statusYC}
+                                    onChange={handleChangeStatusYC}
                                 />
                             </div>
                         </div>
@@ -615,7 +718,7 @@ export default function RequestsForDiplomaDrafts(){
                         </div>
                         <div className='row p-5'>
                             <div id='contain-table-show-yc-xin-cap-phoi'>
-                                <table className="table table-bordered">
+                                <table className="table table-bordered" style={{width: '1500px'}}>
                                     <thead>
                                         <tr>
                                             <th style={{textAlign: 'center'}} scope="col">Mã phiếu</th>
@@ -625,11 +728,12 @@ export default function RequestsForDiplomaDrafts(){
                                             <th style={{textAlign: 'center'}} scope="col">Số seri</th>
                                             <th style={{textAlign: 'center'}} scope="col">Trạng thái</th>
                                             <th style={{textAlign: 'center'}} scope="col">Xem chi tiết</th>
+                                            <th style={{textAlign: 'center'}} scope="col">Thêm nhật ký nhận phôi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
-                                            allEIRShow?.map((currentValue, index)=>{
+                                            all_YCCP_PT?.map((currentValue, index)=>{
                                                 let seriStartAfterProcess = handleSeri(currentValue.seri_number_start);
                                                 let seriEndAfterProcess = handleSeri(currentValue.seri_number_end);
                                                 let diplomaName = '';
@@ -701,6 +805,18 @@ export default function RequestsForDiplomaDrafts(){
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+
+                        <div className="d-flex justify-content-center mt-3 mb-3">
+                            <Stack spacing={2}>
+                                <Pagination 
+                                    count={Math.ceil(all_YCCP_After_filter2?.length/5)}
+                                    variant="outlined"
+                                    page={page}
+                                    onChange={handleChange}
+                                    color="info"
+                                />
+                            </Stack>
                         </div>
                         {
                             showRequestDetail ? (

@@ -863,7 +863,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                 <div className="d-flex justify-content-center mt-3">
                                     <Stack spacing={2}>
                                         <Pagination 
-                                            count={Math.ceil(allYCCP?.length/5)}
+                                            count={Math.ceil(allYCCP_After_filter3?.length/5)}
                                             variant="outlined"
                                             page={page}
                                             onChange={handleChange}

@@ -112,6 +112,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     }
 
     useEffect(()=>{
+        setSelectedSelectDiplomaNameARFIOE({value:"", label:"Tất cả tên văn bằng"});
         if(selectedMUARFIOE != ""){
             getAllDiplomaNameByMU(selectedMUARFIOE.value);
         }
@@ -165,8 +166,48 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
         }else{
             setAllRequestForIssuanceOfEmbryosShow(allRequestForIssuanceOfEmbryos);
         }
-    }, [selectedMUARFIOE, selectedSelectDiplomaNameARFIOE])
+    }, [selectedMUARFIOE, selectedSelectDiplomaNameARFIOE, allRequestForIssuanceOfEmbryos])
     
+    const [inputMaPhieuSearch, setInputMaPhieuSearch] = useState("");
+    const [statusYC, setStatusYC] = useState({value: "", label:"Tất cả trạng thái"});
+    const handleChangeStatusYC = (selectedOption) => {
+        setStatusYC(selectedOption);
+    }
+
+    //State sau khi lọc theo trạng thái
+    const [all_YCCP_After_filter1, setAll_YCCP_After_filter1] = useState([]);
+    //State sau khi lọc theo mã phiếu
+    const [all_YCCP_After_filter2, setAll_YCCP_After_filter2] = useState([]);
+
+    useEffect(()=>{
+        if(statusYC.value!=""){
+            let result = [];
+            allRequestForIssuanceOfEmbryosShow?.forEach((currentValue)=>{
+                if(currentValue.status == statusYC.value){
+                    result = [...result, currentValue];
+                }
+            })
+            setAll_YCCP_After_filter1(result);
+        }else{
+            setAll_YCCP_After_filter1(allRequestForIssuanceOfEmbryosShow);
+        }
+
+    }, [allRequestForIssuanceOfEmbryosShow, statusYC])
+
+    useEffect(()=>{
+        if(inputMaPhieuSearch!=""){
+            let result = [];
+            all_YCCP_After_filter1?.forEach((currentValue)=>{
+                if(currentValue.embryoIssuanceRequest_id == inputMaPhieuSearch){
+                    result = [...result, currentValue];
+                }
+            })
+            setAll_YCCP_After_filter2(result);
+        }else{
+            setAll_YCCP_After_filter2(all_YCCP_After_filter1);
+        }
+    }, [all_YCCP_After_filter1, inputMaPhieuSearch])
+
     function handleDateToDMY(date){
         const splitDate = date.split("-");
         const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
@@ -212,27 +253,27 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     };
 
     useEffect(()=>{
-        if(page!=undefined && allRequestForIssuanceOfEmbryosShow!=undefined){
-            if(allRequestForIssuanceOfEmbryosShow.length>5){
-                const numberOfPage = Math.ceil(allRequestForIssuanceOfEmbryosShow?.length/5);
+        if(page!=undefined && all_YCCP_After_filter2!=undefined){
+            if(all_YCCP_After_filter2.length>5){
+                const numberOfPage = Math.ceil(all_YCCP_After_filter2?.length/5);
                 const startElement = (page - 1) * 5;
                 let endElement = 0;
                 if(page == numberOfPage){
-                    endElement = allRequestForIssuanceOfEmbryosShow.length-1;
+                    endElement = all_YCCP_After_filter2.length-1;
                 }else{
                     endElement = page * 5-1;
                 }
 
                 let result = [];
                 for(let i = startElement; i <= endElement; i++){
-                    result = [...result, allRequestForIssuanceOfEmbryosShow[i]];
+                    result = [...result, all_YCCP_After_filter2[i]];
                 }
                 setAllYCCP_PT(result);
             }else{
-                setAllYCCP_PT(allRequestForIssuanceOfEmbryosShow);
+                setAllYCCP_PT(all_YCCP_After_filter2);
             }         
         }
-    }, [page, allRequestForIssuanceOfEmbryosShow])
+    }, [page, all_YCCP_After_filter2])
     
     //State và xử lý logic hiện chi tiết yêu cầu cấp phôi và danh sách học viên kèm theo
     //State để ẩn hiện chi tiết yêu cầu
@@ -382,6 +423,34 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                         value={selectedSelectDiplomaNameARFIOE}
                                         onChange={handleChangeSelectDiplomaNameARFIOE}
                                         options={optionsSelectDiplomaNameARFIOE}
+                                    />
+                                </div>
+                            </div>
+                            <div className="row p-3">
+                                <div className="col-md-6">
+                                    <input 
+                                        type="text" 
+                                        placeholder='Tìm kiếm theo mã phiếu'
+                                        value={inputMaPhieuSearch}
+                                        className='form-control'
+                                        onChange={(e)=>{
+                                            setInputMaPhieuSearch(e.target.value)
+                                        }}
+                                    />
+                                </div>
+                                <div className="col-md-6">
+                                    <Select
+                                        options={[
+                                            {value: "", label:"Tất cả trạng thái"},
+                                            {value: "Đã gửi yêu cầu", label: "Đã gửi yêu cầu"},
+                                            {value: "Đã duyệt yêu cầu", label: "Đã duyệt yêu cầu"},
+                                            {value: "Đã gửi thủ kho", label: "Đã gửi thủ kho"},
+                                            {value: "Đã in phôi", label: "Đã in phôi"},
+                                            {value: "Đã dán tem", label: "Đã dán tem"},
+                                            {value: "Đã nhận phôi", label: "Đã nhận phôi"},
+                                        ]}
+                                        value={statusYC}
+                                        onChange={handleChangeStatusYC}
                                     />
                                 </div>
                             </div>
@@ -544,7 +613,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                 <div className="d-flex justify-content-center mt-3">
                                     <Stack spacing={2}>
                                         <Pagination 
-                                            count={Math.ceil(allRequestForIssuanceOfEmbryosShow?.length/5)}
+                                            count={Math.ceil(all_YCCP_After_filter2?.length/5)}
                                             variant="outlined"
                                             page={page}
                                             onChange={handleChange}
