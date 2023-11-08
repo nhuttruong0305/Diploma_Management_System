@@ -1,36 +1,39 @@
-//Quản lý yêu cầu cấp phôi cho thư ký
-import Toast from '../Toast/Toast';
-import './ManageRequestsForEmbryoIssuanceForSecretary.css';
+//Trang Các yêu cầu xin cấp phôi đã được thủ kho xử lý của thư ký
+import './RequestForIssuanceOfEmbryosProcessed.css';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom'
 import Select from 'react-select';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { useEffect,useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllDiplomaName, getAllDiplomaType } from '../../redux/apiRequest';
+import DetailRequest from '../DetailRequest/DetailRequest';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { getAllDiplomaName, getAllDiplomaType} from '../../redux/apiRequest';
-import DetailRequest from '../DetailRequest/DetailRequest';
-export default function ManageRequestsForEmbryoIssuanceForSecretary(){
+import Toast from '../Toast/Toast';
+import DetailDeliveryBill from '../DetailDeliveryBill/DetailDeliveryBill';
+
+export default function RequestForIssuanceOfEmbryosProcessed(){
     const dispatch = useDispatch();
     const allDiplomaName = useSelector((state) => state.diplomaName.diplomaNames?.allDiplomaName); //state đại diện cho all diploma name để lấy ra tên văn bằng
-    
-    //State chứa all management unit trong DB, trừ tổ quản lý VBCC ra
-    const [allManagementUnit, setAllManagementUnit] = useState([]);
+    const allDiplomaType = useSelector((state) => state.diplomaType.diplomaTypes?.allDiplomaType); //state lấy ra all diploma type
 
     //State lấy ra all user trong DB để lấy tên cán bộ tạo yêu cầu
     const [allUserAccount, setAllUserAccount] = useState([]);
 
+    //Hàm gọi api lấy all user trong DB
+    const getAllUserAccount = async () => {
+        try{
+            const res = await axios.get("http://localhost:8000/v1/user_account/get_all_useraccount");
+            setAllUserAccount(res.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     //State để lấy all major trong DB ra
     const [allMajorInDB, setAllMajorInDB] = useState([]);
-
-    //State để lưu options của select có id = select-MU-MRFEIFS
-    const [optionsOfSelectMU_MRFEIFS, setOptionsOfSelectMU_MRFEIFS] = useState([]);
-    const [selectedSelectMU_MRFEIFS, setSelectedSelectMU_MRFEIFS] = useState({value: "", label: "Tất cả đơn vị quản lý"})
-    const handleChangeselectedSelectMU_MRFEIFS = (selectedOption) => {
-        setSelectedSelectMU_MRFEIFS(selectedOption)
-    }
 
     //Hàm lấy ra all majors
     const getAllMajorsShowModal = async () =>{
@@ -41,6 +44,9 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
             console.log(error);
         }
     }
+
+    //State chứa all management unit trong DB, trừ tổ quản lý VBCC ra
+    const [allManagementUnit, setAllManagementUnit] = useState([]);
 
     //Hàm call api lấy danh sách các đơn vị quản lý
     const getAllManagementUnit = async () => {
@@ -58,16 +64,6 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
         }
     }
 
-    //Hàm gọi api lấy all user trong DB
-    const getAllUserAccount = async () => {
-        try{
-            const res = await axios.get("http://localhost:8000/v1/user_account/get_all_useraccount");
-            setAllUserAccount(res.data);
-        }catch(error){
-            console.log(error);
-        }
-    }
-
     useEffect(()=>{
         getAllManagementUnit();
         getAllRequestForIssuanceOfEmbryos();
@@ -76,6 +72,13 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
         getAllDiplomaType(dispatch);
         getAllMajorsShowModal();
     }, [])
+    
+    //State chứa dữ liệu cho options và selected của select có id = select-MU-RFIOEP
+    const [optionsOfSelectMU, setOptionsOfSelectMU] = useState([]) 
+    const [selectedOfSelectMU, setSelectedOfSelectMU] = useState({value: "", label: "Tất cả đơn vị quản lý"});
+    const handleChangeMU = (selectedOption) =>{
+        setSelectedOfSelectMU(selectedOption)
+    }
 
     useEffect(()=>{
         let resultOption = [{value: "", label: "Tất cả đơn vị quản lý"}];
@@ -83,16 +86,16 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
             const newOption = {value: currentValue.management_unit_id, label: currentValue.management_unit_name};
             resultOption = [...resultOption, newOption];
         })
-        setOptionsOfSelectMU_MRFEIFS(resultOption);
+        setOptionsOfSelectMU(resultOption);
     }, [allManagementUnit])
     
-    //State lưu các tên văn bằng theo đơn vị quản lý được chọn tại select có id = select-MU-MRFEIFS
+    //State chứa dữ liệu cho options và selected của select có id = select-diploma-name-RFIOEP
     const [allDiplomaNameByMU, setAllDiplomaNameByMU] = useState([]);
-    const [optionsOfselectDiplomaNameMRFEIFS, setOptionsOfselectDiplomaNameMRFEIFS] = useState([]);
-    const [selectedSelectDiplomaNameMRFEIFS, setSelectedSelectDiplomaNameMRFEIFS] = useState({value:'', label: "Tất cả tên văn bằng"});
-    const handleChangeSelectDiplomaNameMRFEIFS = (selectedOption) => {
-        setSelectedSelectDiplomaNameMRFEIFS(selectedOption)
-    }
+    const [optionsOfSelectDiplomaName, setOptionsOfSelectDiplomaName] = useState([])
+    const [selectedOfSelectDiplomaName, setSelectedOfSelectDiplomaName] = useState({value:'', label: "Tất cả tên văn bằng"});
+    const handleChangeselectedOfSelectDiplomaName = (selectedOption) => {
+        setSelectedOfSelectDiplomaName(selectedOption);
+    } 
 
     //Hàm lấy ra các tên (loại văn bằng) được quản lý bởi đơn vị quản lý được chọn tại select có id = select-MU-MRFEIFS
     const getAllDiplomaNameByMU = async (management_unit_id) => {
@@ -107,45 +110,45 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
     }
 
     useEffect(()=>{
-        getAllDiplomaNameByMU(selectedSelectMU_MRFEIFS.value);
-    }, [selectedSelectMU_MRFEIFS])    
-    
+        getAllDiplomaNameByMU(selectedOfSelectMU.value);
+    }, [selectedOfSelectMU])
+
     useEffect(()=>{
         let resultOption = [{value: "", label: "Tất cả tên văn bằng"}];
         allDiplomaNameByMU?.forEach((currentValue)=>{
             const newOption = {value: currentValue.diploma_name_id, label: currentValue.diploma_name_name}
             resultOption = [...resultOption, newOption]
         })
-        setOptionsOfselectDiplomaNameMRFEIFS(resultOption)
+        setOptionsOfSelectDiplomaName(resultOption);
     }, [allDiplomaNameByMU])
-    
-    //state để chứa value của input tìm yêu cầu cấp phôi theo mã phiếu
+
+    //State chứa value để tìm kiếm theo mã số phiếu
     const [inputMaPhieuSearch, setInputMaPhieuSearch] = useState("");
-    
-    //State để chứa value của trạng thái yêu cầu muốn lọc ra
+
+    //State chứa selected trạng thái của yêu cầu cần tìm
     const [statusYC, setStatusYC] = useState({value:"", label: "Tất cả trạng thái"});
     const handleChangeStatusYC = (selectedOption) => {
         setStatusYC(selectedOption);
     }
 
-    //State chứa all yc cấp phôi trong db
+    //State chứa all yêu cầu cấp phôi với trạng thái là đã gửi thủ kho và đã in phôi
     const [allYCCP, setAllYCCP] = useState([]);
     //State chứa các yc cấp phôi sau khi lọc MU và diploma_name
     const [allYCCP_After_filter, setAllYCCP_After_filter] = useState([]);
-    //State chứa các yc cấp phôi sau khi lọc status
-    const [allYCCP_After_filter3, setAllYCCP_After_filter3] = useState([]);
-    //State chứa các yc cấp phôi sau khi lọc mã phiếu
+    //State chứa các yc cấp phôi sau khi lọc trạng thái
     const [allYCCP_After_filter2, setAllYCCP_After_filter2] = useState([]);
+    //State chứa các yc cấp phôi sau khi lọc theo mã phiếu
+    const [allYCCP_After_filter3, setAllYCCP_After_filter3] = useState([]);
     //State chứa all yc cấp phôi phân trang
     const [allYCCP_Panigate, setAllYCCP_Panigate] = useState([]);
-    
+
     //Hàm call api lấy ra all yêu cầu cấp phôi
     const getAllRequestForIssuanceOfEmbryos = async () => {
         try{
             let finalResult = [];
             const result = await axios.get("http://localhost:8000/v1/embryo_issuance_request/get_all_yccp");
             result.data.forEach((currentValue)=>{
-                if(currentValue.status == "Đã duyệt yêu cầu" || currentValue.status == "Đã gửi thủ kho"){
+                if(currentValue.status == "Đã in phôi" || currentValue.status == "Đã nhận phôi" || currentValue.status == "Đã dán tem"){
                     finalResult = [...finalResult, currentValue];
                 }
             })
@@ -155,21 +158,20 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
             console.log(error);
         }
     }
-    
-    //Xử lý việc lọc ra các yêu cầu cấp phôi theo các điều kiện là đơn vị quản lý và tên văn bằng
+
     useEffect(()=>{
         let result = [];
-        if(selectedSelectMU_MRFEIFS.value!=""){
+        if(selectedOfSelectMU.value!=""){
             allYCCP?.forEach((currentValue)=>{
-                if(currentValue.management_unit_id == selectedSelectMU_MRFEIFS.value){
+                if(currentValue.management_unit_id == selectedOfSelectMU.value){
                     result = [...result, currentValue];
                 }
             })
 
-            if(selectedSelectDiplomaNameMRFEIFS.value!=""){
+            if(selectedOfSelectDiplomaName.value!=""){
                 let result2 = [];
                 result?.forEach((currentValue)=>{
-                    if(currentValue.diploma_name_id == selectedSelectDiplomaNameMRFEIFS.value){
+                    if(currentValue.diploma_name_id == selectedOfSelectDiplomaName.value){
                         result2 = [...result2, currentValue];                        
                     }
                 })
@@ -180,9 +182,8 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
         }else{  
             setAllYCCP_After_filter(allYCCP);
         }
-    }, [selectedSelectMU_MRFEIFS, selectedSelectDiplomaNameMRFEIFS, inputMaPhieuSearch])
-    
-    //Lọc các yc cấp phôi theo trạng thái yêu cầu
+    }, [selectedOfSelectMU, selectedOfSelectDiplomaName, allYCCP])
+
     useEffect(()=>{
         if(statusYC.value!=""){
             let result = [];
@@ -191,65 +192,61 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                     result = [...result, currentValue];
                 }
             })
-            setAllYCCP_After_filter3(result);
+            setAllYCCP_After_filter2(result);
         }else{
-            setAllYCCP_After_filter3(allYCCP_After_filter);
+            setAllYCCP_After_filter2(allYCCP_After_filter);
         }
+
     }, [allYCCP_After_filter, statusYC])
 
-    //Lọc ra các yc cấp phôi qua mã phiếu
     useEffect(()=>{
         if(inputMaPhieuSearch!=""){
             let result = [];
-            allYCCP_After_filter3?.forEach((currentValue)=>{
+            allYCCP_After_filter2?.forEach((currentValue)=>{
                 if(currentValue.embryoIssuanceRequest_id == inputMaPhieuSearch){
                     result = [...result, currentValue];
                 }
             })
-            setAllYCCP_After_filter2(result);
+            setAllYCCP_After_filter3(result);
         }else{
-            setAllYCCP_After_filter2(allYCCP_After_filter3);
+            setAllYCCP_After_filter3(allYCCP_After_filter2);
         }
-    }, [allYCCP_After_filter3, inputMaPhieuSearch])
-    
+    }, [allYCCP_After_filter2, inputMaPhieuSearch])
+
     const [page, setPage] = useState(1);
     const handleChange = (event, value) => {
         setPage(value);
     };
 
     useEffect(()=>{
-        if(page!=undefined && allYCCP_After_filter2!=undefined){
-            if(allYCCP_After_filter2.length>5){
-                const numberOfPage = Math.ceil(allYCCP_After_filter2?.length/5);
+        if(page!=undefined && allYCCP_After_filter3!=undefined){
+            if(allYCCP_After_filter3.length>5){
+                const numberOfPage = Math.ceil(allYCCP_After_filter3?.length/5);
                 const startElement = (page - 1) * 5;
                 let endElement = 0;
                 if(page == numberOfPage){
-                    endElement = allYCCP_After_filter2.length-1;
+                    endElement = allYCCP_After_filter3.length-1;
                 }else{
                     endElement = page * 5-1;
                 }
 
                 let result = [];
                 for(let i = startElement; i <= endElement; i++){
-                    result = [...result, allYCCP_After_filter2[i]];
+                    result = [...result, allYCCP_After_filter3[i]];
                 }
                 setAllYCCP_Panigate(result);
             }else{
-                setAllYCCP_Panigate(allYCCP_After_filter2);
+                setAllYCCP_Panigate(allYCCP_After_filter3);
             }         
         }
-    }, [page, allYCCP_After_filter2])
-    
+    }, [page, allYCCP_After_filter3])
+
     function handleDateToDMY(date){
         const splitDate = date.split("-");
         const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
         return result;
     }
-    const handleDateToMDY = (date) => {
-        let splitDate = date.split("-");
-        const result = `${splitDate[1]}/${splitDate[2]}/${splitDate[0]}`
-        return result;
-    }
+
     const handleSeri = (seriNumber) => {
         let seriAfterProcessing = seriNumber.toString();
         switch(seriAfterProcessing.length){
@@ -275,13 +272,10 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
         return seriAfterProcessing;
     }
 
-    //State để tạo nút đóng
     const [closeButton, setCloseButton] = useState(null);
-
-    //State để show chi tiết yêu cầu
     const [showDetailRequest, setShowDetailRequest] = useState(false);
 
-    //Các state cho chi tiết yêu cầu cấp phôi
+    //State để lấy dữ liệu chi tiết yêu cầu và điền vào mẫu xin cấp phôi
     const [embryoIssuanceRequest_id, setEmbryoIssuanceRequest_id] = useState("");
     const [managementUnitPhieuYC, setManagementUnitPhieuYC] = useState("");
     const [diplomaNameInPhieuYC, setDiplomaNameInPhieuYC] = useState("");
@@ -290,8 +284,6 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
     const [seriStartInPhieuYC, setSeriStartInPhieuYC] = useState("");
     const [seriEndInPhieuYC, setSeriEndInPhieuYC] = useState("");
     const [diplomaType, setDiplomaType] = useState("");
-
-    const allDiplomaType = useSelector((state) => state.diplomaType.diplomaTypes?.allDiplomaType); //state lấy ra all diploma type
 
     //state để lấy ra trường options của diplomaName được chọn trong chi tiết yêu cầu cấp phôi
     const [optionsOfDiplomaName, setOptionsOfDiplomaName] = useState([]);
@@ -379,18 +371,59 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
         setAllDSHVByEIR(data);
     }
 
-    //Xử lý logic cho việc   
-    //State chứa _id của yêu cầu cấp phôi sẽ được cập nhật trạng thái
-    const [_idYCCP_approved, set_idYCCP_approved] = useState("");
+    const handleDateToMDY = (date) => {
+        let splitDate = date.split("-");
+        const result = `${splitDate[1]}/${splitDate[2]}/${splitDate[0]}`
+        return result;
+    }
 
+    function scrollToDetailRequest(){
+        setTimeout(()=>{
+            document.body.scrollTop = 1100;
+            document.documentElement.scrollTop = 1100;
+        },200)
+    }
+
+    //State và logic xử lý việc hiển thị chi tiết phiếu xuất kho
+    const [showDeliveryBill, setShowDeliveryBill] = useState(false);
+    const [detailDeliveryBill, setDetailDeliveryBill] = useState([]);
+
+    //Hàm call api lấy chi tiết phiếu xuất kho
+    const getDetailDeliveryBill = async (embryoIssuanceRequest_id) => {
+        try{
+            const result = await axios.get(`http://localhost:8000/v1/delivery_bill/get_detail_delivery_bill/${embryoIssuanceRequest_id}`);
+            setDetailDeliveryBill(result.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    function scrollToDeliveryBill(){
+        if(showDetailRequest == false){
+            setTimeout(()=>{
+                document.body.scrollTop = 1100;
+                document.documentElement.scrollTop = 1100;
+            },200)
+        }else{
+            setTimeout(()=>{
+                document.body.scrollTop = 2850;
+                document.documentElement.scrollTop = 2850;
+            },200)
+        }
+    }
+
+    const [closeButtonDeliveryBill, setCloseButtonDeliveryBill] = useState(null);
+
+    //Xử lý logic cập nhật trạng thái của các yêu cầu xin cấp phôi có trạng thái là "Đã in phôi" thành "Đã dán tem"
+    const [_idYCCP_need_update, set_idYCCP_need_update] = useState("");
     const noti = useRef();
     
     const handleUpdateStatusRequest = async () => {
         try{
             const updateDoc = {
-                status: "Đã gửi thủ kho"
+                status: "Đã dán tem"
             }
-            const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_approved}`,updateDoc);
+            const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_need_update}`,updateDoc);
             noti.current.showToast();
             setTimeout(async()=>{
                 await getAllRequestForIssuanceOfEmbryos();
@@ -403,7 +436,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
     return(
         <>  
             <Header/>
-            <div className="container" id='body-MRFEIFS'> 
+            <div className="container" id='body-RFIOEP'>
                 <div style={{ backgroundColor: '#ffffff', padding: '10px' }}>
                     <div className="row">
                         <div className="col-md-3">
@@ -412,66 +445,63 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                     <i className="fa-solid fa-sliders"></i>
                                 </div>
                                 <ul className="list-group list-group-flush">
-                                    <li style={{backgroundColor: '#1b95a2'}} className="list-group-item">Các yêu cầu xin cấp phôi đã được duyệt</li>
-                                    <Link style={{textDecoration: 'none'}} to='/request_for_issuance_of_embryos_processed'>
-                                        <li className="list-group-item">Các yêu cầu xin cấp phôi đã được thủ kho xử lý</li>
+                                    <Link style={{textDecoration: 'none'}} to='/manage_requests_for_embryo_issuance_for_secretary'>
+                                        <li className="list-group-item">Các yêu cầu xin cấp phôi đã được duyệt</li>
                                     </Link>
+                                    <li style={{backgroundColor: '#1b95a2'}} className="list-group-item">Các yêu cầu xin cấp phôi đã được thủ kho xử lý</li>
                                 </ul>
                             </div>
                         </div>
                         <div className="col-md-9">
-                            <div className='card p-3'>
-                                <div className='row'>
+                            <div className="card p-3">
+                                <div className="row">
                                     <div className="col-6">
                                         <Select
-                                            id='select-MU-MRFEIFS'
-                                            options={optionsOfSelectMU_MRFEIFS}
-                                            placeholder="Chọn đơn vị quản lý"
-                                            value={selectedSelectMU_MRFEIFS}
-                                            onChange={handleChangeselectedSelectMU_MRFEIFS}
+                                            id='select-MU-RFIOEP'
+                                            value={selectedOfSelectMU}
+                                            onChange={handleChangeMU}
+                                            options={optionsOfSelectMU}
                                         />
                                     </div>
                                     <div className="col-6">
                                         <Select
-                                            id='select-diplomaName-MRFEIFS'
-                                            placeholder="Chọn tên văn bằng"
-                                            options={optionsOfselectDiplomaNameMRFEIFS}
-                                            value={selectedSelectDiplomaNameMRFEIFS}
-                                            onChange={handleChangeSelectDiplomaNameMRFEIFS}
+                                            id='select-diploma-name-RFIOEP'
+                                            value={selectedOfSelectDiplomaName}
+                                            onChange={handleChangeselectedOfSelectDiplomaName}
+                                            options={optionsOfSelectDiplomaName}
                                         />
                                     </div>
                                 </div>
-                                <div className='mt-3 row'>
+                                <div className="row mt-3">
                                     <div className="col-6">
                                         <input 
                                             type="text" 
                                             className='form-control'
-                                            placeholder='Tìm kiếm theo mã phiếu'   
+                                            placeholder='Tìm kiếm theo mã số phiếu'
                                             value={inputMaPhieuSearch}
                                             onChange={(e)=>{
-                                                setInputMaPhieuSearch(e.target.value);
+                                                setInputMaPhieuSearch(e.target.value)
                                             }}
                                         />
                                     </div>
                                     <div className="col-6">
                                         <Select
                                             options={[
-                                                {value:"", label: "Tất cả trạng thái"},
-                                                {value:"Đã duyệt yêu cầu", label: "Đã duyệt yêu cầu"},
-                                                {value:"Đã gửi thủ kho", label: "Đã gửi thủ kho"}
+                                                {value:"Đã in phôi", label: "Đã in phôi"},
+                                                {value:"Đã dán tem", label: "Đã dán tem"},
+                                                {value:"Đã nhận phôi", label: "Đã nhận phôi"}
                                             ]}
-                                            placeholder="Chọn trạng thái yêu cầu"
                                             value={statusYC}
                                             onChange={handleChangeStatusYC}
                                         />
                                     </div>
                                 </div>
                                 <div className="row mt-3">
-                                    <p className='title-list-yc-xin-cap-phoi'>DANH SÁCH CÁC YÊU CẦU XIN CẤP PHÔI ĐÃ ĐƯỢC DUYỆT</p>
+                                    <p className='title-list-yc-xin-cap-phoi'>DANH SÁCH CÁC YÊU CẦU XIN CẤP PHÔI ĐÃ ĐƯỢC IN PHÔI</p>
                                 </div>
                                 <div className="row mt-3 p-3">
-                                    <div id='contain-yc-cap-phoi-secretary'>
-                                        <table className='table table-bordered' style={{width: '1700px'}}>
+                                    <div id="contain-yccp-da-in">
+                                        <table className='table table-bordered' style={{width: '1800px'}}>
                                             <thead>
                                                 <tr>
                                                     <th style={{textAlign: 'center'}} scope="col">Mã phiếu</th>
@@ -483,24 +513,24 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                     <th style={{textAlign: 'center'}} scope="col">MSCB</th>
                                                     <th style={{textAlign: 'center'}} scope="col">Trạng thái</th>
                                                     <th style={{textAlign: 'center'}} scope="col">Xem chi tiết</th>
+                                                    <th style={{textAlign: 'center'}} scope="col">Xem phiếu xuất kho</th>
                                                     <th style={{textAlign: 'center'}} scope="col">
                                                         Cập nhật trạng thái
                                                         <br />
-                                                        (Đã gửi thủ kho)
+                                                        (Đã dán tem cho phôi)
                                                     </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {
                                                     allYCCP_Panigate?.map((currentValue, index)=>{
-                                                        //Lấy ra tên văn bằng, loại văn bằng và options
+                                                        //Lấy ra tên văn bằng, loại văn bằng, options
                                                         let ten_van_bang;
                                                         let loai_van_bang;
                                                         let options;
                                                         allDiplomaName?.forEach((diplomaName)=>{
-                                                            if(currentValue.diploma_name_id == diplomaName.diploma_name_id){
+                                                            if(diplomaName.diploma_name_id == currentValue.diploma_name_id){
                                                                 ten_van_bang = diplomaName.diploma_name_name;
-
                                                                 allDiplomaType?.forEach((diplomaType)=>{
                                                                     if(diplomaType.diploma_type_id == diplomaName.diploma_type_id){
                                                                         loai_van_bang = diplomaType.diploma_type_name;
@@ -509,10 +539,11 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                                 options = diplomaName.options;
                                                             }
                                                         })
-                                                        //Lấy ra tên cán bộ
+
+                                                        //Lấy tên cán bộ
                                                         let ten_can_bo_tao_yc;
                                                         allUserAccount?.forEach((user)=>{
-                                                            if(currentValue.mscb == user.mssv_cb){
+                                                            if(user.mssv_cb == currentValue.mscb){
                                                                 ten_can_bo_tao_yc = user.fullname;
                                                             }
                                                         })
@@ -524,64 +555,92 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                             }
                                                         })
                                                         return(
-                                                            <tr key={index} style={{textAlign: 'center'}}>
+                                                            <tr style={{textAlign: 'center'}} key={index}>
                                                                 <td>{`#${currentValue.embryoIssuanceRequest_id}`}</td>
                                                                 <td>{ten_van_bang}</td>
                                                                 <td>{handleDateToDMY(currentValue.examination)}</td>
                                                                 <td>{currentValue.numberOfEmbryos}</td>
-                                                                <td>{`${handleSeri(currentValue.seri_number_start)} - ${currentValue.seri_number_end}`}</td>
+                                                                <td>{`${handleSeri(currentValue.seri_number_start)} - ${handleSeri(currentValue.seri_number_end)}`}</td>
                                                                 <td>{ten_can_bo_tao_yc}</td>
                                                                 <td>{currentValue.mscb}</td>
                                                                 <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
                                                                 <td>
+                                                                {
+                                                                    closeButton == index ? (
+                                                                        <i 
+                                                                            style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
+                                                                            className="fa-regular fa-circle-xmark"
+                                                                            onClick={(e)=>{
+                                                                                setCloseButton(null)
+                                                                                setShowDetailRequest(false)
+                                                                            }}
+                                                                        ></i>
+                                                                    ) : (
+                                                                        //nút xem chi tiết yêu cầu xin cấp phôi
+                                                                        <i 
+                                                                            className="fa-solid fa-eye"
+                                                                            style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}                                                             
+                                                                            onClick={(e)=>{
+                                                                                setCloseButton(index);
+                                                                                setShowDetailRequest(true)
+                                                                                
+                                                                                setEmbryoIssuanceRequest_id(currentValue.embryoIssuanceRequest_id);
+                                                                                setManagementUnitPhieuYC(don_vi_quan_ly);
+                                                                                setDiplomaNameInPhieuYC(ten_van_bang);
+                                                                                setExaminationsInPhieuYC(currentValue.examination)
+                                                                                setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos)
+                                                                                setSeriStartInPhieuYC(currentValue.seri_number_start);
+                                                                                setSeriEndInPhieuYC(currentValue.seri_number_end);
+                                                                                setDiplomaType(loai_van_bang);
+                                                                                setOptionsOfDiplomaName(options);
+                                                                                getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, options)     
+                                                                                scrollToDetailRequest();                                               
+                                                                            }}
+                                                                        ></i>
+                                                                    )
+                                                                }
+                                                                </td>
+                                                                <td>
                                                                     {
-                                                                        closeButton == index ? (
+                                                                        closeButtonDeliveryBill == index ? (
                                                                             <i 
                                                                                 style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
                                                                                 className="fa-regular fa-circle-xmark"
                                                                                 onClick={(e)=>{
-                                                                                    setCloseButton(null)
-                                                                                    setShowDetailRequest(false)
+                                                                                    setShowDeliveryBill(false);
+                                                                                    setCloseButtonDeliveryBill(null);
                                                                                 }}
                                                                             ></i>
                                                                         ) : (
+                                                                            // nút xem chi tiết phiếu xuất kho 
                                                                             <i 
-                                                                                className="fa-solid fa-eye"
-                                                                                style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}                                                             
+                                                                                className="fa-solid fa-circle-info"
+                                                                                style={{backgroundColor: "#0dcaf0", padding: '7px', borderRadius: '5px', color: 'white'}}
                                                                                 onClick={(e)=>{
-                                                                                    setCloseButton(index);
-                                                                                    setShowDetailRequest(true)
-                                                                                    setEmbryoIssuanceRequest_id(currentValue.embryoIssuanceRequest_id);
-                                                                                    setManagementUnitPhieuYC(don_vi_quan_ly);
-                                                                                    setDiplomaNameInPhieuYC(ten_van_bang);
-                                                                                    setExaminationsInPhieuYC(currentValue.examination);
-                                                                                    setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos);
-                                                                                    setSeriStartInPhieuYC(currentValue.seri_number_start);
-                                                                                    setSeriEndInPhieuYC(currentValue.seri_number_end);
-                                                                                    setDiplomaType(loai_van_bang);
-                                                                                    setOptionsOfDiplomaName(options);
-                                                                                    getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, options)
+                                                                                    getDetailDeliveryBill(currentValue.embryoIssuanceRequest_id);
+                                                                                    setCloseButtonDeliveryBill(index);
+                                                                                    setShowDeliveryBill(true);
+                                                                                    scrollToDeliveryBill()
                                                                                 }}
                                                                             ></i>
                                                                         )
                                                                     }
                                                                 </td>
                                                                 <td>
-
                                                                     {
-                                                                        currentValue.status == "Đã duyệt yêu cầu" ? (
+                                                                        currentValue.status == "Đã in phôi" ? (
                                                                             <i 
                                                                                 className="fa-solid fa-pen-to-square"
-                                                                                style={{backgroundColor: "#fed25c", padding: '7px', borderRadius: '5px', color: 'white'}}  
-                                                                                data-bs-toggle="modal" data-bs-target="#updateStatusYCCPtoSentStocker" 
+                                                                                style={{backgroundColor: "#fed25c", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                                data-bs-toggle="modal" data-bs-target="#updateStatusstampedModal"   
                                                                                 onClick={(e)=>{
-                                                                                    set_idYCCP_approved(currentValue._id);
-                                                                                }}                                                          
+                                                                                    set_idYCCP_need_update(currentValue._id);
+                                                                                }}                                                                                                                             
                                                                             ></i>
                                                                         ) : (
                                                                             <i 
                                                                                 className="fa-solid fa-pen-to-square"
-                                                                                style={{backgroundColor: "grey", padding: '7px', borderRadius: '5px', color: 'white'}}                                                            
+                                                                                style={{backgroundColor: "grey", padding: '7px', borderRadius: '5px', color: 'white'}}
                                                                             ></i>
                                                                         )
                                                                     }
@@ -593,79 +652,99 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                             </tbody>
                                         </table>
                                     </div>
-
-                                    {/* Modal cập nhật trạng thái của yêu cầu thành Đã gửi thủ kho */}
-                                    <div className="modal fade" id="updateStatusYCCPtoSentStocker" tabIndex="-1" aria-labelledby="updateStatusYCCPtoSentStockerLabel" aria-hidden="true">
+                                    {/* Modal cập nhật trạng thái của yêu cầu thành Đã dán tem */}
+                                    <div className="modal fade" id="updateStatusstampedModal" tabIndex="-1" aria-labelledby="updateStatusstampedModalLabel" aria-hidden="true">
                                         <div className="modal-dialog modal-dialog-centered">
                                             <div className="modal-content">
                                             <div className="modal-header">
-                                                <h1 className="modal-title fs-5" id="updateStatusYCCPtoSentStockerLabel"></h1>
+                                                <h1 className="modal-title fs-5" id="updateStatusstampedModalLabel"></h1>
                                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div className="modal-body">
-                                                <h5>Bạn có chắc muốn cập nhật trạng thái của yêu cầu cấp phôi này thành <span style={{fontWeight: 'bold'}}>"Đã gửi thủ kho"</span></h5>
+                                                <h5>Bạn có chắc muốn cập nhật trạng thái của yêu cầu cấp phôi này thành <span style={{fontWeight: 'bold'}}>"Đã dán tem"</span></h5>
                                             </div>
                                             <div className="modal-footer">
                                                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                                                 <button 
                                                     type="button" 
-                                                    className="btn" 
+                                                    className="btn btn-primary"
                                                     style={{backgroundColor: '#1b95a2'}}
                                                     onClick={(e)=>{
-                                                        handleUpdateStatusRequest();
+                                                        handleUpdateStatusRequest()
                                                     }}
                                                 >Cập nhật</button>
                                             </div>
                                             </div>
                                         </div>
                                     </div>
-                                                                                    
-
                                     <div className="d-flex justify-content-center mt-3">
-                                    <Stack spacing={2}>
-                                        <Pagination 
-                                            count={Math.ceil(allYCCP?.length/5)}
-                                            variant="outlined"
-                                            page={page}
-                                            onChange={handleChange}
-                                            color="info"
-                                        />
-                                    </Stack>
-                                </div>
+                                        <Stack spacing={2}>
+                                            <Pagination 
+                                                count={Math.ceil(allYCCP?.length/5)}
+                                                variant="outlined"
+                                                page={page}
+                                                onChange={handleChange}
+                                                color="info"
+                                            />
+                                        </Stack>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="row pb-3">
-                        <div className="mt-4">
-                            {
-                                showDetailRequest ? (
-                                    <DetailRequest
-                                        embryoIssuanceRequest_id={embryoIssuanceRequest_id}
-                                        managementUnitPhieuYC={managementUnitPhieuYC}
-                                        diplomaNameInPhieuYC={diplomaNameInPhieuYC}
-                                        examinationsInPhieuYC={examinationsInPhieuYC}
-                                        numberOfEmbryosInPhieuYC={numberOfEmbryosInPhieuYC}
-                                        seriStartInPhieuYC={seriStartInPhieuYC}
-                                        seriEndInPhieuYC={seriEndInPhieuYC}
-                                        diplomaType={diplomaType}
-                                        optionsOfDiplomaName={optionsOfDiplomaName}
-                                        allDSHVByEIR={allDSHVByEIR}
-                                    />
-                                ) : (
-                                    ""
-                                )
-                            }
-                        </div>
+                    <div className="mt-4">
+                        {
+                            showDetailRequest ? (
+                                <DetailRequest 
+                                    embryoIssuanceRequest_id={embryoIssuanceRequest_id}
+                                    managementUnitPhieuYC={managementUnitPhieuYC}
+                                    diplomaNameInPhieuYC={diplomaNameInPhieuYC}
+                                    examinationsInPhieuYC={examinationsInPhieuYC}
+                                    numberOfEmbryosInPhieuYC={numberOfEmbryosInPhieuYC}
+                                    seriStartInPhieuYC={seriStartInPhieuYC}
+                                    seriEndInPhieuYC={seriEndInPhieuYC}
+                                    diplomaType={diplomaType}
+                                    optionsOfDiplomaName={optionsOfDiplomaName}
+                                    allDSHVByEIR={allDSHVByEIR}
+                                ></DetailRequest>
+                            ) : ("")
+                        }
+                        {
+                            showDeliveryBill ? (
+                                //Lưu ý mỗi yêu cầu xin cấp phôi chỉ có duy nhất 1 delivery bill trong DB
+                                detailDeliveryBill?.map((currentValue, index)=>{
+                                    return(
+                                        <div key={index}>
+                                            <DetailDeliveryBill
+                                                delivery_bill={currentValue?.delivery_bill}
+                                                delivery_bill_creation_time={currentValue?.delivery_bill_creation_time}
+                                                fullname_of_consignee={currentValue?.fullname_of_consignee}
+                                                address_department={currentValue?.address_department}
+                                                reason={currentValue?.reason}
+                                                export_warehouse={currentValue?.export_warehouse}
+                                                address_export_warehouse={currentValue?.address_export_warehouse}
+                                                embryo_type={currentValue?.embryo_type}
+                                                numberOfEmbryos={currentValue?.numberOfEmbryos}
+                                                seri_number_start={currentValue?.seri_number_start}
+                                                seri_number_end={currentValue?.seri_number_end}
+                                                unit_price={currentValue?.unit_price}
+                                                mscb={currentValue?.mscb}
+                                            >                                    
+                                            </DetailDeliveryBill>
+                                        </div>
+                                    )
+                                })
+                            ) : ("")
+                        }
                     </div>
-                </div>    
+                </div>
             </div>
-            <Footer/>
             <Toast
                 message="Cập nhật trạng thái yêu cầu xin cấp phôi thành công"
                 type="success"
                 ref={noti}
             />
+            <Footer/>
         </>
     )
 }

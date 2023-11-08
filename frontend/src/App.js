@@ -23,6 +23,7 @@ import ApproveRequestForIssuanceOfEmbryos from './components/ApproveRequestForIs
 import ManageRequestsForEmbryoIssuanceForSecretary from './components/ManageRequestsForEmbryoIssuanceForSecretary/ManageRequestsForEmbryoIssuanceForSecretary';
 import Statistical from './components/Statistical/Statistical';
 import ManageRequestsForEmbryoIssuanceForStocker from './components/ManageRequestsForEmbryoIssuanceForStocker/ManageRequestsForEmbryoIssuanceForStocker';
+import RequestForIssuanceOfEmbryosProcessed from './components/RequestForIssuanceOfEmbryosProcessed/RequestForIssuanceOfEmbryosProcessed';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -256,6 +257,17 @@ function App() {
           >
             <ManageRequestsForEmbryoIssuanceForStocker/>
           </ProtectedStocker>
+        )
+      },
+      {
+        path: '/request_for_issuance_of_embryos_processed',
+        element: (
+          <ProtectedSecretary
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <RequestForIssuanceOfEmbryosProcessed/>
+          </ProtectedSecretary>
         )
       }
     ])

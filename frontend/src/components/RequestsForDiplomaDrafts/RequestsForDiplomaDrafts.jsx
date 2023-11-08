@@ -647,14 +647,14 @@ export default function RequestsForDiplomaDrafts(){
                                                     }
                                                 })
                                                 return(
-                                                    <tr key={index}>
-                                                        <td style={{textAlign: 'center'}} scope="row">{`#${currentValue.embryoIssuanceRequest_id}`}</td>
+                                                    <tr style={{textAlign: 'center'}} key={index}>
+                                                        <td scope="row">{`#${currentValue.embryoIssuanceRequest_id}`}</td>
                                                         <td>{diplomaName}</td>
                                                         <td>{handleDateToDMY(currentValue.examination)}</td>
                                                         <td>{currentValue.numberOfEmbryos}</td>
                                                         <td>{seriStartAfterProcess} - {seriEndAfterProcess}</td>
-                                                        <td>{currentValue.status}</td>
-                                                        <td style={{textAlign: 'center'}}>
+                                                        <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
+                                                        <td>
                                                             {
                                                                 closeButton == index ? (
                                                                     <i 

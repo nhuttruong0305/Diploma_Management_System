@@ -582,8 +582,8 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                         }
                                                     })
                                                     return(
-                                                        <tr key={index}>
-                                                            <td style={{textAlign: 'center'}}>{`#${currentValue.embryoIssuanceRequest_id}`}</td>
+                                                        <tr style={{textAlign: 'center'}} key={index}>
+                                                            <td>{`#${currentValue.embryoIssuanceRequest_id}`}</td>
                                                             <td>{ten_van_bang}</td>
                                                             <td>{handleDateToDMY(currentValue.examination)}</td>
                                                             <td>{currentValue.numberOfEmbryos}</td>
@@ -591,7 +591,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                             <td>{ten_can_bo_tao_yc}</td>
                                                             <td>{currentValue.mscb}</td>
                                                             <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
-                                                            <td style={{textAlign: 'center'}}>
+                                                            <td>
                                                                 {
                                                                     closeButton == index ? (
                                                                         <i 
@@ -627,7 +627,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                                     )
                                                                 }
                                                             </td>
-                                                            <td style={{textAlign:'center'}}>
+                                                            <td>
                                                                 {
                                                                     currentValue.status == "Đã gửi thủ kho" ? (
                                                                         //nút tạo phiếu xuất kho
