@@ -91,6 +91,24 @@ const embryoIssuanceRequestController = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+
+    //Hàm lấy all yccp được thêm
+    getAllYCCPImported: async (req, res) => {
+        try{
+            const result = await EmbryoIssuanceRequestModel.find({status: { $ne: "Đã nhận phôi" }});
+            return res.status(200).json(result);
+        }catch(error){  
+            return res.status(500).json(error);
+        }
+    },
+    getAllYCCPReviewed:async(req, res) => {
+        try{
+            const result = await EmbryoIssuanceRequestModel.find({status: "Đã nhận phôi" });
+            return res.status(200).json(result);
+        }catch(error){  
+            return res.status(500).json(error);
+        }
     }
 }
 

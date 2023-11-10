@@ -13,4 +13,8 @@ router.get("/search_diploma_tracuu", diplomaControllers.searchDiplomaTraCuu);//r
 router.get("/search_diploma_tracuu_for_student_and_client_user", diplomaControllers.searchDiplomaTraCuuForStudentAndClientUser);//route này dùng cho trang chủ tra cứu với loại tài khoản cán bộ
 
 router.get("/get_all_diploma_by_diploma_name_id/:diploma_name_id", diplomaControllers.getAllDiplomaByDiplomaNameId);
+
+router.get("/get_all_diploma_imported", diplomaControllers.getAllDiplomaImported);
+router.get("/get_all_diploma_reviewed", diplomaControllers.getAllDiplomaReviewed);
+
 module.exports = router;

@@ -258,6 +258,26 @@ const diplomaControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+
+    //Lấy tất cả diploma có trạng thái là "Chờ duyệt"
+    getAllDiplomaImported: async (req, res) => {
+        try{
+            const result = await DiplomaModel.find({status: "Chờ duyệt"});  
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+
+    //Lấy tất cả văn bằng đã duyệt
+    getAllDiplomaReviewed: async (req, res) => {
+        try{
+            const result = await DiplomaModel.find({status: "Đã duyệt"});  
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 
