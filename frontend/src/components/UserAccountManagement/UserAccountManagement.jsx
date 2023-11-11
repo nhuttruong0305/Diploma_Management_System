@@ -778,24 +778,25 @@ export default function UserAccountManagement() {
                                     </div>
                                 </div>
                                 <div id='contain-table-show-all-user'>
-                                    <table id='table-show-all-user' className='table mt-3'>
+                                    <table id='table-show-all-user' className='table table-striped table-hover'>
                                         <thead>
                                             <tr>
-                                                <th scope="col"></th>
-                                                <th scope="col">Họ tên</th>
-                                                <th scope="col">MSSV/CB</th>
-                                                <th scope="col">Loại tài khoản</th>
-                                                <th scope="col"></th>
+                                                <th scope="col" style={{backgroundColor: '#fed25c'}}></th>
+                                                <th scope="col" style={{backgroundColor: '#fed25c'}}>Họ tên</th>
+                                                <th scope="col" style={{backgroundColor: '#fed25c'}}>MSSV/CB</th>
+                                                <th scope="col" style={{backgroundColor: '#fed25c'}}>Loại tài khoản</th>
+                                                <th scope="col" style={{backgroundColor: '#fed25c'}}>Chức vụ</th>
+                                                <th scope="col" style={{backgroundColor: '#fed25c'}}>Xem chi tiết</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {
                                                 allUserAccount?.map((currentValue, index) => {        
-                                                    let chucVu ="";
+                                                    let loai_tai_khoan ="";
                                                     if(currentValue.position == "Student"){
-                                                        chucVu = "Sinh viên";                                                   
+                                                        loai_tai_khoan = "Sinh viên";                                                   
                                                     }else if(currentValue.position == "Officer"){
-                                                        chucVu = "Cán bộ";
+                                                        loai_tai_khoan = "Cán bộ";
                                                     }
 
                                                     let quyen = '';
@@ -818,7 +819,8 @@ export default function UserAccountManagement() {
                                                             <th scope="row">{index + 1}</th>
                                                             <td>{currentValue.fullname}</td>
                                                             <td>{currentValue.mssv_cb}</td>
-                                                            <td>{chucVu}</td>
+                                                            <td>{loai_tai_khoan}</td>
+                                                            <td>{quyen}</td>
                                                             <td>
                                                                 <i 
                                                                     className="fa-solid fa-eye"
@@ -861,7 +863,7 @@ export default function UserAccountManagement() {
                                                                         setCCCDShowModal(currentValue.cccd);
                                                                         setSexShowModal(sex);
                                                                         setSDTShowModal(currentValue.phonenumber);
-                                                                        setPositionShowModal(chucVu);
+                                                                        setPositionShowModal(loai_tai_khoan);
                                                                         setClassIDShowModal(currentValue.class);
                                                                         setFalcutyShowModal(khoa);
                                                                         setMajorsShowModal(nganh);

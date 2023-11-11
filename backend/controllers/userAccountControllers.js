@@ -268,6 +268,15 @@ const userAccountControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    //Lấy tất cả các tài khoản có chức vụ Leader
+    getAllUserLeader: async (req, res) => {
+        try{
+            const result = await UserAccountModel.find({role: { $in: "Leader" }});
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

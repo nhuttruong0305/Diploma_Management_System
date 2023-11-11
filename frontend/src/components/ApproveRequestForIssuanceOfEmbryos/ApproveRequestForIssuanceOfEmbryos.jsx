@@ -25,8 +25,6 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     //State để lấy all major trong DB ra
     const [allMajorInDB, setAllMajorInDB] = useState([]);
 
-
-
     //State để lưu options cho select có id = select-management-unit-ARFIOE
     const [optionsOfSelectMUARFIOE, setOptionsOfSelectMUARFIOE] = useState([]);
     //State lưu giá trị của select có id = select-management-unit-ARFIOE
@@ -287,8 +285,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     const [diplomaNameInPhieuYC, setDiplomaNameInPhieuYC] = useState("");
     const [examinationsInPhieuYC, setExaminationsInPhieuYC] = useState("");
     const [numberOfEmbryosInPhieuYC, setNumberOfEmbryosInPhieuYC] = useState();
-    const [seriStartInPhieuYC, setSeriStartInPhieuYC] = useState("");
-    const [seriEndInPhieuYC, setSeriEndInPhieuYC] = useState("");
+    
     const [diplomaType, setDiplomaType] = useState("");
 
     const allDiplomaType = useSelector((state) => state.diplomaType.diplomaTypes?.allDiplomaType); //state lấy ra all diploma type
@@ -383,6 +380,8 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     //State chứa _id của yêu cầu cấp phôi sẽ được duyệt
     const [_idYCCP_approved, set_idYCCP_approved] = useState("");
 
+    //State chứa phần diễn giải khi duyệt/không duyệt yêu cầu xin cấp phôi
+
     const noti = useRef();
     //Hàm duyệt yêu cầu cấp phôi
     const handleApproveRequest = async () => {
@@ -443,6 +442,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                         options={[
                                             {value: "", label:"Tất cả trạng thái"},
                                             {value: "Đã gửi yêu cầu", label: "Đã gửi yêu cầu"},
+                                            {value:"Không duyệt", label: "Không duyệt"},
                                             {value: "Đã duyệt yêu cầu", label: "Đã duyệt yêu cầu"},
                                             {value: "Đã gửi thủ kho", label: "Đã gửi thủ kho"},
                                             {value: "Đã in phôi", label: "Đã in phôi"},
@@ -459,21 +459,19 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                             </div>
                             <div className="row p-5">
                                 <div id='contain-yc-xin-cap-phoi-ARFIOE'>
-                                    <table className='table table-bordered' style={{width: '1700px'}}>
+                                    <table className='table table-striped table-hover' style={{width: '1700px', border: '2px solid #fed25c'}}>
                                         <thead>
                                             <tr>
-                                                <th style={{textAlign: 'center'}} scope="col">Mã phiếu</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Số seri</th>
-
-                                                <th style={{textAlign: 'center'}} scope="col">Cán bộ tạo yêu cầu</th>
-                                                <th style={{textAlign: 'center'}} scope="col">MSCB</th>
-
-                                                <th style={{textAlign: 'center'}} scope="col">Trạng thái</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Xem chi tiết</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Duyệt yêu cầu</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Đợt thi/Đợt cấp văn bằng (D/M/Y)</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng phôi</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Cán bộ tạo yêu cầu</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xét duyệt yêu cầu</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -504,16 +502,12 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                         }
                                                     })
 
-                                                    const startSeri = handleSeri(currentValue.seri_number_start);
-                                                    const endSeri = handleSeri(currentValue.seri_number_end);
                                                     return(
                                                         <tr style={{textAlign: 'center'}} key={index}>
                                                             <td>{`#${currentValue.embryoIssuanceRequest_id}`}</td>
                                                             <td>{ten_van_bang}</td>
                                                             <td>{handleDateToDMY(currentValue.examination)}</td>
                                                             <td>{currentValue.numberOfEmbryos}</td>
-                                                            <td>{`${startSeri} - ${endSeri}`}</td>
-                                                            
                                                             <td>{ten_can_bo_tao_yc}</td>
                                                             <td>{currentValue.mscb}</td>
 
@@ -523,7 +517,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                                     closeButton == index ? (
                                                                         <i 
                                                                             style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
-                                                                            class="fa-regular fa-circle-xmark"
+                                                                            className="fa-regular fa-circle-xmark"
                                                                             onClick={(e)=>{
                                                                                 setShowDetailRequest(false)
                                                                                 setCloseButton(null)
@@ -546,8 +540,6 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                                                 setDiplomaNameInPhieuYC(ten_van_bang);
                                                                                 setExaminationsInPhieuYC(currentValue.examination);
                                                                                 setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos);
-                                                                                setSeriStartInPhieuYC(currentValue.seri_number_start);
-                                                                                setSeriEndInPhieuYC(currentValue.seri_number_end);
                                                                                 setOptionsOfDiplomaName(options);
                                                                                 getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, options)
                                                                             }}                                                              
@@ -555,12 +547,13 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                                     )
                                                                 }
                                                             </td>
+                                                            <td></td>
                                                             <td>  
                                                                 {
                                                                     currentValue.status == "Đã gửi yêu cầu" ? (
                                                                         <i 
-                                                                            className="fa-solid fa-check"
-                                                                            style={{backgroundColor: "#fed25c", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                            className="fa-solid fa-pen-to-square"
+                                                                            style={{backgroundColor: "#2E8B57", padding: '7px', borderRadius: '5px', color: 'white'}}
                                                                             data-bs-toggle="modal" 
                                                                             data-bs-target="#approveRequestModal"
                                                                             onClick={(e)=>{
@@ -588,11 +581,26 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                     <div className="modal-dialog modal-dialog-centered">
                                         <div className="modal-content">
                                         <div className="modal-header">
-                                            <h1 className="modal-title fs-5" id="approveRequestModalLabel"></h1>
+                                            <h1 className="modal-title fs-5" id="approveRequestModalLabel">Xét duyệt yêu cầu xin cấp phôi</h1>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div className="modal-body">
-                                            <h5>Bạn có chắc muốn duyệt yêu cầu xin cấp phôi này</h5>
+                                            <div className="row">
+                                                {/* <div className="col-4">Nhập diễn giải</div> */}
+                                                <div className="col-8">
+                                                    <div className="form-floating">
+                                                        <textarea 
+                                                            className="form-control" 
+                                                            // value={explainModalReview}
+                                                            // onChange={(e)=>{
+                                                            //     setExplainModalReview(e.target.value);
+                                                            // }}
+                                                            placeholder="Leave a comment here" 
+                                                            id="floatingTextarea2" style={{height: "100px"}}></textarea>
+                                                        <label htmlFor="floatingTextarea2">Nhập diễn giải</label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="modal-footer">
                                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -604,6 +612,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                     handleApproveRequest()
                                                 }}
                                             >Duyệt</button>
+                                            <button className='btn btn-danger'>Không duyệt</button>
                                         </div>
                                         </div>
                                     </div>
@@ -632,8 +641,6 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                             diplomaNameInPhieuYC={diplomaNameInPhieuYC}
                                             examinationsInPhieuYC={examinationsInPhieuYC}
                                             numberOfEmbryosInPhieuYC={numberOfEmbryosInPhieuYC}
-                                            seriStartInPhieuYC={seriStartInPhieuYC}
-                                            seriEndInPhieuYC={seriEndInPhieuYC}
                                             diplomaType={diplomaType}
                                             optionsOfDiplomaName={optionsOfDiplomaName}
                                             allDSHVByEIR={allDSHVByEIR}

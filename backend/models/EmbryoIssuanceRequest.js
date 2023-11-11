@@ -26,21 +26,17 @@ const embryoIssuanceRequestSchema = new mongoose.Schema(
             type: String,
             default: "Đã gửi yêu cầu"
         },
-        seri_number_start:{ //Số seri bắt đầu - có
-            type: Number,
-            required: true
-        },
-        seri_number_end:{ //Số seri kết thúc - có
-            type:Number,
-            required: true
-        },
         mscb: { //Lưu mscb của người tạo yêu cầu cấp phôi
             type: String
         },
         time: { //Tạo vào thời gian nào
             type: String
         },
-        Embryo_receipt_diary: {
+        embryo_receipt_diary: { //nhật ký nhận phôi (dành cho tài khoản có chức vụ Trưởng phòng/Giám đốc Trung tâm cập nhật nhật ký nhận phôi khi đã nhận phôi)
+            type: String,
+            default: ""
+        },
+        comment: { //phần diễn giải cho Tổ trưởng nhập khi duyệt/không duyệt yêu cầu
             type: String,
             default: ""
         }

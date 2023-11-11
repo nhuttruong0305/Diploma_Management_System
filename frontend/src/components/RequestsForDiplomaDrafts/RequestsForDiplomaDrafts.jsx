@@ -36,6 +36,8 @@ export default function RequestsForDiplomaDrafts(){
         getAllDiplomaNameByMU(user?.management_unit);
         getAllMajorsShowModal();
         getAllDiplomaType(dispatch);
+        getAllUserLeader();
+        getAllUserAccount();
     }, [])
 
     useEffect(()=>{
@@ -212,6 +214,31 @@ export default function RequestsForDiplomaDrafts(){
         }
     }
 
+    //Lấy tất cả các tài khoản có chức vụ tổ trưởng
+    const [allUserLeader, setAllUserLeader] = useState([]);
+
+    const getAllUserLeader = async () => {
+        try{
+            const result = await axios.get("http://localhost:8000/v1/user_account/get_all_user_leader");
+            setAllUserLeader(result.data)
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+    //Lấy all user account 
+    const [allUserAccount, setAllUserAccount] = useState([]);
+
+    //Hàm gọi api lấy all user trong DB
+    const getAllUserAccount = async () => {
+        try{
+            const res = await axios.get("http://localhost:8000/v1/user_account/get_all_useraccount");
+            setAllUserAccount(res.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+    
     const handleSubmitCreateRequest = async () => {
         if(selectedSelectDiplomaNameRFDD =="" || selectedSelectDiplomaNameRFDD ==undefined){
             noti.current.showToast();
@@ -307,13 +334,33 @@ export default function RequestsForDiplomaDrafts(){
             mscb: user.mssv_cb
         }
 
+        let new_embryo_issuance_request;//Object yêu cầu xin cấp phôi được trả về khi tạo yêu cầu
+        let loai_phoi = '';
+        let ten_cb_tao_yc = '';
         try{
             const result1 = await axios.post("http://localhost:8000/v1/embryo_issuance_request/add_new_embryoIssuanceRequest", newYCCapPhoi, {
                 headers: {token: `Bearer ${user.accessToken}`}
             })
+            new_embryo_issuance_request = result1.data;
         }catch(error){
             console.log(error);
+            return;
         }
+
+        //Lấy ra các thông tin để điền vào email
+        //Lấy ra tên loại phôi
+        allDiplomaNameByMU?.forEach((diplomaName) => {
+            if(diplomaName.diploma_name_id == new_embryo_issuance_request.diploma_name_id){
+                loai_phoi=diplomaName.diploma_name_name;
+            }
+        })
+
+        //Lấy ra tên người tạo yêu cầu
+        allUserAccount?.forEach((user)=>{
+            if(user.mssv_cb == new_embryo_issuance_request.mscb){
+                ten_cb_tao_yc = user.fullname;
+            }
+        })
 
         for(let j = 0; j<allDataInExcel.length; j++){
             try{
@@ -322,8 +369,71 @@ export default function RequestsForDiplomaDrafts(){
                 })
             }catch(error){
                 console.log(error);
+                return;
             }
         }
+        //Gửi email cho các tài khoản có chức vụ Tổ trưởng  
+        for(let k = 0; k<allUserLeader.length; k++){
+            try{
+                const mailOptions = {
+                    to: allUserLeader[k].email,
+                    subject: "Yêu cầu xin cấp phôi mới",
+                    html:   `<div style='background-color: #f3f2f0; padding: 50px 150px 50px 150px; color: black;'>
+                                <div style='background-color: white;'>
+                                    <div>
+                                        <img
+                                            style='width: 50px; margin-top: 25px; margin-left: 25px;'
+                                            src='https://upload.wikimedia.org/wikipedia/vi/thumb/6/6c/Logo_Dai_hoc_Can_Tho.svg/1200px-Logo_Dai_hoc_Can_Tho.svg.png'
+                                        />
+                                    </div>
+                                    <h1 style='text-align: center; font-size: 24px; padding: 15px;'>
+                                        Yêu cầu xin cấp phôi mới vừa được tạo cần được xét duyệt
+                                    </h1>
+                                    <hr />
+                                    <h3 style='text-align: center;'>Chi tiết yêu cầu</h3>
+                                    <div style='padding: 0px 25px 10px 25px;'>
+                                        <div>Mã phiếu: #${new_embryo_issuance_request.embryoIssuanceRequest_id}</div>
+                                        <div style='margin-top: 10px;'>
+                                            Đơn vị yêu cầu: ${managementUnitOfUser}
+                                        </div>
+                                        <div style='margin-top: 10px;'>
+                                            Loại phôi cần cấp: ${loai_phoi}
+                                        </div>
+                                        <div style='margin-top: 10px;'>
+                                            Đợt thi/đợt cấp bằng: ${handleDateToDMY(new_embryo_issuance_request.examination)}
+                                        </div>
+                                        <div style='margin-top: 10px;'>Số lượng phôi cần cấp: ${new_embryo_issuance_request.numberOfEmbryos}</div>
+                                        <div style='margin-top: 10px;'>
+                                            Người tạo yêu cầu: ${ten_cb_tao_yc}/${new_embryo_issuance_request.mscb}
+                                        </div>
+                                        <div style='margin-top: 10px;'>Thời gian tạo: ${handleDateToDMY(new_embryo_issuance_request.time)}</div>
+                                        <div style='margin-top: 15px;'>
+                                        <a href='http://localhost:3000/approve_request_for_issuance_of_embryos'>
+                                            <button
+                                            style='
+                                                border-radius: 20px;
+                                                padding: 10px;
+                                                color: #146ec6;
+                                                font-weight: bold;
+                                                border: 2px solid #146ec6;
+                                                background-color: white;
+                                            '
+                                            >
+                                            Xem thêm
+                                            </button>
+                                        </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`
+                }
+                const sendEmail = await axios.post("http://localhost:8000/v1/send_email/sendEmail", mailOptions);
+            }catch(error){
+                console.log(error);
+                return;
+            }
+        }
+        
         noti6.current.showToast(); 
         await getAllEIR(allDiplomaNameByMU);
     }
@@ -336,8 +446,12 @@ export default function RequestsForDiplomaDrafts(){
 
     //State để ẩn hiện chi tiết yêu cầu
     const [showRequestDetail, setShowRequestDetail] = useState(false);
-    //State để tạo nút đóng
+    //State để tạo nút đóng cho nút hiển thị chi tiết yêu cầu xin cấp phôi
     const [closeButton, setCloseButton] = useState(null);
+
+    //State để tạo nút đóng cho nút hiển thị chi tiết phiếu xuất kho
+    const [closeButtonDeliveryBill, setCloseButtonDeliveryBill] = useState(null);
+
 
     useEffect(()=>{
         getAllEIR(allDiplomaNameByMU);
@@ -430,38 +544,13 @@ export default function RequestsForDiplomaDrafts(){
         }
     }, [page, all_YCCP_After_filter2])
 
-    const handleSeri = (seriNumber) => {//xóa
-        let seriAfterProcessing = seriNumber.toString();
-        switch(seriAfterProcessing.length){
-            case 1:
-                seriAfterProcessing = `00000${seriAfterProcessing}`;
-                break;
-            case 2:
-                seriAfterProcessing = `0000${seriAfterProcessing}`;  
-                break;
-            case 3:
-                seriAfterProcessing = `000${seriAfterProcessing}`;  
-                break;      
-            case 4:
-                seriAfterProcessing = `00${seriAfterProcessing}`;  
-                break;    
-            case 5:
-                seriAfterProcessing = `0${seriAfterProcessing}`;  
-                break;   
-            case 6:
-                seriAfterProcessing = `${seriAfterProcessing}`;  
-                break;   
-        }
-        return seriAfterProcessing;
-    }
-
-    const handleDateToDMY = (date) => {//xóa
+    const handleDateToDMY = (date) => {
         let splitDate = date.split("-");
         const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
         return result;
     }
 
-    const handleDateToMDY = (date) => {//xóa
+    const handleDateToMDY = (date) => {
         let splitDate = date.split("-");
         const result = `${splitDate[1]}/${splitDate[2]}/${splitDate[0]}`
         return result;
@@ -473,8 +562,6 @@ export default function RequestsForDiplomaDrafts(){
     const [diplomaNameInPhieuYC, setDiplomaNameInPhieuYC] = useState("");
     const [examinationsInPhieuYC, setExaminationsInPhieuYC] = useState("");
     const [numberOfEmbryosInPhieuYC, setNumberOfEmbryosInPhieuYC] = useState();
-    const [seriStartInPhieuYC, setSeriStartInPhieuYC] = useState("");
-    const [seriEndInPhieuYC, setSeriEndInPhieuYC] = useState("");
     const [diplomaType, setDiplomaType] = useState("");
 
     const allDiplomaType = useSelector((state) => state.diplomaType.diplomaTypes?.allDiplomaType); //state lấy ra all diploma type
@@ -701,6 +788,7 @@ export default function RequestsForDiplomaDrafts(){
                                         [
                                             {value:"", label: "Tất cả trạng thái"},
                                             {value:"Đã gửi yêu cầu", label: "Đã gửi yêu cầu"},
+                                            {value:"Không duyệt", label: "Không duyệt"},
                                             {value:"Đã duyệt yêu cầu", label: "Đã duyệt yêu cầu"},
                                             {value:"Đã gửi thủ kho", label: "Đã gửi thủ kho"},
                                             {value:"Đã in phôi", label: "Đã in phôi"},
@@ -718,24 +806,28 @@ export default function RequestsForDiplomaDrafts(){
                         </div>
                         <div className='row p-5'>
                             <div id='contain-table-show-yc-xin-cap-phoi'>
-                                <table className="table table-bordered" style={{width: '1500px'}}>
+                                <table 
+                                    id='table-show-yc-xin-cap-phoi-RFDD' 
+                                    className="table table-striped table-hover"
+                                >
                                     <thead>
                                         <tr>
-                                            <th style={{textAlign: 'center'}} scope="col">Mã phiếu</th>
-                                            <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
-                                            <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
-                                            <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
-                                            <th style={{textAlign: 'center'}} scope="col">Số seri</th>
-                                            <th style={{textAlign: 'center'}} scope="col">Trạng thái</th>
-                                            <th style={{textAlign: 'center'}} scope="col">Xem chi tiết</th>
-                                            <th style={{textAlign: 'center'}} scope="col">Thêm nhật ký nhận phôi</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">
+                                                Đợt thi/Đợt cấp văn bằng
+                                                (D/M/Y)
+                                            </th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng phôi</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Thêm nhật ký nhận phôi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
                                             all_YCCP_PT?.map((currentValue, index)=>{
-                                                let seriStartAfterProcess = handleSeri(currentValue.seri_number_start);
-                                                let seriEndAfterProcess = handleSeri(currentValue.seri_number_end);
                                                 let diplomaName = '';
                                                 let nameOfDiplomaType = '';
                                                 let optionsOfDiplomaName = [];
@@ -756,14 +848,14 @@ export default function RequestsForDiplomaDrafts(){
                                                         <td>{diplomaName}</td>
                                                         <td>{handleDateToDMY(currentValue.examination)}</td>
                                                         <td>{currentValue.numberOfEmbryos}</td>
-                                                        <td>{seriStartAfterProcess} - {seriEndAfterProcess}</td>
                                                         <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
                                                         <td>
                                                             {
+                                                                //Nút xem chi tiết yêu cầu xin cấp phôi
                                                                 closeButton == index ? (
                                                                     <i 
                                                                         style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
-                                                                        class="fa-regular fa-circle-xmark"
+                                                                        className="fa-regular fa-circle-xmark"
                                                                         onClick={(e)=>{
                                                                             setShowRequestDetail(false);
                                                                             setCloseButton(null)
@@ -788,8 +880,6 @@ export default function RequestsForDiplomaDrafts(){
                                                                             setDiplomaNameInPhieuYC(diplomaName);
                                                                             setExaminationsInPhieuYC(currentValue.examination);
                                                                             setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos)
-                                                                            setSeriStartInPhieuYC(currentValue.seri_number_start);
-                                                                            setSeriEndInPhieuYC(currentValue.seri_number_end);
                                                                             setOptionsOfDiplomaName(optionsOfDiplomaName);
                                                                             getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, optionsOfDiplomaName)
                                                                         }}
@@ -797,6 +887,41 @@ export default function RequestsForDiplomaDrafts(){
                                                                     </i>
                                                                 )
                                                             }
+                                                        </td>
+                                                        <td>
+                                                            {
+                                                                //Nút xem phiếu xuất kho
+                                                                currentValue.status == "Đã in phôi" ? (
+                                                                    <i
+                                                                        className="fa-solid fa-info"
+                                                                        style={{ backgroundColor: "#FF6A6A", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                        onClick={(e)=>{
+                                                                            setCloseButtonDeliveryBill(index);
+                                                                        }}
+                                                                    ></i>
+                                                                ) : closeButtonDeliveryBill == index ? (
+                                                                    <i 
+                                                                        style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
+                                                                        className="fa-regular fa-circle-xmark"
+                                                                        onClick={(e)=>{
+                                                                            setCloseButtonDeliveryBill(null);
+                                                                        }}
+                                                                    ></i>
+                                                                ) : (
+                                                                    <i
+                                                                        className="fa-solid fa-info"
+                                                                        style={{ backgroundColor: "grey", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                    ></i>
+                                                                )
+                                                            }
+                                                            
+                                                        </td>
+                                                        <td>
+                                                            {/* Nút thêm nhật ký nhận phôi */}
+                                                            <i 
+                                                                className="fa-solid fa-book"
+                                                                style={{ backgroundColor: "#2E8B57", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                            ></i>
                                                         </td>
                                                     </tr> 
                                                 )
@@ -827,8 +952,6 @@ export default function RequestsForDiplomaDrafts(){
                                         diplomaNameInPhieuYC={diplomaNameInPhieuYC}
                                         examinationsInPhieuYC={examinationsInPhieuYC}
                                         numberOfEmbryosInPhieuYC={numberOfEmbryosInPhieuYC}
-                                        seriStartInPhieuYC={seriStartInPhieuYC}
-                                        seriEndInPhieuYC={seriEndInPhieuYC}
                                         diplomaType={diplomaType}
                                         optionsOfDiplomaName={optionsOfDiplomaName}
                                         allDSHVByEIR={allDSHVByEIR}

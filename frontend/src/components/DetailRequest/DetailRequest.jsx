@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import * as XLSX from 'xlsx';
-export default function DetailRequest({ embryoIssuanceRequest_id, managementUnitPhieuYC, diplomaNameInPhieuYC, examinationsInPhieuYC, numberOfEmbryosInPhieuYC, seriStartInPhieuYC, seriEndInPhieuYC, diplomaType, optionsOfDiplomaName, allDSHVByEIR }) {
+export default function DetailRequest({ embryoIssuanceRequest_id, managementUnitPhieuYC, diplomaNameInPhieuYC, examinationsInPhieuYC, numberOfEmbryosInPhieuYC, diplomaType, optionsOfDiplomaName, allDSHVByEIR }) {
 
     //Hàm tạo file pdf yêu cầu cấp phôi
     const convertToImage = async () => {
@@ -19,40 +19,9 @@ export default function DetailRequest({ embryoIssuanceRequest_id, managementUnit
         pdf.save("yc_cap_phoi.pdf");
     };
 
-    const handleSeri = (seriNumber) => {
-        let seriAfterProcessing = seriNumber.toString();
-        switch(seriAfterProcessing.length){
-            case 1:
-                seriAfterProcessing = `00000${seriAfterProcessing}`;
-                break;
-            case 2:
-                seriAfterProcessing = `0000${seriAfterProcessing}`;  
-                break;
-            case 3:
-                seriAfterProcessing = `000${seriAfterProcessing}`;  
-                break;      
-            case 4:
-                seriAfterProcessing = `00${seriAfterProcessing}`;  
-                break;    
-            case 5:
-                seriAfterProcessing = `0${seriAfterProcessing}`;  
-                break;   
-            case 6:
-                seriAfterProcessing = `${seriAfterProcessing}`;  
-                break;   
-        }
-        return seriAfterProcessing;
-    }
-
     const handleDateToDMY = (date) => {//xóa
         let splitDate = date.split("-");
         const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
-        return result;
-    }
-
-    const handleDateToMDY = (date) => {//xóa
-        let splitDate = date.split("-");
-        const result = `${splitDate[1]}/${splitDate[2]}/${splitDate[0]}`
         return result;
     }
 
@@ -213,7 +182,6 @@ export default function DetailRequest({ embryoIssuanceRequest_id, managementUnit
                                             <th style={{ textAlign: 'center' }}>{diplomaType}</th>
                                             <th style={{ textAlign: 'center' }}>Đợt thi/Đợt cấp bằng</th>
                                             <th style={{ textAlign: 'center' }}>Số lượng thí sinh</th>
-                                            <th style={{ textAlign: 'center' }}>Số seri</th>
                                             <th style={{ textAlign: 'center' }}>Số cần cấp</th>
                                         </tr>
                                     </thead>
@@ -222,11 +190,10 @@ export default function DetailRequest({ embryoIssuanceRequest_id, managementUnit
                                             <td>{diplomaNameInPhieuYC}</td>
                                             <td>{handleDateToDMY(examinationsInPhieuYC)}</td>
                                             <td>{numberOfEmbryosInPhieuYC}</td>
-                                            <td>{`${handleSeri(seriStartInPhieuYC)}-${handleSeri(seriEndInPhieuYC)}`}</td>
                                             <td>{numberOfEmbryosInPhieuYC}</td>
                                         </tr>
                                         <tr>
-                                            <td style={{ fontWeight: 'bold' }} colSpan={4}>Tổng cộng</td>
+                                            <td style={{ fontWeight: 'bold' }} colSpan={3}>Tổng cộng</td>
                                             <td style={{ fontWeight: 'bold' }}>{numberOfEmbryosInPhieuYC}</td>
                                         </tr>
                                     </tbody>

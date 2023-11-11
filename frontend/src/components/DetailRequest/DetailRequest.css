@@ -35,3 +35,7 @@
     border: 1px solid;
     text-align: center;
 }
+
+#table-file-name-EGAF td, #table-file-name-EGAF th{
+    padding: 10px;
+}
