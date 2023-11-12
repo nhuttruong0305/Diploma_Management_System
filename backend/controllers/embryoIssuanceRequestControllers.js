@@ -54,17 +54,14 @@ const embryoIssuanceRequestController = {
             return res.status(500).json(error);
         }
     },
-    //Hàm cập nhật trạng thái cho yêu cầu xin cấp phôi
+    //Hàm cập nhật trạng thái và comment hoặc embryo_receipt_diary cho yêu cầu xin cấp phôi
     updateStatusEmbryoIssuanceRequest: async (req, res) => {
         try{
             //_id của yêu cầu cấp phôi sẽ được cập nhật status
             const _id = req.params._id;
 
             const options = {returnDocument: "after"};
-            const updateDoc = {
-                status: req.body.status
-            }
-
+            const updateDoc = req.body;
             const resultUpdate = await EmbryoIssuanceRequestModel.findByIdAndUpdate(_id, updateDoc, options);
             return res.status(200).json(resultUpdate);
         }catch(error){
