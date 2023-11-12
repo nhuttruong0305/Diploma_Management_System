@@ -499,6 +499,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
             const sendEmail = await axios.post("http://localhost:8000/v1/send_email/sendEmail", mailOptions);
         }catch(error){
             console.log(error);
+            return;
         }
 
         //Gửi mail cho tất cả các tài khoản có chức vụ Thư ký

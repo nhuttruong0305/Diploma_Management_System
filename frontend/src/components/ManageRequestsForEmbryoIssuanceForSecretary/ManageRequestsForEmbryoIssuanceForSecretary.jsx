@@ -287,8 +287,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
     const [diplomaNameInPhieuYC, setDiplomaNameInPhieuYC] = useState("");
     const [examinationsInPhieuYC, setExaminationsInPhieuYC] = useState("");
     const [numberOfEmbryosInPhieuYC, setNumberOfEmbryosInPhieuYC] = useState();
-    const [seriStartInPhieuYC, setSeriStartInPhieuYC] = useState("");
-    const [seriEndInPhieuYC, setSeriEndInPhieuYC] = useState("");
+    
     const [diplomaType, setDiplomaType] = useState("");
 
     const allDiplomaType = useSelector((state) => state.diplomaType.diplomaTypes?.allDiplomaType); //state lấy ra all diploma type
@@ -379,25 +378,181 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
         setAllDSHVByEIR(data);
     }
 
-    //Xử lý logic cho việc   
-    //State chứa _id của yêu cầu cấp phôi sẽ được cập nhật trạng thái
+    //Xử lý logic cho việc thay đổi trạng thái của yêu cầu thành "Đã gửi thủ kho"   
+    //State chứa object của yêu cầu cấp phôi sẽ được cập nhật trạng thái
     const [_idYCCP_approved, set_idYCCP_approved] = useState("");
 
     const noti = useRef();
     
     const handleUpdateStatusRequest = async () => {
         try{
+            //Cập nhật trạng thái của yêu cầu thành "Đã gửi thủ kho"
             const updateDoc = {
                 status: "Đã gửi thủ kho"
             }
-            const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_approved}`,updateDoc);
-            noti.current.showToast();
-            setTimeout(async()=>{
-                await getAllRequestForIssuanceOfEmbryos();
-            }, 2000)
+            const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_approved._id}`,updateDoc);    
         }catch(error){
             console.log(error);
+            return;
         }
+
+        
+        //Lấy ra tên đơn vị quản lý để điền vào "Đơn vị yêu cầu"
+        let don_vi_yc = '';
+        allManagementUnit?.forEach((management_unit)=>{
+            if(management_unit.management_unit_id == _idYCCP_approved.management_unit_id){
+                don_vi_yc = management_unit.management_unit_name;
+            }
+        })
+
+        //Lấy ra loại phôi
+        let loai_phoi = '';
+        allDiplomaName?.forEach((diplomaName)=>{
+            if(_idYCCP_approved.diploma_name_id == diplomaName.diploma_name_id){
+                loai_phoi = diplomaName.diploma_name_name;
+            }
+        })
+        
+        //Lấy ra tên cán bộ và email tạo yêu cầu
+        let ten_cb_tao_yc = '';
+        let email_cb_tao_yc = '';
+        //Lấy các user account có chức vụ thủ kho
+        let allUserAccountStocker = [];
+        allUserAccount?.forEach((user)=>{
+            if(user.mssv_cb == _idYCCP_approved.mscb){
+                ten_cb_tao_yc = user.fullname;
+                email_cb_tao_yc = user.email;
+            }
+            if(user.role[0] == "Stocker"){
+                allUserAccountStocker = [...allUserAccountStocker, user];
+            }
+        })
+        //Gửi mail cho tài khoản của Giám đốc Trung tâm/Trưởng phòng tạo yêu cầu
+        try{
+            const mailOptions = {
+                to: email_cb_tao_yc,
+                subject: "Yêu cầu xin cấp phôi của bạn đã được gửi cho thủ kho",
+                html: `<div style='background-color: #f3f2f0; padding: 50px 150px 50px 150px; color: black;'>
+                        <div style='background-color: white;'>
+                            <div>
+                                <img
+                                    style='width: 50px; margin-top: 25px; margin-left: 25px;'
+                                    src='https://upload.wikimedia.org/wikipedia/vi/thumb/6/6c/Logo_Dai_hoc_Can_Tho.svg/1200px-Logo_Dai_hoc_Can_Tho.svg.png'
+                                />
+                            </div>
+                            <h1 style='text-align: center; font-size: 24px; padding: 15px;'>
+                                Yêu cầu xin cấp phôi của bạn đã được gửi cho thủ kho    
+                            </h1>
+                            <hr />
+                            <h3 style='text-align: center;'>Chi tiết yêu cầu</h3>
+                            <div style='padding: 0px 25px 10px 25px;'>
+                                <div>Mã phiếu: #${_idYCCP_approved.embryoIssuanceRequest_id}</div>
+                                <div style='margin-top: 10px;'>
+                                    Đơn vị yêu cầu: ${don_vi_yc}
+                                </div>
+                                <div style='margin-top: 10px;'>
+                                    Loại phôi cần cấp: ${loai_phoi}
+                                </div>
+                                <div style='margin-top: 10px;'>
+                                    Đợt thi/đợt cấp bằng: ${handleDateToDMY(_idYCCP_approved.examination)}
+                                </div>
+                                <div style='margin-top: 10px;'>Số lượng phôi cần cấp: ${_idYCCP_approved.numberOfEmbryos}</div>
+                                <div style='margin-top: 10px;'>
+                                    Người tạo yêu cầu: ${ten_cb_tao_yc}/${_idYCCP_approved.mscb}
+                                </div>
+                                <div style='margin-top: 10px;'>Thời gian tạo: ${handleDateToDMY(_idYCCP_approved.time)}</div>
+                                <div style='margin-top: 15px;'>
+                                <a href='http://localhost:3000/manage_requests_for_diploma_drafts'>
+                                    <button
+                                    style='
+                                        border-radius: 20px;
+                                        padding: 10px;
+                                        color: #146ec6;
+                                        font-weight: bold;
+                                        border: 2px solid #146ec6;
+                                        background-color: white;
+                                    '
+                                    >
+                                    Xem thêm
+                                    </button>
+                                </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`
+            }
+            const sendEmail = await axios.post("http://localhost:8000/v1/send_email/sendEmail", mailOptions);
+        }catch(error){
+            console.log(error);
+            return;
+        }       
+
+        //Gửi mail cho tất cả các tài khoản có chức vụ Thủ kho
+        for(let i = 0; i<allUserAccountStocker.length; i++){
+            try{
+                const mailOptions = {
+                    to: allUserAccountStocker[i].email,
+                    subject: "Yêu cầu xin cấp phôi mới cần được xử lý",
+                    html: `<div style='background-color: #f3f2f0; padding: 50px 150px 50px 150px; color: black;'>
+                            <div style='background-color: white;'>
+                                <div>
+                                    <img
+                                        style='width: 50px; margin-top: 25px; margin-left: 25px;'
+                                        src='https://upload.wikimedia.org/wikipedia/vi/thumb/6/6c/Logo_Dai_hoc_Can_Tho.svg/1200px-Logo_Dai_hoc_Can_Tho.svg.png'
+                                    />
+                                </div>
+                                <h1 style='text-align: center; font-size: 24px; padding: 15px;'>
+                                    Yêu cầu xin cấp phôi mới cần được xử lý
+                                </h1>
+                                <hr />
+                                <h3 style='text-align: center;'>Chi tiết yêu cầu</h3>
+                                <div style='padding: 0px 25px 10px 25px;'>
+                                    <div>Mã phiếu: #${_idYCCP_approved.embryoIssuanceRequest_id}</div>
+                                    <div style='margin-top: 10px;'>
+                                        Đơn vị yêu cầu: ${don_vi_yc}
+                                    </div>
+                                    <div style='margin-top: 10px;'>
+                                        Loại phôi cần cấp: ${loai_phoi}
+                                    </div>
+                                    <div style='margin-top: 10px;'>
+                                        Đợt thi/đợt cấp bằng: ${handleDateToDMY(_idYCCP_approved.examination)}
+                                    </div>
+                                    <div style='margin-top: 10px;'>Số lượng phôi cần cấp: ${_idYCCP_approved.numberOfEmbryos}</div>
+                                    <div style='margin-top: 10px;'>
+                                        Người tạo yêu cầu: ${ten_cb_tao_yc} / ${_idYCCP_approved.mscb}
+                                    </div>
+                                    <div style='margin-top: 10px;'>Thời gian tạo: ${handleDateToDMY(_idYCCP_approved.time)}</div>
+                                    <div style='margin-top: 15px;'>
+                                    <a href='http://localhost:3000/manage_requests_for_embryo_issuance_for_stocker'>
+                                        <button
+                                        style='
+                                            border-radius: 20px;
+                                            padding: 10px;
+                                            color: #146ec6;
+                                            font-weight: bold;
+                                            border: 2px solid #146ec6;
+                                            background-color: white;
+                                        '
+                                        >
+                                        Xem thêm
+                                        </button>
+                                    </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`
+                }
+                const sendEmail = await axios.post("http://localhost:8000/v1/send_email/sendEmail", mailOptions);
+            }catch(error){
+                console.log(error);
+                return; 
+            }
+        }
+        
+        noti.current.showToast();
+        setTimeout(async()=>{
+            await getAllRequestForIssuanceOfEmbryos();
+        }, 2000)
     }
 
     return(
@@ -478,7 +633,6 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                     <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
                                                     <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
                                                     <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Số seri</th>
                                                     <th style={{textAlign: 'center'}} scope="col">Cán bộ tạo yêu cầu</th>
                                                     <th style={{textAlign: 'center'}} scope="col">MSCB</th>
                                                     <th style={{textAlign: 'center'}} scope="col">Trạng thái</th>
@@ -529,7 +683,6 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                                 <td>{ten_van_bang}</td>
                                                                 <td>{handleDateToDMY(currentValue.examination)}</td>
                                                                 <td>{currentValue.numberOfEmbryos}</td>
-                                                                <td>{`${handleSeri(currentValue.seri_number_start)} - ${currentValue.seri_number_end}`}</td>
                                                                 <td>{ten_can_bo_tao_yc}</td>
                                                                 <td>{currentValue.mscb}</td>
                                                                 <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
@@ -556,8 +709,6 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                                                     setDiplomaNameInPhieuYC(ten_van_bang);
                                                                                     setExaminationsInPhieuYC(currentValue.examination);
                                                                                     setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos);
-                                                                                    setSeriStartInPhieuYC(currentValue.seri_number_start);
-                                                                                    setSeriEndInPhieuYC(currentValue.seri_number_end);
                                                                                     setDiplomaType(loai_van_bang);
                                                                                     setOptionsOfDiplomaName(options);
                                                                                     getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, options)
@@ -575,7 +726,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                                                 style={{backgroundColor: "#fed25c", padding: '7px', borderRadius: '5px', color: 'white'}}  
                                                                                 data-bs-toggle="modal" data-bs-target="#updateStatusYCCPtoSentStocker" 
                                                                                 onClick={(e)=>{
-                                                                                    set_idYCCP_approved(currentValue._id);
+                                                                                    set_idYCCP_approved(currentValue);
                                                                                 }}                                                          
                                                                             ></i>
                                                                         ) : (
@@ -646,8 +797,6 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                         diplomaNameInPhieuYC={diplomaNameInPhieuYC}
                                         examinationsInPhieuYC={examinationsInPhieuYC}
                                         numberOfEmbryosInPhieuYC={numberOfEmbryosInPhieuYC}
-                                        seriStartInPhieuYC={seriStartInPhieuYC}
-                                        seriEndInPhieuYC={seriEndInPhieuYC}
                                         diplomaType={diplomaType}
                                         optionsOfDiplomaName={optionsOfDiplomaName}
                                         allDSHVByEIR={allDSHVByEIR}
