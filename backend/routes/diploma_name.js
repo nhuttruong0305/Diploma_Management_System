@@ -11,4 +11,7 @@ router.put("/transfer/:diploma_name_id/:diploma_name_id_to_delete_list", middlew
 router.get("/search_diplomaNameForDNMH", diplomaNameControllers.searchDiplomaNameForDNMH);
 router.get("/get_all_diplomaNameByMU/:management_unit_id", diplomaNameControllers.getAllDiplomaNameByMU);
 router.delete("/delete_diploma_name/:diploma_name_id", middlewareController.verifyTokenAndSystemAdministratorRole, diplomaNameControllers.deleteDiplomaName);
+
+//Hàm cập nhật giá
+router.put("/update_unit_price/:diploma_name_idUpdatePrice", diplomaNameControllers.updateUnitPrice);
 module.exports = router;

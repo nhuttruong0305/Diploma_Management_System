@@ -741,7 +741,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                             </div>
                             <div className="row p-5">
                                 <div id='contain-yc-xin-cap-phoi-ARFIOE'>
-                                    <table className='table table-striped table-hover' style={{width: '1700px', border: '2px solid #fed25c'}}>
+                                    <table className='table table-striped table-hover table-bordered' style={{width: '1700px', border: '2px solid #fed25c'}}>
                                         <thead>
                                             <tr>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>

@@ -778,7 +778,7 @@ export default function UserAccountManagement() {
                                     </div>
                                 </div>
                                 <div id='contain-table-show-all-user'>
-                                    <table id='table-show-all-user' className='table table-striped table-hover'>
+                                    <table id='table-show-all-user' className='table table-striped table-hover table-bordered'>
                                         <thead>
                                             <tr>
                                                 <th scope="col" style={{backgroundColor: '#fed25c'}}></th>

@@ -24,6 +24,7 @@ import ManageRequestsForEmbryoIssuanceForSecretary from './components/ManageRequ
 import Statistical from './components/Statistical/Statistical';
 import ManageRequestsForEmbryoIssuanceForStocker from './components/ManageRequestsForEmbryoIssuanceForStocker/ManageRequestsForEmbryoIssuanceForStocker';
 import RequestForIssuanceOfEmbryosProcessed from './components/RequestForIssuanceOfEmbryosProcessed/RequestForIssuanceOfEmbryosProcessed';
+import UnitPriceManagement from './components/UnitPriceManagement/UnitPriceManagement';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -268,6 +269,17 @@ function App() {
           >
             <RequestForIssuanceOfEmbryosProcessed/>
           </ProtectedSecretary>
+        )
+      },
+      {
+        path: '/unit_price_management',
+        element: (
+          <ProtectedStocker
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <UnitPriceManagement/>
+          </ProtectedStocker>
         )
       }
     ])

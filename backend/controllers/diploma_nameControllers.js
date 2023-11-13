@@ -282,6 +282,22 @@ const diplomaNameControllers = {
         }catch(error){
             return res.status(500).json(error); 
         }
+    },
+    //Hàm cập nhật unit_price
+    updateUnitPrice: async(req, res) =>{
+        try{
+            const diploma_name_idUpdatePrice = parseInt(req.params.diploma_name_idUpdatePrice);
+
+            const filter = {diploma_name_id: diploma_name_idUpdatePrice};
+            const updateDoc = {
+                unit_price: req.body.unit_price
+            };
+
+            const updateUnitPrice = await DiplomaNameModel.updateMany(filter, updateDoc);
+            return res.status(200).json(updateUnitPrice);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

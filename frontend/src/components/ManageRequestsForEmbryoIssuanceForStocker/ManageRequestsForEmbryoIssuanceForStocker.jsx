@@ -147,7 +147,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
             let finalResult = [];
             const result = await axios.get("http://localhost:8000/v1/embryo_issuance_request/get_all_yccp");
             result.data.forEach((currentValue)=>{
-                if(currentValue.status != "Đã gửi yêu cầu" && currentValue.status != "Đã duyệt yêu cầu"){
+                if(currentValue.status != "Đã gửi yêu cầu" && currentValue.status != "Đã duyệt yêu cầu" && currentValue.status != "Không duyệt"){
                     finalResult = [...finalResult, currentValue];
                 }
             })
@@ -281,8 +281,6 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
     const [diplomaNameInPhieuYC, setDiplomaNameInPhieuYC] = useState("");
     const [examinationsInPhieuYC, setExaminationsInPhieuYC] = useState("");
     const [numberOfEmbryosInPhieuYC, setNumberOfEmbryosInPhieuYC] = useState();
-    const [seriStartInPhieuYC, setSeriStartInPhieuYC] = useState("");
-    const [seriEndInPhieuYC, setSeriEndInPhieuYC] = useState("");
     const [diplomaType, setDiplomaType] = useState("");
 
     const allDiplomaType = useSelector((state) => state.diplomaType.diplomaTypes?.allDiplomaType); //state lấy ra all diploma type
@@ -388,7 +386,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
 
     const [reason, setReason] = useState("");
     const [export_warehouse, setExport_warehouse] = useState("");
-    const [address_export_warehouse, setAddress_export_warehouse] = useState("");
+    const [address_export_warehouse, setAddress_export_warehouse] = useState("Trung tâm Quản lý văn bằng chứng chỉ - Trường Đại học Cần Thơ");
     
     const [embryo_type, setEmbryo_type] = useState("");
     const [embryo_typeShow, setEmbryo_typeShow] = useState("");
@@ -441,8 +439,8 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
     
     function scrollToDetailRequest(){
         setTimeout(()=>{
-            document.body.scrollTop = 1000;
-            document.documentElement.scrollTop = 1000;
+            document.body.scrollTop = 960;
+            document.documentElement.scrollTop = 960;
         },200)
     }
 
@@ -519,7 +517,9 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                             [
                                                 {value: "", label: "Tất cả trạng thái"},
                                                 {value: "Đã gửi thủ kho", label:"Đã gửi thủ kho"},
-                                                {value: "Đã in phôi", label: "Đã in phôi"}
+                                                {value: "Đã in phôi", label: "Đã in phôi"},
+                                                {value: "Đã dán tem", label: "Đã dán tem"},
+                                                {value: "Đã nhận phôi", label: "Đã nhận phôi"}
                                             ]
                                         }
                                         value={selectedStatus}
@@ -532,19 +532,18 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                             </div>
                             <div className="row mt-3 p-3">
                                 <div id='contain-yccp-need-processed'>
-                                    <table className='table table-bordered' style={{width: '1900px'}}>
+                                    <table className='table table-striped table-hover table-bordered' style={{width: '1900px', border: '2px solid #fed25c'}}>
                                         <thead>
                                             <tr>
-                                                <th style={{textAlign: 'center'}} scope="col">Mã phiếu</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng (D/M/Y)</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Số seri</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Cán bộ tạo yêu cầu</th>
-                                                <th style={{textAlign: 'center'}} scope="col">MSCB</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Trạng thái</th>
-                                                <th style={{textAlign: 'center'}} scope="col">Xem chi tiết</th>
-                                                <th style={{textAlign: 'center'}} scope="col">
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Đợt thi/Đợt cấp văn bằng (D/M/Y)</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng phôi</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Cán bộ tạo yêu cầu</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">
                                                     Tạo phiếu xuất kho
                                                 </th>
                                             </tr>
@@ -587,7 +586,6 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                             <td>{ten_van_bang}</td>
                                                             <td>{handleDateToDMY(currentValue.examination)}</td>
                                                             <td>{currentValue.numberOfEmbryos}</td>
-                                                            <td>{`${handleSeri(currentValue.seri_number_start)} - ${handleSeri(currentValue.seri_number_end)}`}</td>
                                                             <td>{ten_can_bo_tao_yc}</td>
                                                             <td>{currentValue.mscb}</td>
                                                             <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
@@ -616,8 +614,8 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                                                 setDiplomaNameInPhieuYC(ten_van_bang);
                                                                                 setExaminationsInPhieuYC(currentValue.examination)
                                                                                 setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos)
-                                                                                setSeriStartInPhieuYC(currentValue.seri_number_start);
-                                                                                setSeriEndInPhieuYC(currentValue.seri_number_end);
+                                                                                
+                                                                                
                                                                                 setDiplomaType(loai_van_bang);
                                                                                 setOptionsOfDiplomaName(options);
                                                                                 getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, options)     
@@ -646,6 +644,9 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                                                 setSeri_number_start(currentValue.seri_number_start);
                                                                                 setSeri_number_end(currentValue.seri_number_end);
                                                                                 setFullname_of_consignee(ten_can_bo_tao_yc);
+
+                                                                                //Lấy lý do xuất kho
+                                                                                setReason(`Cấp ${currentValue.numberOfEmbryos} phôi ${ten_van_bang}`);
                                                                             }}
                                                                         ></i>
                                                                         
@@ -702,6 +703,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                     <input 
                                                         type="text" 
                                                         className='form-control'
+                                                        readOnly={true}
                                                         value={fullname_of_consignee}
                                                         onChange={(e)=>{
                                                             setFullname_of_consignee(e.target.value);
@@ -783,6 +785,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                             setAddress_export_warehouse(e.target.value)
                                                         }}
                                                         className="form-control"
+                                                        readOnly={true}
                                                     />
                                                 </div>
                                             </div>
@@ -817,6 +820,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                 <div className="col-9">
                                                     <input
                                                         type='number'
+                                                        readOnly={true}
                                                         value={numberOfEmbryos}                                                            
                                                         className='form-control'
                                                         onChange={(e)=>{
@@ -882,8 +886,6 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                         diplomaNameInPhieuYC={diplomaNameInPhieuYC}
                                         examinationsInPhieuYC={examinationsInPhieuYC}
                                         numberOfEmbryosInPhieuYC={numberOfEmbryosInPhieuYC}
-                                        seriStartInPhieuYC={seriStartInPhieuYC}
-                                        seriEndInPhieuYC={seriEndInPhieuYC}
                                         diplomaType={diplomaType}
                                         optionsOfDiplomaName={optionsOfDiplomaName}
                                         allDSHVByEIR={allDSHVByEIR}

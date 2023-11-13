@@ -113,6 +113,10 @@ export default function Navbar() {
                 var currentElement = document.querySelector("#xu-ly-yc-xin-cap-phoi");
                 currentElement.classList.add("active-nav-navbar");
                 break;
+            case "/unit_price_management":
+                var currentElement = document.querySelector("#quan-ly-gia-phoi");
+                currentElement.classList.add("active-nav-navbar");
+                break;
             }
     })
 
@@ -227,6 +231,9 @@ export default function Navbar() {
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/manage_requests_for_embryo_issuance_for_stocker" id='xu-ly-yc-xin-cap-phoi'>Xử lý yêu cầu xin cấp phôi văn bằng</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/unit_price_management" id='quan-ly-gia-phoi'>Quản lý giá phôi</Link>
                                 </li>
                             </ul>
                         ) : (

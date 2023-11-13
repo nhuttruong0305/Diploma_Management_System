@@ -808,7 +808,7 @@ export default function RequestsForDiplomaDrafts(){
                             <div id='contain-table-show-yc-xin-cap-phoi'>
                                 <table 
                                     id='table-show-yc-xin-cap-phoi-RFDD' 
-                                    className="table table-striped table-hover"
+                                    className="table table-striped table-hover table-bordered"
                                 >
                                     <thead>
                                         <tr>

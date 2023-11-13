@@ -33,6 +33,10 @@ const diplomaNameSchema = new mongoose.Schema(
         options:{ //lưu các thông tin thêm cho mỗi tên văn bằng
             type: Array,
             default: []
+        },
+        unit_price:{
+            type: Number,
+            default: null
         }
     },
     {timestamps: true}

@@ -626,18 +626,18 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                 </div>
                                 <div className="row mt-3 p-3">
                                     <div id='contain-yc-cap-phoi-secretary'>
-                                        <table className='table table-bordered' style={{width: '1700px'}}>
+                                        <table className='table table-striped table-hover table-bordered' style={{width: '1700px', border: '2px solid #fed25c'}}>
                                             <thead>
                                                 <tr>
-                                                    <th style={{textAlign: 'center'}} scope="col">Mã phiếu</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Cán bộ tạo yêu cầu</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">MSCB</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Trạng thái</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Xem chi tiết</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng phôi</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Cán bộ tạo yêu cầu</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">
                                                         Cập nhật trạng thái
                                                         <br />
                                                         (Đã gửi thủ kho)
