@@ -419,20 +419,177 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
     const noti = useRef();
     
     const handleUpdateStatusRequest = async () => {
+        //Cập nhật trạng thái thành "Đã dán tem"
         try{
             const updateDoc = {
                 status: "Đã dán tem"
             }
-            const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_need_update}`,updateDoc);
-            noti.current.showToast();
-            setTimeout(async()=>{
-                await getAllRequestForIssuanceOfEmbryos();
-            }, 2000)
+            const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_need_update._id}`,updateDoc);
         }catch(error){
             console.log(error);
+            return;
         }
-    }
 
+        //Lấy ra tên cán bộ tạo yêu cầu
+        let ten_cb_tao_yc = '';
+        let email_cb_tao_yc = '';
+        let ten_cb_tao_phieu_xk = '';
+        allUserAccount?.forEach((user) => {
+            if(user.mssv_cb == _idYCCP_need_update.mscb){
+                ten_cb_tao_yc = user.fullname;
+                email_cb_tao_yc = user.email;
+            }
+            if(user.mssv_cb == detailDeliveryBill[0].mscb){
+                ten_cb_tao_phieu_xk = user.fullname;
+            }
+        })
+
+        //Lấy ra tên đơn vị quản lý để điền vào "Đơn vị yêu cầu" và địa chỉ (bộ phận) nhận hàng
+        let don_vi_yc = '';
+        let receiving_address = '';
+        allManagementUnit?.forEach((management_unit)=>{
+            if(management_unit.management_unit_id == _idYCCP_need_update.management_unit_id){
+                don_vi_yc = management_unit.management_unit_name;
+            }
+            if(management_unit.management_unit_id == detailDeliveryBill[0].address_department){
+                receiving_address = management_unit.management_unit_name;
+            }
+        })
+
+        //Lấy ra loại phôi
+        let loai_phoi = '';
+        allDiplomaName?.forEach((diplomaName)=>{
+            if(_idYCCP_need_update.diploma_name_id == diplomaName.diploma_name_id){
+                loai_phoi = diplomaName.diploma_name_name;
+            }
+        })
+
+        //Lấy ra số seri để điền vào phiếu xuất kho
+        let resultSeri = '';
+        let resultSeriStart = detailDeliveryBill[0].seri_number_start;
+        let resultSeriEnd = detailDeliveryBill[0].seri_number_end;
+        for(let i = 0; i<resultSeriStart.length-1; i++){
+            resultSeri+=`${handleSeri(resultSeriStart[i])} - ${handleSeri(resultSeriEnd[i])}, `;
+        }
+        resultSeri+=`${handleSeri(resultSeriStart[resultSeriStart.length-1])} - ${handleSeri(resultSeriEnd[resultSeriEnd.length-1])}`;
+
+        //Gửi mail cho tài khoản của Giám đốc Trung tâm/Trưởng phòng tạo yêu cầu.
+        try{
+            const mailOptions = {
+                to: email_cb_tao_yc,
+                subject: "Đã dán tem cho phôi, phôi đang được gửi về",
+                html: `<div
+                        style="
+                        background-color: #f3f2f0;
+                        padding: 50px 150px 50px 150px;
+                        color: black;
+                        "
+                    >
+                        <div style="background-color: white;">
+                        <div>
+                            <img
+                            style="width: 50px; margin-top: 25px; margin-left: 25px;"
+                            src="https://upload.wikimedia.org/wikipedia/vi/thumb/6/6c/Logo_Dai_hoc_Can_Tho.svg/1200px-Logo_Dai_hoc_Can_Tho.svg.png"
+                            />
+                        </div>
+                        <h1 style="text-align: center; font-size: 24px; padding: 15px;">
+                            Đã dán tem cho phôi, phôi đang được gửi về
+                        </h1>
+                        <hr />
+                        <h3 style="text-align: center;">Chi tiết yêu cầu</h3>
+                        <div style="padding: 0px 25px 10px 25px;">
+                            <div>Mã phiếu: #${_idYCCP_need_update.embryoIssuanceRequest_id}</div>
+                            <div style="margin-top: 10px;">
+                            Đơn vị yêu cầu: ${don_vi_yc}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Loại phôi cần cấp: ${loai_phoi}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Đợt thi/đợt cấp bằng: ${handleDateToDMY(_idYCCP_need_update.examination)}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Số lượng phôi cần cấp: ${_idYCCP_need_update.numberOfEmbryos}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Người tạo yêu cầu: ${ten_cb_tao_yc} / ${_idYCCP_need_update.mscb}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Thời gian tạo: ${handleDateToDMY(_idYCCP_need_update.time)}
+                            </div>
+                        </div>
+                        <hr />
+                        <h3 style="margin-top: 15px; text-align: center;">
+                            Chi tiết phiếu xuất kho
+                        </h3>
+                        <div style="padding: 0px 25px 10px 25px;">
+                            <div>Số phiếu xuất kho: ${detailDeliveryBill[0].delivery_bill}</div>
+                            <div style="margin-top: 10px;">Ngày tạo phiếu: ${handleDateToDMY(detailDeliveryBill[0].delivery_bill_creation_time)}</div>
+                            <div style="margin-top: 10px;">Người nhận hàng: ${detailDeliveryBill[0].fullname_of_consignee}</div>
+                            <div style="margin-top: 10px;">
+                            Địa chỉ (bộ phận) nhận hàng: ${receiving_address}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Lý do xuất: ${detailDeliveryBill[0].reason}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Kho xuất: ${detailDeliveryBill[0].export_warehouse}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Địa điểm xuất: ${detailDeliveryBill[0].address_export_warehouse}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Loại phôi: ${loai_phoi}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Số lượng phôi xuất: ${detailDeliveryBill[0].numberOfEmbryos}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Số seri: ${resultSeri}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Đơn giá mỗi phôi: ${detailDeliveryBill[0].unit_price}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Thành tiền: ${detailDeliveryBill[0].unit_price*detailDeliveryBill[0].numberOfEmbryos}
+                            </div>
+                            <div style="margin-top: 10px;">
+                            Người tạo phiếu xuất kho: ${ten_cb_tao_phieu_xk} / ${detailDeliveryBill[0].mscb}
+                            </div>
+                            <div style="margin-top: 15px;">
+                            <a
+                                href="http://localhost:3000/manage_requests_for_diploma_drafts"
+                            >
+                                <button
+                                style="
+                                    border-radius: 20px;
+                                    padding: 10px;
+                                    color: #146ec6;
+                                    font-weight: bold;
+                                    border: 2px solid #146ec6;
+                                    background-color: white;
+                                "
+                                >
+                                Xem thêm
+                                </button>
+                            </a>
+                            </div>
+                        </div>
+                        </div>
+                    </div>`
+            }
+
+            const sendEmail = await axios.post("http://localhost:8000/v1/send_email/sendEmail", mailOptions);
+        }catch(error){
+            console.log(error);
+            return;
+        }
+
+        noti.current.showToast();
+        setTimeout(async()=>{
+            await getAllRequestForIssuanceOfEmbryos();
+        }, 2000)
+    }
     return(
         <>  
             <Header/>
@@ -508,7 +665,6 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                                     <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
                                                     <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
                                                     <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Số seri</th>
                                                     <th style={{textAlign: 'center'}} scope="col">Cán bộ tạo yêu cầu</th>
                                                     <th style={{textAlign: 'center'}} scope="col">MSCB</th>
                                                     <th style={{textAlign: 'center'}} scope="col">Trạng thái</th>
@@ -560,7 +716,6 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                                                 <td>{ten_van_bang}</td>
                                                                 <td>{handleDateToDMY(currentValue.examination)}</td>
                                                                 <td>{currentValue.numberOfEmbryos}</td>
-                                                                <td>{`${handleSeri(currentValue.seri_number_start)} - ${handleSeri(currentValue.seri_number_end)}`}</td>
                                                                 <td>{ten_can_bo_tao_yc}</td>
                                                                 <td>{currentValue.mscb}</td>
                                                                 <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
@@ -629,12 +784,14 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                                                 <td>
                                                                     {
                                                                         currentValue.status == "Đã in phôi" ? (
+                                                                            //nút cập nhật trạng thái thành "Đã dán tem"
                                                                             <i 
                                                                                 className="fa-solid fa-pen-to-square"
                                                                                 style={{backgroundColor: "#fed25c", padding: '7px', borderRadius: '5px', color: 'white'}}
                                                                                 data-bs-toggle="modal" data-bs-target="#updateStatusstampedModal"   
                                                                                 onClick={(e)=>{
-                                                                                    set_idYCCP_need_update(currentValue._id);
+                                                                                    set_idYCCP_need_update(currentValue);
+                                                                                    getDetailDeliveryBill(currentValue.embryoIssuanceRequest_id);
                                                                                 }}                                                                                                                             
                                                                             ></i>
                                                                         ) : (

@@ -5,7 +5,19 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllDiplomaName } from '../../redux/apiRequest';
 import axios from 'axios';
-export default function DetailDeliveryBill({delivery_bill, delivery_bill_creation_time, fullname_of_consignee, address_department, reason, export_warehouse, address_export_warehouse, embryo_type, numberOfEmbryos, seri_number_start, seri_number_end, unit_price, mscb}){
+export default function DetailDeliveryBill({delivery_bill, //ok
+                                            delivery_bill_creation_time, //ok
+                                            fullname_of_consignee, //ok
+                                            address_department, //ok
+                                            reason, //ok
+                                            export_warehouse, //ok
+                                            address_export_warehouse, //ok
+                                            embryo_type, //ok
+                                            numberOfEmbryos, //ok
+                                            seri_number_start, //ok
+                                            seri_number_end, //ok
+                                            unit_price, //ok
+                                            mscb}){ //ok
     const dispatch = useDispatch();
     
     //Xử lý lấy ra ngày lập phiếu
@@ -27,19 +39,26 @@ export default function DetailDeliveryBill({delivery_bill, delivery_bill_creatio
 
     const [resultSeri, setResultSeri] = useState("");
     useEffect(()=>{
-        const splitDate = delivery_bill_creation_time.split("-");
-        setDateCreate(splitDate);
         getAllManagementUnit();
         getAllDiplomaName(dispatch);
         getAllUserAccount();
+    }, [])
 
+    //Gọi useEffect khi delivery_bill_creation_time thay đổi thì thay đổi ngày lập phiếu hiện lên phiếu
+    useEffect(()=>{
+        const splitDate = delivery_bill_creation_time.split("-");
+        setDateCreate(splitDate);
+    }, [delivery_bill_creation_time])
+
+    //Gọi useEffect khi seri_number_start hoặc seri_number_end thay đổi
+    useEffect(()=>{
         let resultSeri = '';
         for(let i = 0; i<seri_number_start.length-1; i++){
             resultSeri+=`${handleSeri(seri_number_start[i])} - ${handleSeri(seri_number_end[i])}, `
         }
         resultSeri+=`${handleSeri(seri_number_start[seri_number_start.length-1])} - ${handleSeri(seri_number_end[seri_number_end.length-1])}`;
         setResultSeri(resultSeri);
-    }, [])
+    }, [seri_number_start, seri_number_end])
 
     //Xử lý việc lấy ra địa chỉ, bộ phận nhận sản phẩm (thực chất là đơn vị quản lý)
     //State chứa all management unit trong DB trừ tổ QLVBCC
