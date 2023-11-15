@@ -25,12 +25,20 @@ export default function DetailDeliveryBill({delivery_bill, delivery_bill_creatio
 
     const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
 
+    const [resultSeri, setResultSeri] = useState("");
     useEffect(()=>{
         const splitDate = delivery_bill_creation_time.split("-");
         setDateCreate(splitDate);
         getAllManagementUnit();
         getAllDiplomaName(dispatch);
         getAllUserAccount();
+
+        let resultSeri = '';
+        for(let i = 0; i<seri_number_start.length-1; i++){
+            resultSeri+=`${handleSeri(seri_number_start[i])} - ${handleSeri(seri_number_end[i])}, `
+        }
+        resultSeri+=`${handleSeri(seri_number_start[seri_number_start.length-1])} - ${handleSeri(seri_number_end[seri_number_end.length-1])}`;
+        setResultSeri(resultSeri);
     }, [])
 
     //Xử lý việc lấy ra địa chỉ, bộ phận nhận sản phẩm (thực chất là đơn vị quản lý)
@@ -156,11 +164,11 @@ export default function DetailDeliveryBill({delivery_bill, delivery_bill_creatio
                             <div style={{marginTop: '15px'}}>
                                 - Lý do xuất kho: {reason}
                             </div>
-                            <div className='d-flex justify-content-between' style={{marginTop: '15px'}}>
-                                <div>
+                            <div className='row' style={{marginTop: '15px'}}>
+                                <div className='col-5'>
                                     - Xuất tại kho (ngăn lô): {export_warehouse}
                                 </div>
-                                <div>
+                                <div className='col-7'>
                                     Địa điểm: {address_export_warehouse}
                                 </div>
                             </div>
@@ -181,7 +189,7 @@ export default function DetailDeliveryBill({delivery_bill, delivery_bill_creatio
                                             <td>1</td>
                                             <td>{nameOfEmbryoType}</td>
                                             <td>{numberOfEmbryos}</td>
-                                            <td>{`${handleSeri(seri_number_start)} - ${handleSeri(seri_number_end)}`}</td>
+                                            <td>{resultSeri}</td>
                                             <td>{formatter.format(unit_price)}</td>
                                             <td>{formatter.format(unit_price*numberOfEmbryos)}</td>
                                         </tr>

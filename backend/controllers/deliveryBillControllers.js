@@ -52,6 +52,15 @@ const deliveryBillControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    //Lấy phiếu xuất kho cuối cùng của 1 loại phôi nào đó, hàm này nếu chưa có phiếu xuất kho nào của loại phôi đó thì trả về null
+    getLastedDeliveryBillBasedOnembryo_type : async(req, res) => {
+        try{
+            const result = await DeliveryBillModel.findOne({embryo_type: parseInt(req.params.embryo_type)}, {}, { sort: { 'createdAt': -1 } });
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

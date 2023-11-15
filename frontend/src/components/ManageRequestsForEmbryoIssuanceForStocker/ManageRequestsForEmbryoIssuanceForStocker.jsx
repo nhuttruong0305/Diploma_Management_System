@@ -393,16 +393,79 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
     
     const [numberOfEmbryos,setNumberOfEmbryos] = useState(0);
 
-    const [seri_number_start, setSeri_number_start] = useState("");
-    const [seri_number_end, setSeri_number_end] = useState("");
+    const [inputSeriNumberStart, setInputSeriNumberStart] = useState(""); 
+    const [inputSeriNumberEnd, setInputSeriNumberEnd] = useState("");
+
+    const [seri_number_start, setSeri_number_start] = useState([]);
+    const [seri_number_end, setSeri_number_end] = useState([]);
+
+    const noti2 = useRef();
+    const noti4 = useRef();
+    const noti5 = useRef();
+    const handleAddSeriToArray = () =>{
+        if(inputSeriNumberStart == "" || inputSeriNumberStart == NaN || inputSeriNumberEnd == "" || inputSeriNumberEnd == NaN){
+            noti2.current.showToast();
+            return;
+        }
+
+        if(inputSeriNumberStart<lowestSerialNumber){
+            noti4.current.showToast();
+            return;
+        }
+        
+        if(inputSeriNumberEnd<=inputSeriNumberStart){
+            noti5.current.showToast();
+            return;
+        }
+        setSeri_number_start((prev) =>{ return [...prev, parseInt(inputSeriNumberStart)]});
+        setSeri_number_end((prev) =>{ return [...prev, parseInt(inputSeriNumberEnd)]});
+
+        setInputSeriNumberStart("");
+        setInputSeriNumberEnd("");
+        setLowestSerialNumber(parseInt(inputSeriNumberEnd)+1);
+    }
 
     const [unit_price, setUnit_price] = useState(0);
 
-    //_id của yêu cầu xin cấp phôi để cập nhật trạng thái
+    //Object của yêu cầu xin cấp phôi để cập nhật trạng thái
     const [_idYCCP_approved, set_idYCCP_approved] = useState("");
 
     const noti = useRef();
+    const noti3 = useRef();
+
+    //Giá trị seri thấp nhất dc nhập trong các lần nhập, dc gán lại sau mỗi lần nhập
+    const [lowestSerialNumber, setLowestSerialNumber] = useState("");
+
+    //Giá trị seri thấp nhất đầu tiên, chỉ dc gán 1 lần
+    const [firstLowestSerialNumber, setFirstLowestSerialNumber] = useState("");
+    //Lấy phiếu xuất kho cuối cùng của loại phôi đang tạo phiếu xuất kho để biết được số seri bắt đầu
+    const getLastedDeliveryBillBaseOnEmbryoType = async (embryo_type) => {
+        try{
+            const lastedDeliveryBillBasedOnembryo_type = await axios.get(`http://localhost:8000/v1/delivery_bill/get_lasted_delivery_bill_based_on_embryo_type/${parseInt(embryo_type)}`);
+            if(lastedDeliveryBillBasedOnembryo_type.data == null){
+                setLowestSerialNumber(1);
+                setFirstLowestSerialNumber(1);
+            }else{
+                setLowestSerialNumber(lastedDeliveryBillBasedOnembryo_type.data.seri_number_end[seri_number_end.length]+1);
+                setFirstLowestSerialNumber(lastedDeliveryBillBasedOnembryo_type.data.seri_number_end[seri_number_end.length]+1);
+            }
+        }catch(error){
+            console.log(error);
+            return;
+        }
+    }
+
     const handleCreateDeliveryBill = async () => {
+        if(export_warehouse == ""){
+            noti3.current.showToast();
+            return;
+        }
+
+        if(seri_number_start.length == 0 || seri_number_end.length == 0){
+            noti2.current.showToast();
+            return;
+        }
+
         const newDeliveryBill = {
             embryoIssuanceRequest_id: parseInt(embryoIssuanceRequest_id_delivery_bill),
             fullname_of_consignee: fullname_of_consignee,
@@ -412,29 +475,303 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
             address_export_warehouse: address_export_warehouse,
             embryo_type: parseInt(embryo_type),
             numberOfEmbryos: parseInt(numberOfEmbryos),
-            seri_number_start: parseInt(seri_number_start),
-            seri_number_end: parseInt(seri_number_end),
+            seri_number_start: seri_number_start,
+            seri_number_end: seri_number_end,
             unit_price: parseInt(unit_price),
             mscb: user.mssv_cb
         }
+
+        //Object chứa phiếu xuất kho mới tạo được trả về khi tạo phiếu xuất kho
+        let newDeliveryBillCreated; 
 
         try{
             //call api tạo phiếu xuất kho
             const res = await axios.post("http://localhost:8000/v1/delivery_bill/create_delivery_bill", newDeliveryBill);
             
+            newDeliveryBillCreated = res.data;
             //call api cập nhật trạng thái yêu cầu xin cấp phôi
             const updateDoc = {
                 status: "Đã in phôi"
             }
-            const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_approved}`,updateDoc);
-
-            noti.current.showToast();
-            setTimeout(async()=>{
-                await getAllRequestForIssuanceOfEmbryos();
-            }, 2000)
+            const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_approved._id}`,updateDoc);
         }catch(error){
             console.log(error);
+            return;
         }
+
+        //Gửi mail cho tất cả tài khoản có chức vụ Thư ký
+        //Step 1: lấy ra all user account có chức vụ Thư ký
+
+        //Lấy ra tên cán bộ tạo yêu cầu
+        let ten_cb_tao_yc = '';
+        let email_cb_tao_yc = '';
+
+        let allUserSecretary = [];
+        allUserAccount?.forEach((user) => {
+            if(user.role[0] == "Secretary"){
+                allUserSecretary = [...allUserSecretary, user];
+            }
+            if(user.mssv_cb == _idYCCP_approved.mscb){
+                ten_cb_tao_yc = user.fullname;
+                email_cb_tao_yc = user.email;
+            }
+        })
+
+        //Lấy ra tên đơn vị quản lý để điền vào "Đơn vị yêu cầu" và địa chỉ (bộ phận) nhận hàng
+        let don_vi_yc = '';
+        let receiving_address = '';
+        allManagementUnit?.forEach((management_unit)=>{
+            if(management_unit.management_unit_id == _idYCCP_approved.management_unit_id){
+                don_vi_yc = management_unit.management_unit_name;
+            }
+            if(management_unit.management_unit_id == newDeliveryBillCreated.address_department){
+                receiving_address = management_unit.management_unit_name;
+            }
+        })
+
+        //Lấy ra loại phôi
+        let loai_phoi = '';
+        allDiplomaName?.forEach((diplomaName)=>{
+            if(_idYCCP_approved.diploma_name_id == diplomaName.diploma_name_id){
+                loai_phoi = diplomaName.diploma_name_name;
+            }
+        })
+
+        //Lấy ra số seri để điền vào phiếu xuất kho
+        let resultSeri = '';
+        for(let i = 0; i<newDeliveryBillCreated.seri_number_start.length-1; i++){
+            resultSeri+=`${handleSeri(seri_number_start[i])} - ${handleSeri(seri_number_end[i])}, `;
+        }
+        resultSeri+=`${handleSeri(seri_number_start[seri_number_start.length-1])} - ${handleSeri(seri_number_end[seri_number_end.length-1])}`;
+
+        //Step 2: gửi mail
+        for(let i = 0; i<allUserSecretary.length; i++){
+            try{
+                const mailOptions = {
+                    to: allUserSecretary[i].email,
+                    subject: "Đã in phôi theo yêu cầu xin cấp phôi",
+                    html: `<div
+                    style="
+                      background-color: #f3f2f0;
+                      padding: 50px 150px 50px 150px;
+                      color: black;
+                    "
+                  >
+                    <div style="background-color: white;">
+                      <div>
+                        <img
+                          style="width: 50px; margin-top: 25px; margin-left: 25px;"
+                          src="https://upload.wikimedia.org/wikipedia/vi/thumb/6/6c/Logo_Dai_hoc_Can_Tho.svg/1200px-Logo_Dai_hoc_Can_Tho.svg.png"
+                        />
+                      </div>
+                      <h1 style="text-align: center; font-size: 24px; padding: 15px;">
+                        Phôi đã được in theo yêu cầu xin cấp phôi
+                      </h1>
+                      <hr />
+                      <h3 style="text-align: center;">Chi tiết yêu cầu</h3>
+                      <div style="padding: 0px 25px 10px 25px;">
+                        <div>Mã phiếu: #${_idYCCP_approved.embryoIssuanceRequest_id}</div>
+                        <div style="margin-top: 10px;">
+                          Đơn vị yêu cầu: ${don_vi_yc}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Loại phôi cần cấp: ${loai_phoi}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Đợt thi/đợt cấp bằng: ${handleDateToDMY(_idYCCP_approved.examination)}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Số lượng phôi cần cấp: ${_idYCCP_approved.numberOfEmbryos}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Người tạo yêu cầu: ${ten_cb_tao_yc} / ${_idYCCP_approved.mscb}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Thời gian tạo: ${handleDateToDMY(_idYCCP_approved.time)}
+                        </div>
+                      </div>
+                      <hr />
+                      <h3 style="margin-top: 15px; text-align: center;">
+                        Chi tiết phiếu xuất kho
+                      </h3>
+                      <div style="padding: 0px 25px 10px 25px;">
+                        <div>Số phiếu xuất kho: ${newDeliveryBillCreated.delivery_bill}</div>
+                        <div style="margin-top: 10px;">Ngày tạo phiếu: ${handleDateToDMY(newDeliveryBillCreated.delivery_bill_creation_time)}</div>
+                        <div style="margin-top: 10px;">Người nhận hàng: ${newDeliveryBillCreated.fullname_of_consignee}</div>
+                        <div style="margin-top: 10px;">
+                          Địa chỉ (bộ phận) nhận hàng: ${receiving_address}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Lý do xuất: ${newDeliveryBillCreated.reason}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Kho xuất: ${newDeliveryBillCreated.export_warehouse}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Địa điểm xuất: ${newDeliveryBillCreated.address_export_warehouse}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Loại phôi: ${loai_phoi}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Số lượng phôi xuất: ${newDeliveryBillCreated.numberOfEmbryos}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Số seri: ${resultSeri}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Đơn giá mỗi phôi: ${newDeliveryBillCreated.unit_price}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Thành tiền: ${newDeliveryBillCreated.unit_price*newDeliveryBillCreated.numberOfEmbryos}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Người tạo phiếu xuất kho: ${user.fullname} / ${user.mssv_cb}
+                        </div>
+                        <div style="margin-top: 15px;">
+                          <a
+                            href="http://localhost:3000/request_for_issuance_of_embryos_processed"
+                          >
+                            <button
+                              style="
+                                border-radius: 20px;
+                                padding: 10px;
+                                color: #146ec6;
+                                font-weight: bold;
+                                border: 2px solid #146ec6;
+                                background-color: white;
+                              "
+                            >
+                              Xem thêm
+                            </button>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>`
+                }
+                const sendEmail = await axios.post("http://localhost:8000/v1/send_email/sendEmail", mailOptions);
+            }catch(error){
+                console.log(error);
+                return;
+            }
+        }
+
+        //Gửi mail cho tài khoản của Giám đốc Trung tâm/Trưởng phòng tạo yêu cầu. 
+        try{
+            const mailOptions = {
+                to: email_cb_tao_yc,
+                    subject: "Đã in phôi theo yêu cầu xin cấp phôi",
+                    html: `<div
+                    style="
+                      background-color: #f3f2f0;
+                      padding: 50px 150px 50px 150px;
+                      color: black;
+                    "
+                  >
+                    <div style="background-color: white;">
+                      <div>
+                        <img
+                          style="width: 50px; margin-top: 25px; margin-left: 25px;"
+                          src="https://upload.wikimedia.org/wikipedia/vi/thumb/6/6c/Logo_Dai_hoc_Can_Tho.svg/1200px-Logo_Dai_hoc_Can_Tho.svg.png"
+                        />
+                      </div>
+                      <h1 style="text-align: center; font-size: 24px; padding: 15px;">
+                        Phôi đã được in theo yêu cầu xin cấp phôi
+                      </h1>
+                      <hr />
+                      <h3 style="text-align: center;">Chi tiết yêu cầu</h3>
+                      <div style="padding: 0px 25px 10px 25px;">
+                        <div>Mã phiếu: #${_idYCCP_approved.embryoIssuanceRequest_id}</div>
+                        <div style="margin-top: 10px;">
+                          Đơn vị yêu cầu: ${don_vi_yc}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Loại phôi cần cấp: ${loai_phoi}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Đợt thi/đợt cấp bằng: ${handleDateToDMY(_idYCCP_approved.examination)}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Số lượng phôi cần cấp: ${_idYCCP_approved.numberOfEmbryos}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Người tạo yêu cầu: ${ten_cb_tao_yc} / ${_idYCCP_approved.mscb}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Thời gian tạo: ${handleDateToDMY(_idYCCP_approved.time)}
+                        </div>
+                      </div>
+                      <hr />
+                      <h3 style="margin-top: 15px; text-align: center;">
+                        Chi tiết phiếu xuất kho
+                      </h3>
+                      <div style="padding: 0px 25px 10px 25px;">
+                        <div>Số phiếu xuất kho: ${newDeliveryBillCreated.delivery_bill}</div>
+                        <div style="margin-top: 10px;">Ngày tạo phiếu: ${handleDateToDMY(newDeliveryBillCreated.delivery_bill_creation_time)}</div>
+                        <div style="margin-top: 10px;">Người nhận hàng: ${newDeliveryBillCreated.fullname_of_consignee}</div>
+                        <div style="margin-top: 10px;">
+                          Địa chỉ (bộ phận) nhận hàng: ${receiving_address}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Lý do xuất: ${newDeliveryBillCreated.reason}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Kho xuất: ${newDeliveryBillCreated.export_warehouse}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Địa điểm xuất: ${newDeliveryBillCreated.address_export_warehouse}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Loại phôi: ${loai_phoi}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Số lượng phôi xuất: ${newDeliveryBillCreated.numberOfEmbryos}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Số seri: ${resultSeri}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Đơn giá mỗi phôi: ${newDeliveryBillCreated.unit_price}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Thành tiền: ${newDeliveryBillCreated.unit_price*newDeliveryBillCreated.numberOfEmbryos}
+                        </div>
+                        <div style="margin-top: 10px;">
+                          Người tạo phiếu xuất kho: ${user.fullname} / ${user.mssv_cb}
+                        </div>
+                        <div style="margin-top: 15px;">
+                          <a
+                            href="http://localhost:3000/manage_requests_for_diploma_drafts"
+                          >
+                            <button
+                              style="
+                                border-radius: 20px;
+                                padding: 10px;
+                                color: #146ec6;
+                                font-weight: bold;
+                                border: 2px solid #146ec6;
+                                background-color: white;
+                              "
+                            >
+                              Xem thêm
+                            </button>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>`
+                }
+                const sendEmail = await axios.post("http://localhost:8000/v1/send_email/sendEmail", mailOptions);
+        }catch(error){
+            console.log(error);
+            return;
+        }
+
+        noti.current.showToast();
+        setTimeout(async()=>{
+            await getAllRequestForIssuanceOfEmbryos();
+        }, 2000)
     }
     
     function scrollToDetailRequest(){
@@ -555,6 +892,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                     let ten_van_bang;
                                                     let loai_van_bang;
                                                     let options;
+                                                    let don_gia_moi_phoi = 0;
                                                     allDiplomaName?.forEach((diplomaName)=>{
                                                         if(diplomaName.diploma_name_id == currentValue.diploma_name_id){
                                                             ten_van_bang = diplomaName.diploma_name_name;
@@ -564,6 +902,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                                 }
                                                             })
                                                             options = diplomaName.options;
+                                                            don_gia_moi_phoi = diplomaName.unit_price;
                                                         }
                                                     })
                                                     //Lấy tên cán bộ
@@ -637,16 +976,15 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                                                 setEmbryoIssuanceRequest_id_delivery_bill(currentValue.embryoIssuanceRequest_id);
                                                                                 setEmbryo_type(currentValue.diploma_name_id);
                                                                                 setEmbryo_typeShow(ten_van_bang);
-                                                                                set_idYCCP_approved(currentValue._id);
+                                                                                set_idYCCP_approved(currentValue);
                                                                                 setAddress_department(currentValue.management_unit_id)
                                                                                 setAddress_departmentShow(don_vi_quan_ly);
                                                                                 setNumberOfEmbryos(currentValue.numberOfEmbryos);
-                                                                                setSeri_number_start(currentValue.seri_number_start);
-                                                                                setSeri_number_end(currentValue.seri_number_end);
                                                                                 setFullname_of_consignee(ten_can_bo_tao_yc);
-
                                                                                 //Lấy lý do xuất kho
                                                                                 setReason(`Cấp ${currentValue.numberOfEmbryos} phôi ${ten_van_bang}`);
+                                                                                setUnit_price(don_gia_moi_phoi);
+                                                                                getLastedDeliveryBillBaseOnEmbryoType(currentValue.diploma_name_id)
                                                                             }}
                                                                         ></i>
                                                                         
@@ -848,6 +1186,89 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                     />
                                                 </div>
                                             </div>
+                                            <div className="row mt-3">
+                                                <div className="col-3">
+                                                    <label
+                                                        htmlFor="fullname"
+                                                        className="col-form-label text-end d-block"
+                                                        style={{ fontSize: '12px', fontStyle: 'italic' }}
+                                                    >Nhập số seri của phôi được cấp</label>
+                                                </div>
+                                                <div className="col-3">
+                                                    <input 
+                                                        type="number"
+                                                        className='form-control' 
+                                                        placeholder='Số seri bắt đầu'                                                        
+                                                        value={inputSeriNumberStart}
+                                                        onChange={(e)=>{
+                                                            setInputSeriNumberStart(parseInt(e.target.value))
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className="col-1 text-center">
+                                                    <i className="fa-solid fa-arrow-right" style={{marginTop: '10px'}}></i>
+                                                </div>
+                                                <div className="col-3">
+                                                    <input 
+                                                        type="number"
+                                                        className='form-control'
+                                                        placeholder='Số seri kết thúc'
+                                                        value={inputSeriNumberEnd}
+                                                        onChange={(e)=>{
+                                                            setInputSeriNumberEnd(parseInt(e.target.value))
+                                                        }}
+                                                    />
+                                                </div>
+                                                <div className='col-1'>
+                                                    <i 
+                                                        className="fa-solid fa-check"
+                                                        style={{backgroundColor: "#3184fa", padding: '10px 7px 7px 7px', borderRadius: '5px', color: 'white', width: '37px', height: '37px', textAlign: 'center'}}
+                                                        onClick={(e)=>{
+                                                            handleAddSeriToArray()
+                                                        }}
+                                                    ></i>
+                                                    
+                                                </div>
+                                                <div className="col-1">
+                                                    <i 
+                                                        className="fa-solid fa-arrows-rotate"
+                                                        style={{backgroundColor: "#990000", padding: '10px 7px 7px 7px', borderRadius: '5px', color: 'white', width: '37px', height: '37px', textAlign: 'center'}}
+                                                        onClick={(e)=>{
+                                                            setSeri_number_start([]);
+                                                            setSeri_number_end([]);
+                                                            setLowestSerialNumber(firstLowestSerialNumber)
+                                                        }}
+                                                    ></i>
+                                                </div>
+                                            </div>
+
+                                            {/* Lấy mảng seri start và end hiện ra màn hình */}
+                                            {
+                                                seri_number_start?.map((seri, index)=>{
+                                                    return(
+                                                        <div className="row mt-3" key={index}>
+                                                            <div className="col-3 offset-3">
+                                                                <input 
+                                                                    type="number"
+                                                                    className='form-control'
+                                                                    value={seri}
+                                                                />
+                                                            </div>
+                                                            <div className="col-1 text-center">
+                                                                <i className="fa-solid fa-arrow-right" style={{marginTop: '10px'}}></i>
+                                                            </div>
+                                                            <div className="col-3">
+                                                                <input 
+                                                                    type="number"
+                                                                    className='form-control'
+                                                                    value={seri_number_end[index]}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                            
                                         </div>
                                         <div className="modal-footer">
                                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -927,6 +1348,26 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                     message="Tạo phiếu xuất kho thành công"
                     type="success"
                     ref={noti}
+                />
+                <Toast
+                    message="Hãy nhập đầy đủ số seri yêu cầu"
+                    type="warning"
+                    ref={noti2}
+                />
+                <Toast
+                    message="Hãy nhập kho xuất"
+                    type="warning"
+                    ref={noti3}
+                />
+                <Toast
+                    message={`Hãy nhập số seri bắt đầu lớn hơn hoặc bằng ${lowestSerialNumber}`}
+                    type="warning"
+                    ref={noti4}
+                />
+                <Toast
+                    message="Số seri kết thúc phải lớn hơn số seri bắt đầu"
+                    type="warning"
+                    ref={noti5}
                 />
             <Footer/>
         </>        

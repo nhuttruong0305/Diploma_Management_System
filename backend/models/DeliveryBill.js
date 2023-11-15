@@ -35,10 +35,10 @@ const deliveryBillSchema = new mongoose.Schema(
             type: Number
         },
         seri_number_start:{//số seri start
-            type: Number
+            type: Array
         },
         seri_number_end:{//số seri end
-            type: Number
+            type: Array
         },
         unit_price: { //đơn giá mỗi phôi
             type: Number
