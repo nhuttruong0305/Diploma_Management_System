@@ -1,5 +1,5 @@
 const EmbryoIssuanceRequestModel = require("../models/EmbryoIssuanceRequest");
-    
+const DSHVModel = require("../models/DSHV");
 const embryoIssuanceRequestController = {
     //Hàm này dùng để lấy yc cấp phôi theo từng diploma_name_id, dùng cho tài khoản có chức vụ: Giám đốc Trung tâm/Trưởng phòng
     getAllembryoIssuanceRequestByListDiplomaNameId: async (req, res) => {
@@ -82,6 +82,21 @@ const embryoIssuanceRequestController = {
         try{
             const result = await EmbryoIssuanceRequestModel.find({status: "Đã nhận phôi" });
             return res.status(200).json(result);
+        }catch(error){  
+            return res.status(500).json(error);
+        }
+    },
+    //Xóa yccp
+    deleteYCCP: async (req, res) => {
+        try{
+            //Step 1: Xóa yccp theo _id
+            const deleteYCCP = await EmbryoIssuanceRequestModel.findByIdAndDelete(req.params._id);
+
+            //Step 2: Xóa các học viên trong collection dshv
+            const deleteDSHV = await DSHVModel.deleteMany({embryoIssuanceRequest_id: parseInt(req.params.embryoIssuanceRequest_id)});
+
+            return res.status(200).json("Xóa thành công");
+
         }catch(error){  
             return res.status(500).json(error);
         }

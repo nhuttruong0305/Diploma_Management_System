@@ -437,7 +437,9 @@ export default function RequestsForDiplomaDrafts(){
         }
         
         noti6.current.showToast(); 
-        await getAllEIR(allDiplomaNameByMU);
+        setTimeout(async()=>{
+            await getAllEIR(allDiplomaNameByMU);
+        }, 2000)
     }
 
     //Phần dưới chứa state và logic xử lý phần hiển thị các yêu cầu cấp phôi văn bằng
@@ -688,6 +690,24 @@ export default function RequestsForDiplomaDrafts(){
         }
     }
 
+    //Logic xử lý việc xóa YCCP khi chưa dc duyệt
+    //State chứa _id của YCCP cần xóa
+    const [_idYCCP_delete, set_idYCCP_delete] = useState("");
+    //State chứa embryoIssuanceRequest_id để xóa dshv
+    const [embryoIssuanceRequest_id_delete, setEmbryoIssuanceRequest_id_delete] = useState("");
+    
+    const handleDeleteYCCP = async () => {
+        try{
+            const deleteYCCP = await axios.delete(`http://localhost:8000/v1/embryo_issuance_request/delete_yccp/${_idYCCP_delete}/${embryoIssuanceRequest_id_delete}`);
+            noti5.current.showToast();
+            setTimeout(async()=>{
+                await getAllEIR(allDiplomaNameByMU);
+            }, 2000)
+        }catch(error){
+            console.log(error);
+        }
+    }
+    
     return(
         <>
             <Header/>
@@ -859,6 +879,7 @@ export default function RequestsForDiplomaDrafts(){
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Thêm nhật ký nhận phôi</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xóa</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -980,6 +1001,28 @@ export default function RequestsForDiplomaDrafts(){
                                                                 style={{ backgroundColor: "#2E8B57", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
                                                             ></i>
                                                         </td>
+                                                        <td>
+                                                            {
+                                                                //nút xóa yêu cầu
+                                                                currentValue.status == "Đã gửi yêu cầu" ? (
+                                                                    <i 
+                                                                        className="fa-solid fa-eraser"
+                                                                        style={{ backgroundColor: "red", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                        data-bs-toggle="modal" data-bs-target="#deleteYCCPmodal"
+                                                                        onClick={(e)=>{
+                                                                            set_idYCCP_delete(currentValue._id);
+                                                                            setEmbryoIssuanceRequest_id_delete(currentValue.embryoIssuanceRequest_id);
+                                                                        }}
+                                                                    ></i>
+                                                                ) : (
+                                                                    <i 
+                                                                        className="fa-solid fa-eraser"
+                                                                        style={{ backgroundColor: "grey", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                    ></i>
+                                                                )
+                                                            }
+                                                            
+                                                        </td>
                                                     </tr> 
                                                 )
                                             })
@@ -988,6 +1031,35 @@ export default function RequestsForDiplomaDrafts(){
                                 </table>
                             </div>
                         </div>
+
+                        {/* Modal hỏi người dùng có chắc sẽ xóa YCCP không */}
+                        <div className="modal fade" id="deleteYCCPmodal" tabIndex="-1" aria-labelledby="deleteYCCPmodalLabel" aria-hidden="true">
+                            <div className="modal-dialog modal-dialog-centered">
+                                <div className="modal-content">
+                                <div className="modal-header">
+                                    <h1 className="modal-title fs-5" id="deleteYCCPmodalLabel"></h1>
+                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div className="modal-body">
+                                    <h5>Bạn có chắc chắn muốn xóa yêu cầu xin cấp phôi này</h5>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                    <button 
+                                        type="button" 
+                                        className="btn"
+                                        onClick={(e)=>{
+                                            handleDeleteYCCP();
+                                        }}
+                                        style={{backgroundColor: '#1b95a2'}}
+                                    >Xóa</button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
 
                         <div className="d-flex justify-content-center mt-3 mb-3">
                             <Stack spacing={2}>
@@ -1073,6 +1145,11 @@ export default function RequestsForDiplomaDrafts(){
                 message="Tạo yêu cầu thành công"
                 type="success"
                 ref={noti6}
+            />
+            <Toast
+                message="Xóa yêu cầu thành công"
+                type="success"
+                ref={noti5}
             />
         </>
     )

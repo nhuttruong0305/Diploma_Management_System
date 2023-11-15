@@ -9,4 +9,7 @@ router.put("/update_status_yccp/:_id", embryoIssuanceRequestController.updateSta
 
 router.get("/get_all_yccp_imported", embryoIssuanceRequestController.getAllYCCPImported);
 router.get("/get_all_yccp_reviewed", embryoIssuanceRequestController.getAllYCCPReviewed);
+
+//Xóa yccp khi chưa dc duyệt
+router.delete("/delete_yccp/:_id/:embryoIssuanceRequest_id", embryoIssuanceRequestController.deleteYCCP);
 module.exports = router;
