@@ -11,6 +11,7 @@ import { getAllDiplomaName, getAllDiplomaType } from '../../redux/apiRequest';
 import DetailRequest from '../DetailRequest/DetailRequest';
 import Toast from '../Toast/Toast';
 import DetailDeliveryBill from '../DetailDeliveryBill/DetailDeliveryBill';
+import { Tooltip } from 'react-tippy';
 export default function ManageRequestsForEmbryoIssuanceForStocker(){
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -927,7 +928,23 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                             <td>{currentValue.numberOfEmbryos}</td>
                                                             <td>{ten_can_bo_tao_yc}</td>
                                                             <td>{currentValue.mscb}</td>
-                                                            <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
+                                                            <td style={{color:"red", fontWeight: 'bold'}}>
+                                                                <Tooltip
+                                                                    // options
+                                                                    theme='dark'
+                                                                    html={(
+                                                                        <div>
+                                                                        <strong>
+                                                                            {currentValue.comment}
+                                                                        </strong>
+                                                                        </div>
+                                                                    )}
+                                                                    arrow={true}
+                                                                    position="top"
+                                                                >
+                                                                    {currentValue.status}
+                                                                </Tooltip>
+                                                            </td>
                                                             <td>
                                                                 {
                                                                     closeButton == index ? (

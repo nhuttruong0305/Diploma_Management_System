@@ -12,6 +12,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { getAllDiplomaName, getAllDiplomaType} from '../../redux/apiRequest';
 import DetailRequest from '../DetailRequest/DetailRequest';
+import { Tooltip } from 'react-tippy';
 export default function ManageRequestsForEmbryoIssuanceForSecretary(){
     const dispatch = useDispatch();
     const allDiplomaName = useSelector((state) => state.diplomaName.diplomaNames?.allDiplomaName); //state đại diện cho all diploma name để lấy ra tên văn bằng
@@ -555,6 +556,13 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
         }, 2000)
     }
 
+    const scrollToDetailRequest = () => {
+        setTimeout(()=>{
+            document.body.scrollTop = 900;
+            document.documentElement.scrollTop = 900;
+        },200)
+    }
+
     return(
         <>  
             <Header/>
@@ -685,7 +693,23 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                                 <td>{currentValue.numberOfEmbryos}</td>
                                                                 <td>{ten_can_bo_tao_yc}</td>
                                                                 <td>{currentValue.mscb}</td>
-                                                                <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
+                                                                <td style={{color:"red", fontWeight: 'bold'}}>
+                                                                    <Tooltip    
+                                                                        // options
+                                                                        theme='dark'
+                                                                        html={(
+                                                                            <div>
+                                                                            <strong>
+                                                                                {currentValue.comment}
+                                                                            </strong>
+                                                                            </div>
+                                                                        )}
+                                                                        arrow={true}
+                                                                        position="top"
+                                                                    >
+                                                                        {currentValue.status}
+                                                                    </Tooltip>
+                                                                </td>
                                                                 <td>
                                                                     {
                                                                         closeButton == index ? (
@@ -712,6 +736,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                                                     setDiplomaType(loai_van_bang);
                                                                                     setOptionsOfDiplomaName(options);
                                                                                     getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, options)
+                                                                                    scrollToDetailRequest();
                                                                                 }}
                                                                             ></i>
                                                                         )

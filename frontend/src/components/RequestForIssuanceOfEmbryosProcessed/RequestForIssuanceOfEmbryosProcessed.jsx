@@ -13,7 +13,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Toast from '../Toast/Toast';
 import DetailDeliveryBill from '../DetailDeliveryBill/DetailDeliveryBill';
-
+import { Tooltip } from 'react-tippy';
 export default function RequestForIssuanceOfEmbryosProcessed(){
     const dispatch = useDispatch();
     const allDiplomaName = useSelector((state) => state.diplomaName.diplomaNames?.allDiplomaName); //state đại diện cho all diploma name để lấy ra tên văn bằng
@@ -718,7 +718,23 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                                                 <td>{currentValue.numberOfEmbryos}</td>
                                                                 <td>{ten_can_bo_tao_yc}</td>
                                                                 <td>{currentValue.mscb}</td>
-                                                                <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
+                                                                <td style={{color:"red", fontWeight: 'bold'}}>
+                                                                    <Tooltip
+                                                                        // options
+                                                                        theme='dark'
+                                                                        html={(
+                                                                            <div>
+                                                                            <strong>
+                                                                                {currentValue.comment}
+                                                                            </strong>
+                                                                            </div>
+                                                                        )}
+                                                                        arrow={true}
+                                                                        position="top"
+                                                                    >
+                                                                        {currentValue.status}
+                                                                    </Tooltip>
+                                                                </td>
                                                                 <td>
                                                                 {
                                                                     closeButton == index ? (

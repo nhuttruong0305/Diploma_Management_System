@@ -11,6 +11,8 @@ import {getAllDiplomaType} from '../../redux/apiRequest';
 import DetailRequest from '../DetailRequest/DetailRequest';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import DetailDeliveryBill from '../DetailDeliveryBill/DetailDeliveryBill';
+import { Tooltip } from 'react-tippy';
 export default function RequestsForDiplomaDrafts(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -451,8 +453,21 @@ export default function RequestsForDiplomaDrafts(){
 
     //State để tạo nút đóng cho nút hiển thị chi tiết phiếu xuất kho
     const [closeButtonDeliveryBill, setCloseButtonDeliveryBill] = useState(null);
+    //State ẩn hiện chi tiết phiếu xuất kho
+    const [showDeliveryBill, setShowDeliveryBill] = useState(false);
 
+    const [detailDeliveryBill, setDetailDeliveryBill] = useState([]);
 
+    //Hàm call api lấy chi tiết phiếu xuất kho
+    const getDetailDeliveryBill = async (embryoIssuanceRequest_id) => {
+        try{
+            const result = await axios.get(`http://localhost:8000/v1/delivery_bill/get_detail_delivery_bill/${embryoIssuanceRequest_id}`);
+            setDetailDeliveryBill(result.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+    
     useEffect(()=>{
         getAllEIR(allDiplomaNameByMU);
     }, [allDiplomaNameByMU])
@@ -652,6 +667,27 @@ export default function RequestsForDiplomaDrafts(){
         setAllDSHVByEIR(data);
     }
 
+    const scrollToDetailRequest = () => {
+        setTimeout(()=>{
+            document.body.scrollTop = 1120;
+            document.documentElement.scrollTop = 1120;
+        },200)
+    }
+
+    function scrollToDeliveryBill(){
+        if(showRequestDetail == false){
+            setTimeout(()=>{
+                document.body.scrollTop = 1120;
+                document.documentElement.scrollTop = 1120;
+            },200)
+        }else{
+            setTimeout(()=>{
+                document.body.scrollTop = 3000;
+                document.documentElement.scrollTop = 3000;
+            },200)
+        }
+    }
+
     return(
         <>
             <Header/>
@@ -848,7 +884,23 @@ export default function RequestsForDiplomaDrafts(){
                                                         <td>{diplomaName}</td>
                                                         <td>{handleDateToDMY(currentValue.examination)}</td>
                                                         <td>{currentValue.numberOfEmbryos}</td>
-                                                        <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
+                                                        <td style={{color:"red", fontWeight: 'bold'}}>
+                                                        <Tooltip
+                                                            // options
+                                                            theme='dark'
+                                                            html={(
+                                                                <div>
+                                                                  <strong>
+                                                                    {currentValue.comment}
+                                                                  </strong>
+                                                                </div>
+                                                              )}
+                                                            arrow={true}
+                                                            position="top"
+                                                        >
+                                                            {currentValue.status}
+                                                        </Tooltip>
+                                                        </td>
                                                         <td>
                                                             {
                                                                 //Nút xem chi tiết yêu cầu xin cấp phôi
@@ -882,6 +934,7 @@ export default function RequestsForDiplomaDrafts(){
                                                                             setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos)
                                                                             setOptionsOfDiplomaName(optionsOfDiplomaName);
                                                                             getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, optionsOfDiplomaName)
+                                                                            scrollToDetailRequest();
                                                                         }}
                                                                         >
                                                                     </i>
@@ -891,20 +944,24 @@ export default function RequestsForDiplomaDrafts(){
                                                         <td>
                                                             {
                                                                 //Nút xem phiếu xuất kho
-                                                                currentValue.status == "Đã in phôi" ? (
-                                                                    <i
-                                                                        className="fa-solid fa-info"
-                                                                        style={{ backgroundColor: "#FF6A6A", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
-                                                                        onClick={(e)=>{
-                                                                            setCloseButtonDeliveryBill(index);
-                                                                        }}
-                                                                    ></i>
-                                                                ) : closeButtonDeliveryBill == index ? (
+                                                                closeButtonDeliveryBill == index  ? (
                                                                     <i 
                                                                         style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
                                                                         className="fa-regular fa-circle-xmark"
                                                                         onClick={(e)=>{
                                                                             setCloseButtonDeliveryBill(null);
+                                                                            setShowDeliveryBill(false);
+                                                                        }}
+                                                                    ></i>
+                                                                ) : currentValue.status == "Đã in phôi" || currentValue.status == "Đã dán tem" || currentValue.status == "Đã nhận phôi" ? (
+                                                                    <i
+                                                                        className="fa-solid fa-info"
+                                                                        style={{ backgroundColor: "#FF6A6A", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                        onClick={(e)=>{
+                                                                            setCloseButtonDeliveryBill(index);
+                                                                            setShowDeliveryBill(true)
+                                                                            getDetailDeliveryBill(currentValue.embryoIssuanceRequest_id);
+                                                                            scrollToDeliveryBill();
                                                                         }}
                                                                     ></i>
                                                                 ) : (
@@ -961,7 +1018,32 @@ export default function RequestsForDiplomaDrafts(){
                                 <></>
                             )
                         }
-                        
+                        {
+                            showDeliveryBill ? (
+                                detailDeliveryBill?.map((currentValue, index)=>{
+                                    return(
+                                        <div key={index}>
+                                            <DetailDeliveryBill
+                                                delivery_bill={currentValue?.delivery_bill}
+                                                delivery_bill_creation_time={currentValue?.delivery_bill_creation_time}
+                                                fullname_of_consignee={currentValue?.fullname_of_consignee}
+                                                address_department={currentValue?.address_department}
+                                                reason={currentValue?.reason}
+                                                export_warehouse={currentValue?.export_warehouse}
+                                                address_export_warehouse={currentValue?.address_export_warehouse}
+                                                embryo_type={currentValue?.embryo_type}
+                                                numberOfEmbryos={currentValue?.numberOfEmbryos}
+                                                seri_number_start={currentValue?.seri_number_start}
+                                                seri_number_end={currentValue?.seri_number_end}
+                                                unit_price={currentValue?.unit_price}
+                                                mscb={currentValue?.mscb}
+                                            >                                    
+                                            </DetailDeliveryBill>
+                                        </div>
+                                    )
+                                })
+                            ) : ("")
+                        }
                     </div>
                 </div>
             </div>

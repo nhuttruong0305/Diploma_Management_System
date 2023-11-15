@@ -11,6 +11,8 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Toast from '../Toast/Toast';
 import DetailRequest from '../DetailRequest/DetailRequest';
+import DetailDeliveryBill from '../DetailDeliveryBill/DetailDeliveryBill';
+import { Tooltip } from 'react-tippy';
 export default function ApproveRequestForIssuanceOfEmbryos(){
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -411,6 +413,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
             const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_approved._id}`,updateDoc);
         }catch(error){
             console.log(error);
+            return;
         }
 
         //Lấy ra tên đơn vị quản lý để điền vào "Đơn vị yêu cầu"
@@ -681,6 +684,43 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
         }, 2000)
     }
 
+    const scrollToDetailRequest = () => {
+        setTimeout(()=>{
+            document.body.scrollTop = 1120;
+            document.documentElement.scrollTop = 1120;
+        },200)
+    }
+
+    function scrollToDeliveryBill(){
+        if(showDetailRequest == false){
+            setTimeout(()=>{
+                document.body.scrollTop = 1120;
+                document.documentElement.scrollTop = 1120;
+            },200)
+        }else{
+            setTimeout(()=>{
+                document.body.scrollTop = 3000;
+                document.documentElement.scrollTop = 3000;
+            },200)
+        }
+    }
+
+    //Xử lý logic để hiển thị chi tiết phiếu xuất kho
+    const [showDeliveryBill, setShowDeliveryBill] = useState(false);
+    const [closeButtonDeliveryBill, setCloseButtonDeliveryBill] = useState(null);
+
+    const [detailDeliveryBill, setDetailDeliveryBill] = useState([]);
+
+    //Hàm call api lấy chi tiết phiếu xuất kho
+    const getDetailDeliveryBill = async (embryoIssuanceRequest_id) => {
+        try{
+            const result = await axios.get(`http://localhost:8000/v1/delivery_bill/get_detail_delivery_bill/${embryoIssuanceRequest_id}`);
+            setDetailDeliveryBill(result.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     return(
         <>
             <Header/>
@@ -793,7 +833,23 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                             <td>{ten_can_bo_tao_yc}</td>
                                                             <td>{currentValue.mscb}</td>
 
-                                                            <td style={{color:"red", fontWeight: 'bold'}}>{currentValue.status}</td>
+                                                            <td style={{color:"red", fontWeight: 'bold'}}>
+                                                                <Tooltip
+                                                                    // options
+                                                                    theme='dark'
+                                                                    html={(
+                                                                        <div>
+                                                                        <strong>
+                                                                            {currentValue.comment}
+                                                                        </strong>
+                                                                        </div>
+                                                                    )}
+                                                                    arrow={true}
+                                                                    position="top"
+                                                                >
+                                                                    {currentValue.status}
+                                                                </Tooltip>
+                                                            </td>
                                                             <td>
                                                                 {
                                                                     closeButton == index ? (
@@ -823,13 +879,44 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                                                 setExaminationsInPhieuYC(currentValue.examination);
                                                                                 setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos);
                                                                                 setOptionsOfDiplomaName(options);
-                                                                                getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, options)
+                                                                                getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, options);
+                                                                                scrollToDetailRequest()
                                                                             }}                                                              
                                                                         ></i>
                                                                     )
                                                                 }
                                                             </td>
-                                                            <td></td>
+                                                            <td>
+                                                                {
+                                                                    //Nút xem phiếu xuất kho
+                                                                    closeButtonDeliveryBill == index ? (
+                                                                        <i 
+                                                                            style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
+                                                                            className="fa-regular fa-circle-xmark"
+                                                                            onClick={(e)=>{
+                                                                                setShowDeliveryBill(false);
+                                                                                setCloseButtonDeliveryBill(null)
+                                                                            }}
+                                                                        ></i>
+                                                                    ) : currentValue.status == "Đã in phôi" || currentValue.status == "Đã dán tem" || currentValue.status == "Đã nhận phôi" ? (
+                                                                        <i
+                                                                            className="fa-solid fa-info"
+                                                                            style={{ backgroundColor: "#FF6A6A", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                            onClick={(e)=>{
+                                                                                setCloseButtonDeliveryBill(index);
+                                                                                setShowDeliveryBill(true);
+                                                                                getDetailDeliveryBill(currentValue.embryoIssuanceRequest_id);
+                                                                                scrollToDeliveryBill();
+                                                                            }}
+                                                                        ></i>
+                                                                    ) : (
+                                                                        <i
+                                                                            className="fa-solid fa-info"
+                                                                            style={{ backgroundColor: "grey", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                        ></i>
+                                                                    )
+                                                                }
+                                                            </td>
                                                             <td>  
                                                                 {
                                                                     currentValue.status == "Đã gửi yêu cầu" ? (
@@ -932,6 +1019,32 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                             allDSHVByEIR={allDSHVByEIR}
                                         ></DetailRequest>
                                     </>
+                                ) : ("")
+                            }
+                            {
+                                showDeliveryBill ? (
+                                    detailDeliveryBill?.map((currentValue, index)=>{
+                                        return(
+                                            <div key={index}>
+                                                <DetailDeliveryBill
+                                                    delivery_bill={currentValue?.delivery_bill}
+                                                    delivery_bill_creation_time={currentValue?.delivery_bill_creation_time}
+                                                    fullname_of_consignee={currentValue?.fullname_of_consignee}
+                                                    address_department={currentValue?.address_department}
+                                                    reason={currentValue?.reason}
+                                                    export_warehouse={currentValue?.export_warehouse}
+                                                    address_export_warehouse={currentValue?.address_export_warehouse}
+                                                    embryo_type={currentValue?.embryo_type}
+                                                    numberOfEmbryos={currentValue?.numberOfEmbryos}
+                                                    seri_number_start={currentValue?.seri_number_start}
+                                                    seri_number_end={currentValue?.seri_number_end}
+                                                    unit_price={currentValue?.unit_price}
+                                                    mscb={currentValue?.mscb}
+                                                >                                    
+                                                </DetailDeliveryBill>
+                                            </div>
+                                        )
+                                    })
                                 ) : ("")
                             }
                         </div>
