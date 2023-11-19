@@ -117,6 +117,14 @@ export default function Navbar() {
                 var currentElement = document.querySelector("#quan-ly-gia-phoi");
                 currentElement.classList.add("active-nav-navbar");
                 break;
+            case "/management_of_damaged_embryos": 
+                var currentElement = document.querySelector("#quan-ly-phoi-hu");
+                currentElement.classList.add("active-nav-navbar");
+                break;
+            case "/create_request_reissue":
+                var currentElement = document.querySelector("#tao-yc-cap-lai-phoi");
+                currentElement.classList.add("active-nav-navbar");
+                break;
             }
     })
 
@@ -202,6 +210,9 @@ export default function Navbar() {
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/manage_requests_for_diploma_drafts" id='quan-ly-yc-cap-phoi'>Quản lý yêu cầu xin cấp phôi văn bằng</Link>
                                 </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/create_request_reissue" id='tao-yc-cap-lai-phoi'>Tạo yêu cầu xin cấp lại phôi</Link>
+                                </li>
                             </ul>
                         ) : role == "Leader" ? (
                             <ul className="navbar-nav">
@@ -234,6 +245,9 @@ export default function Navbar() {
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/unit_price_management" id='quan-ly-gia-phoi'>Quản lý giá phôi</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/management_of_damaged_embryos" id='quan-ly-phoi-hu'>Quản lý phôi bị hư</Link>
                                 </li>
                             </ul>
                         ) : (

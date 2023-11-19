@@ -49,39 +49,47 @@ export default function Statistical() {
     //State chứa all diploma được duyệt
     const [allDiplomaReviewed, setAllDiplomaReviewed] = useState([]);
     //State chứa all YCCP được tạo
-    const [allYCCPImported, setAllYCCPImported] = useState([]);
+    const [allYCCPCreated, setallYCCPCreated] = useState([]);
     //State chứa all YCCP đã dc xử lý
-    const [allYCCPReviewed, setAllYCCPReviewed] = useState([]);
+    const [allYCCPProcessed, setAllYCCPProcessed] = useState([]);
 
     //Hàm lấy all văn bằng dc nhập
     const getallInfor = async () => {
         try{
-            const result = await axios.get("http://localhost:8000/v1/diploma/get_all_diploma_imported");
-            setAllDiplomaImported(result.data);
+            const result = await axios.get("http://localhost:8000/v1/diploma/get_all_diploma_in_DB");
+            let diploma_imported = [];
+            let diploma_reviewed = [];
+
+            result.data.forEach((diploma)=>{
+                if(diploma.status == "Đã duyệt"){
+                    diploma_reviewed = [...diploma_reviewed, diploma];
+                }else if(diploma.status == "Chờ duyệt"){
+                    diploma_imported = [...diploma_imported, diploma];
+                }
+            })
+            setAllDiplomaImported(diploma_imported);
+            setAllDiplomaReviewed(diploma_reviewed);
         }catch(error){
             console.log(error);
         }
 
         try{
-            const result = await axios.get("http://localhost:8000/v1/diploma/get_all_diploma_reviewed");
-            setAllDiplomaReviewed(result.data);
+            const result = await axios.get("http://localhost:8000/v1/embryo_issuance_request/get_all_yccp");
+            
+            let yccp_created = [];
+            let yccp_processed = [];
+            result.data.forEach((yccp)=>{
+                if(yccp.status == "Đã nhận phôi"){
+                    yccp_processed = [...yccp_processed, yccp];
+                }else{
+                    yccp_created = [...yccp_created, yccp];
+                }
+            })
+            setallYCCPCreated(yccp_created);
+            setAllYCCPProcessed(yccp_processed);
         }catch(error){
             console.log(error);
-        }
-
-        try{
-            const result = await axios.get("http://localhost:8000/v1/embryo_issuance_request/get_all_yccp_imported");
-            setAllYCCPImported(result.data);
-        }catch(error){
-            console.log(error);
-        }
-
-        try{
-            const result = await axios.get("http://localhost:8000/v1/embryo_issuance_request/get_all_yccp_reviewed");
-            setAllYCCPReviewed(result.data);
-        }catch(error){
-            console.log(error);
-        }
+        }    
     }
 
     useEffect(()=>{
@@ -98,13 +106,21 @@ export default function Statistical() {
     //Mảng chứa số yccp được xử lý mỗi tháng của label 4: "Yêu cầu xin cấp phôi được xử lý"
     const [label4ByMonth, setLabel4ByMonth] = useState([]);    
 
-    useEffect(()=>{
-
-    }, )
 
     useEffect(()=>{
         if(statisticalType.value == "Thống kê theo tháng"){
             if(statistical_year!=""){
+                //Tạo dữ liệu cho các mảng
+                for(let i = 1; i<=12; i++){
+                    allDiplomaImported?.forEach((currentValue)=>{
+                        
+                    })
+
+
+                }
+
+
+
                 setShowChart(true);
             }else{
                 setShowChart(false);
@@ -118,7 +134,7 @@ export default function Statistical() {
                 setShowChart(false);
             }
         }
-    }, [statistical_year, startDate, endDate]);
+    }, [statistical_year, startDate, endDate, allDiplomaImported, allDiplomaReviewed,allYCCPCreated,allYCCPProcessed]);
 
     return (
         <>

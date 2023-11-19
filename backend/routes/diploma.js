@@ -14,7 +14,7 @@ router.get("/search_diploma_tracuu_for_student_and_client_user", diplomaControll
 
 router.get("/get_all_diploma_by_diploma_name_id/:diploma_name_id", diplomaControllers.getAllDiplomaByDiplomaNameId);
 
-router.get("/get_all_diploma_imported", diplomaControllers.getAllDiplomaImported);
-router.get("/get_all_diploma_reviewed", diplomaControllers.getAllDiplomaReviewed);
+router.get("/get_all_diploma_in_DB", diplomaControllers.getAllDiploma);
+
 
 module.exports = router;

@@ -134,7 +134,7 @@ const diplomaControllers = {
             //Biến kiểm tra trùng số vào sổ văn bằng
             let isExistNumberNoteBook = false;
             //Biến kiểm tra trùng số CCCD của người được cấp
-            let isExistCCCD = false;
+            // let isExistCCCD = false;
             
             diplomasOfTheSameDiplomaNameID.forEach((currentValue)=>{
                 if(currentValue.diploma_number == req.body.diploma_number){
@@ -143,9 +143,9 @@ const diplomaControllers = {
                 if(currentValue.numbersIntoTheNotebook == req.body.numbersIntoTheNotebook){
                     isExistNumberNoteBook = true;
                 }
-                if(currentValue.cccd == req.body.cccd){
-                    isExistCCCD = true;
-                }
+                // if(currentValue.cccd == req.body.cccd){
+                //     isExistCCCD = true;
+                // }
             })
             if(isExistDiplomaNumber){
                 return res.status(400).json("Số hiệu của văn bằng đã tồn tại");
@@ -153,9 +153,9 @@ const diplomaControllers = {
             if(isExistNumberNoteBook){
                 return res.status(400).json("Số vào sổ của văn bằng đã tồn tại");
             }
-            if(isExistCCCD){
-                return res.status(400).json("Số CCCD đã tồn tại");
-            }
+            // if(isExistCCCD){
+            //     return res.status(400).json("Số CCCD đã tồn tại");
+            // }
 
             const options = {returnDocument: "after"};
             const updateDoc = req.body;
@@ -260,25 +260,15 @@ const diplomaControllers = {
         }
     },
 
-    //Lấy tất cả diploma có trạng thái là "Chờ duyệt"
-    getAllDiplomaImported: async (req, res) => {
+    //Lấy tất cả diploma
+    getAllDiploma: async (req, res) => {
         try{
-            const result = await DiplomaModel.find({status: "Chờ duyệt"});  
+            const result = await DiplomaModel.find();  
             return res.status(200).json(result);
         }catch(error){
             return res.status(500).json(error);
         }
     },
-
-    //Lấy tất cả văn bằng đã duyệt
-    getAllDiplomaReviewed: async (req, res) => {
-        try{
-            const result = await DiplomaModel.find({status: "Đã duyệt"});  
-            return res.status(200).json(result);
-        }catch(error){
-            return res.status(500).json(error);
-        }
-    }
 }
 
 module.exports = diplomaControllers;

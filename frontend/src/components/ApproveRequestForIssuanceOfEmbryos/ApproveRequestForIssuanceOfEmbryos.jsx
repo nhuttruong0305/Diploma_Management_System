@@ -404,11 +404,26 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
 
     //Hàm duyệt yêu cầu cấp phôi
     const handleApproveRequest = async () => {
+        const todayApprove = new Date();
+        let dayApprove = todayApprove.getDate();
+        let monthApprove = todayApprove.getMonth() + 1;
+        const yearApprove = todayApprove.getFullYear();
+
+        if(dayApprove<10){
+            dayApprove = `0${dayApprove}`;
+        }
+
+        if(monthApprove<10){
+            monthApprove = `0${monthApprove}`;
+        }
+
         //Duyệt yêu cầu và cập nhật diễn giải
         try{
             const updateDoc = {
                 status: "Đã duyệt yêu cầu",
-                comment: explainYCCP
+                comment: explainYCCP,
+                mscb_approve: user.mssv_cb,
+                time_approve: `${yearApprove}-${monthApprove}-${dayApprove}`
             }
             const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_approved._id}`,updateDoc);
         }catch(error){
@@ -579,11 +594,26 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     const noti2 = useRef();
 
     const handleNotApproveRequest = async()=>{
+        const todayApprove = new Date();
+        let dayApprove = todayApprove.getDate();
+        let monthApprove = todayApprove.getMonth() + 1;
+        const yearApprove = todayApprove.getFullYear();
+
+        if(dayApprove<10){
+            dayApprove = `0${dayApprove}`;
+        }
+
+        if(monthApprove<10){
+            monthApprove = `0${monthApprove}`;
+        }
+
         //Không duyệt yêu cầu và cập nhật diễn giải
         try{
             const updateDoc = {
                 status: "Không duyệt",
-                comment: explainYCCP
+                comment: explainYCCP,
+                mscb_approve: user.mssv_cb,
+                time_approve: `${yearApprove}-${monthApprove}-${dayApprove}`
             }
             const updateStatus = await axios.put(`http://localhost:8000/v1/embryo_issuance_request/update_status_yccp/${_idYCCP_approved._id}`,updateDoc);
         }catch(error){

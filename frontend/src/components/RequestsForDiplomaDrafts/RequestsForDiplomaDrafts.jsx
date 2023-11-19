@@ -332,7 +332,7 @@ export default function RequestsForDiplomaDrafts(){
             management_unit_id: user?.management_unit,
             diploma_name_id: selectedSelectDiplomaNameRFDD?.value,
             examination: examination,
-            numberOfEmbryos: numberOfEmbryos,
+            numberOfEmbryos: parseInt(numberOfEmbryos),
             mscb: user.mssv_cb
         }
 
@@ -751,11 +751,11 @@ export default function RequestsForDiplomaDrafts(){
                                                     <div className="col-8">{managementUnitOfUser}</div>
                                                 </div>
                                                 <div className="row mt-3">
-                                                    <div className="col-4">Tên văn bằng</div>
+                                                    <div className="col-4">Loại phôi văn bằng</div>
                                                     <div className="col-8">
                                                         <Select
                                                             id='select-diplomaName-RFDD'
-                                                            placeholder="Chọn tên văn bằng"
+                                                            placeholder="Chọn loại phôi văn bằng"
                                                             value={selectedSelectDiplomaNameRFDD}
                                                             onChange={handleChangeselectedSelectDiplomaNameRFDD}
                                                             options={optionSelectDiplomaNameRFDD}
@@ -821,10 +821,10 @@ export default function RequestsForDiplomaDrafts(){
                             <div className='col-md-4'>
                                 <Select
                                     id='select-diploma-name-search-RFDD'
-                                    options={[{value:"", label: "Tất cả tên văn bằng"}, ...optionSelectDiplomaNameRFDD]}
+                                    options={[{value:"", label: "Tất cả loại phôi văn bằng"}, ...optionSelectDiplomaNameRFDD]}
                                     onChange={handleChangeSelectedSelectDiplomaNameSearchRFDD}
                                     value={selectedSelectDiplomaNameSearchRFDD}
-                                    placeholder="Chọn tên văn bằng"
+                                    placeholder="Chọn loại phôi văn bằng"
                                 />
                             </div>
                             <div className="col-md-4">
@@ -869,7 +869,7 @@ export default function RequestsForDiplomaDrafts(){
                                     <thead>
                                         <tr>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Loại phôi văn bằng</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">
                                                 Đợt thi/Đợt cấp văn bằng
                                                 (D/M/Y)
@@ -1122,7 +1122,7 @@ export default function RequestsForDiplomaDrafts(){
             
             <Footer/>
             <Toast
-                message="Vui lòng chọn tên văn bằng"
+                message="Vui lòng chọn loại phôi văn bằng"
                 type="warning"
                 ref={noti}
             />

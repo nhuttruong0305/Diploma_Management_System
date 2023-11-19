@@ -9,6 +9,7 @@ import Footer from '../Footer/Footer';
 import Toast from '../Toast/Toast';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import { Tooltip } from 'react-tippy';
 export default function DiplomaReview(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -307,27 +308,26 @@ export default function DiplomaReview(){
 
                         <div className="row mt-2 p-4">
                             <div 
-                                // className='table-wrapper table-responsive'
                                 id='contain-table-show-diploma-DR'
                             >
                                 <table
                                     id='table-show-diploma-DR'
-                                    className="table table-bordered"
+                                    className='table table-striped table-hover table-bordered'
                                 >
                                     <thead>
                                         <tr>
-                                            <th style={{width: '50px'}} scope="col"></th>
-                                            <th scope="col">STT</th>
-                                            <th scope="col">Tên văn bằng</th>
-                                            <th scope='col'>Trạng thái</th>
-                                            <th scope="col">Họ tên</th>
-                                            <th scope="col">Giới tính</th>
-                                            <th scope="col">Ngày sinh</th>
-                                            <th scope="col">Nơi sinh</th>
-                                            <th scope="col">CCCD</th>
-                                            <th scope="col">Ngày ký</th>
-                                            <th scope="col">Số hiệu</th>
-                                            <th scope="col">Số vào sổ</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col"></th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">STT</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope='col'>Trạng thái</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Họ tên</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Giới tính</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày sinh</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Nơi sinh</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">CCCD</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày ký</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Số hiệu</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Số vào sổ</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -335,7 +335,7 @@ export default function DiplomaReview(){
                                             allDiplomaByListOfDiplomaNameShow?.map((currentValue, index)=>{
                                                 //Xử lý giới tính
                                                 let sex;
-                                                if(currentValue.sex){
+                                                if(currentValue.sex == true){
                                                     sex = "Nam"
                                                 }else{
                                                     sex = "Nữ"
@@ -362,9 +362,7 @@ export default function DiplomaReview(){
                                                 })
                                                 return(
                                                 <tr key={index}>
-                                                    <td
-                                                        style={{textAlign: 'center'}}
-                                                    >
+                                                    <td>
                                                         <i 
                                                             className="fa-solid fa-eye"
                                                             style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
@@ -398,9 +396,25 @@ export default function DiplomaReview(){
                                                             }}
                                                         ></i>
                                                     </td>
-                                                    <th scope="row" style={{textAlign: 'center'}}>{index+1}</th>
+                                                    <th scope="row">{index+1}</th>
                                                     <td>{ten_van_bang}</td>
-                                                    <td>{currentValue.status}</td>
+                                                    <td style={{fontWeight: 'bold', color: 'red'}}>
+                                                        <Tooltip
+                                                            // options
+                                                            theme='dark'
+                                                            html={(
+                                                                <div>
+                                                                <strong>
+                                                                    {currentValue.explain}
+                                                                </strong>
+                                                                </div>
+                                                            )}
+                                                            arrow={true}
+                                                            position="top"
+                                                        >
+                                                            {currentValue.status}
+                                                        </Tooltip>
+                                                    </td>
                                                     <td>{currentValue.fullname}</td>
                                                     <td>{sex}</td>
                                                     <td>{currentValue.dateofbirth}</td>

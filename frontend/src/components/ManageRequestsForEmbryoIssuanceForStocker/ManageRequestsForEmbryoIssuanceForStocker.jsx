@@ -409,12 +409,12 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
             return;
         }
 
-        if(inputSeriNumberStart<lowestSerialNumber){
+        if(parseInt(inputSeriNumberStart)< parseInt(lowestSerialNumber)){
             noti4.current.showToast();
             return;
         }
         
-        if(inputSeriNumberEnd<=inputSeriNumberStart){
+        if( parseInt(inputSeriNumberEnd)<=parseInt(inputSeriNumberStart)){
             noti5.current.showToast();
             return;
         }
@@ -1269,6 +1269,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                                     type="number"
                                                                     className='form-control'
                                                                     value={seri}
+                                                                    readOnly={true}
                                                                 />
                                                             </div>
                                                             <div className="col-1 text-center">
@@ -1279,6 +1280,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                                                                     type="number"
                                                                     className='form-control'
                                                                     value={seri_number_end[index]}
+                                                                    readOnly={true}
                                                                 />
                                                             </div>
                                                         </div>

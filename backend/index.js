@@ -16,6 +16,8 @@ const embryoIssuanceRequest = require("./routes/embryo_issuance_request");
 const DSHVRoute = require("./routes/DSHV");
 const deliveryBillRoute = require("./routes/delivery_bill");
 const sendEmailRoute = require("./routes/sendEmail");
+const requestForReissueRoute = require("./routes/request_for_reissue");
+const damagedEmbryosRoute = require("./routes/damaged_embryos");
 
 const app = express();
 
@@ -46,6 +48,8 @@ app.use("/v1/embryo_issuance_request", embryoIssuanceRequest);
 app.use("/v1/DSHV", DSHVRoute);
 app.use("/v1/delivery_bill", deliveryBillRoute);
 app.use("/v1/send_email", sendEmailRoute);
+app.use("/v1/request_for_reissue", requestForReissueRoute);
+app.use("/v1/damaged_embryos",damagedEmbryosRoute);
 
 app.listen(process.env.PORT, ()=>{
     console.log(`Server is running...`);

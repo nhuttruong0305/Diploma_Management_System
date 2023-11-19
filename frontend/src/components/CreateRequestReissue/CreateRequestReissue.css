@@ -1,19 +1,17 @@
-#body-import-diploma{
+#body-create-request-reissue{
     padding-top: 10px;
     padding-bottom: 20px;
     background-color: #fff;
     border-radius: 0px 0px 5px 5px;
 }
 
-#contain-table-show-diploma-ID{
+#contain-table-show-all-request-reissue{
     width: 100%;
     overflow-y:hidden;
     overflow-x:auto;
 }
 
-#table-show-diploma-ID{
-    width: 1700px;
-    text-align: center;
+#table-show-all-request-reissue{
+    width: 2000px;
     border: 2px solid #fed25c;
 }
-

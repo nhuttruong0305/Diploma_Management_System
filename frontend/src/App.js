@@ -25,6 +25,8 @@ import Statistical from './components/Statistical/Statistical';
 import ManageRequestsForEmbryoIssuanceForStocker from './components/ManageRequestsForEmbryoIssuanceForStocker/ManageRequestsForEmbryoIssuanceForStocker';
 import RequestForIssuanceOfEmbryosProcessed from './components/RequestForIssuanceOfEmbryosProcessed/RequestForIssuanceOfEmbryosProcessed';
 import UnitPriceManagement from './components/UnitPriceManagement/UnitPriceManagement';
+import ManagementOfDamagedEmbryos from './components/ManagementOfDamagedEmbryos/ManagementOfDamagedEmbryos';
+import CreateRequestReissue from './components/CreateRequestReissue/CreateRequestReissue';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -280,6 +282,28 @@ function App() {
           >
             <UnitPriceManagement/>
           </ProtectedStocker>
+        )
+      },
+      {
+        path: '/management_of_damaged_embryos',
+        element: (
+          <ProtectedStocker
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <ManagementOfDamagedEmbryos/>
+          </ProtectedStocker>
+        )
+      },
+      {
+        path: '/create_request_reissue',
+        element: (
+          <ProtectedRouteCenterDirectorHeadOfDepartment
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <CreateRequestReissue/>
+          </ProtectedRouteCenterDirectorHeadOfDepartment>
         )
       }
     ])

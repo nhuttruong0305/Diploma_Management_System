@@ -10,6 +10,7 @@ import Footer from '../Footer/Footer';
 import * as XLSX from 'xlsx';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import { Tooltip } from 'react-tippy';
 export default function ImportDiploma(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const dispatch = useDispatch();
@@ -1123,32 +1124,32 @@ export default function ImportDiploma(){
                             <div 
                                 // className='table-wrapper table-responsive'
                                 id='contain-table-show-diploma-ID'
-                                
                                 >
                                 <table 
-                                    className="table table-bordered"
+                                    className='table table-striped table-hover table-bordered'
                                     id='table-show-diploma-ID'
                                 >
                                     <thead>
                                         <tr>
-                                            <th style={{width: '50px'}} scope="col"></th>
-                                            <th scope="col">STT</th>
-                                            <th scope="col">Tên văn bằng</th>
-                                            <th scope="col">Họ tên</th>
-                                            <th scope="col">Giới tính</th>
-                                            <th scope="col">Ngày sinh</th>
-                                            <th scope="col">Nơi sinh</th>
-                                            <th scope="col">CCCD</th>
-                                            <th scope="col">Ngày ký</th>
-                                            <th scope="col">Số hiệu</th>
-                                            <th scope="col">Số vào sổ</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col"></th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">STT</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Họ tên</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Giới tính</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày sinh</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Nơi sinh</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">CCCD</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày ký</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Số hiệu</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Số vào sổ</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
                                             allDiplomaByListOfDiplomaNameImportShow?.map((currentValue, index)=>{
                                                 let gioiTinhInTable;
-                                                if(currentValue.sex){
+                                                if(currentValue.sex == true){
                                                     gioiTinhInTable = "Nam"
                                                 }else{
                                                     gioiTinhInTable = "Nữ"
@@ -1165,7 +1166,6 @@ export default function ImportDiploma(){
                                                         <td 
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#editDiplomaModal"
-                                                            style={{textAlign: 'center'}}
                                                             onClick={(e)=>{
                                                                 allDiplomaNameByMU?.forEach((element)=>{
                                                                     if(element.diploma_name_id == currentValue.diploma_name_id){
@@ -1212,8 +1212,25 @@ export default function ImportDiploma(){
                                                         ><i 
                                                             style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
                                                             className="fa-solid fa-eye"></i></td>
-                                                        <th scope="row" style={{textAlign: 'center'}}>{index + 1}</th>
+                                                        <th scope="row">{index + 1}</th>
                                                         <td>{ten_van_bang}</td>
+                                                        <td style={{fontWeight: 'bold', color: 'red'}}>
+                                                            <Tooltip
+                                                                // options
+                                                                theme='dark'
+                                                                html={(
+                                                                    <div>
+                                                                    <strong>
+                                                                        {currentValue.explain}
+                                                                    </strong>
+                                                                    </div>
+                                                                )}
+                                                                arrow={true}
+                                                                position="top"
+                                                            >
+                                                                {currentValue.status}
+                                                            </Tooltip>
+                                                        </td>
                                                         <td>{currentValue.fullname}</td>
                                                         <td>{gioiTinhInTable}</td>
                                                         <td>{currentValue.dateofbirth}</td>

@@ -1682,7 +1682,7 @@ export default function UserAccountManagement() {
                                                                                     {value: "Diploma importer", label: "Cán bộ nhập văn bằng"},
                                                                                     {value: "Diploma reviewer", label: "Cán bộ duyệt văn bằng"},
                                                                                     {value: "Center Director_Head of Department", label: "Trưởng phòng/Giám đốc Trung tâm"},
-                                                                                    // {value: "Secretary", label: "Thư ký"},
+                                                                                    {value: "Secretary", label: "Thư ký"},
                                                                                     // {value: "Stocker", label: "Thủ kho"},
                                                                                 ]}
                                                                                 value={role}

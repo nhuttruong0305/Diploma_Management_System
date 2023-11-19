@@ -1,10 +1,10 @@
 const EmbryoIssuanceRequestModel = require("../models/EmbryoIssuanceRequest");
 const DSHVModel = require("../models/DSHV");
 const embryoIssuanceRequestController = {
-    //Hàm này dùng để lấy yc cấp phôi theo từng diploma_name_id, dùng cho tài khoản có chức vụ: Giám đốc Trung tâm/Trưởng phòng
+    //Hàm này dùng để lấy yc cấp phôi theo từng diploma_name_id, dùng cho tài khoản có chức vụ: Giám đốc Trung tâm/Trưởng phòng, vì các loại văn bằng có thể thay đổi đơn vị quản lý nên cần lấy theo loại văn bằng, đơn vị nào quản lý loại văn bằng nào thì lấy theo loại đó
     getAllembryoIssuanceRequestByListDiplomaNameId: async (req, res) => {
         try{
-            const result = await EmbryoIssuanceRequestModel.find({diploma_name_id: req.params.diploma_name_id});            
+            const result = await EmbryoIssuanceRequestModel.find({diploma_name_id: parseInt(req.params.diploma_name_id)});            
             return res.status(200).json(result);
         }catch(error){
             return res.status(500).json(error);
@@ -65,24 +65,6 @@ const embryoIssuanceRequestController = {
             const resultUpdate = await EmbryoIssuanceRequestModel.findByIdAndUpdate(_id, updateDoc, options);
             return res.status(200).json(resultUpdate);
         }catch(error){
-            return res.status(500).json(error);
-        }
-    },
-
-    //Hàm lấy all yccp được thêm
-    getAllYCCPImported: async (req, res) => {
-        try{
-            const result = await EmbryoIssuanceRequestModel.find({status: { $ne: "Đã nhận phôi" }});
-            return res.status(200).json(result);
-        }catch(error){  
-            return res.status(500).json(error);
-        }
-    },
-    getAllYCCPReviewed:async(req, res) => {
-        try{
-            const result = await EmbryoIssuanceRequestModel.find({status: "Đã nhận phôi" });
-            return res.status(200).json(result);
-        }catch(error){  
             return res.status(500).json(error);
         }
     },

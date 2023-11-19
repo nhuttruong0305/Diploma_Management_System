@@ -272,7 +272,7 @@ export default function HomePage() {
                                                         }
                                                     })
                                                     setFullnameShowModal(currentValue.fullname);
-                                                    if(currentValue.sex){
+                                                    if(currentValue.sex == true){
                                                         setSexShowModal("Nam");
                                                     }else{
                                                         setSexShowModal("Nữ");

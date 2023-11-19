@@ -12,8 +12,9 @@
 }
 
 #table-show-diploma-DR{
-    width: 1500px;
-    
+    width: 1700px;   
+    text-align: center;
+    border: 2px solid #fed25c;
 }
 
 .inForDiploma-DR{

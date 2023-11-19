@@ -6,10 +6,6 @@ router.post("/add_new_embryoIssuanceRequest", middlewareController.verifyTokenAn
 router.get("/get_yccp_by_list_diploma_name_id/:diploma_name_id", embryoIssuanceRequestController.getAllembryoIssuanceRequestByListDiplomaNameId);
 router.get("/get_all_yccp", embryoIssuanceRequestController.getAllembryoIssuanceRequest);
 router.put("/update_status_yccp/:_id", embryoIssuanceRequestController.updateStatusEmbryoIssuanceRequest);
-
-router.get("/get_all_yccp_imported", embryoIssuanceRequestController.getAllYCCPImported);
-router.get("/get_all_yccp_reviewed", embryoIssuanceRequestController.getAllYCCPReviewed);
-
 //Xóa yccp khi chưa dc duyệt
 router.delete("/delete_yccp/:_id/:embryoIssuanceRequest_id", embryoIssuanceRequestController.deleteYCCP);
 module.exports = router;

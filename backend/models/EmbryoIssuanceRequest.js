@@ -36,7 +36,24 @@ const embryoIssuanceRequestSchema = new mongoose.Schema(
             type: String,
             default: ""
         },
+        mscb_diary_creator: { //mscb của thư ký tại đơn vị quản lý cập nhật yêu cầu thành "Đã nhận phôi"
+            type: String,
+            default: ""
+        },
+        time_diary_creator: { //thời gian tạo nhật ký nhận phôi
+            type: String, 
+            default: ""
+        },
+
         comment: { //phần diễn giải cho Tổ trưởng nhập khi duyệt/không duyệt yêu cầu
+            type: String,
+            default: ""
+        },
+        mscb_approve: { //mscb của tổ trưởng đã duyệt/không duyệt văn bằng
+            type: String,
+            default: ""
+        },
+        time_approve: { //ngày duyệt/không duyệt
             type: String,
             default: ""
         }

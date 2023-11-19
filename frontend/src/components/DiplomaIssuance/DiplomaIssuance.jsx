@@ -378,7 +378,8 @@ export default function DiplomaIssuance(){
                                     <button 
                                         type="submit"
                                         form='form-add-diplomaIssuance'
-                                        className="btn btn-primary"
+                                        className="btn"
+                                        style={{backgroundColor: '#1b95a2'}}
                                     >Lưu</button>
                                 </div>
                                 </div>
