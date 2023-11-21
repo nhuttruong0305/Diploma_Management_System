@@ -35,6 +35,31 @@ const damagedEmbryosControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    GetTheDamagedSerialNumber: async(req, res) => {
+        try{
+            const diploma_name_id = parseInt(req.params.diploma_name_id);
+            const damagedList = await DamagedEmbryosModel.find({diploma_name_id: diploma_name_id});
+            
+            let finalResult = [];
+            for(let i = 0; i < damagedList.length; i++){
+                for(let j = 0; j < damagedList[i].seri_number_start.length; j++){
+                    let index =  damagedList[i].seri_number_start[j];
+                    do{
+                        if(!finalResult.includes(index)){
+                            finalResult = [...finalResult, index];
+                        }
+                        index++;
+                    }while(index <= damagedList[i].seri_number_end[j])
+
+                }
+            }
+            
+            console.log(finalResult.length);
+            return res.status(200).json(finalResult);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 
