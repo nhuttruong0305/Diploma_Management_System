@@ -374,6 +374,10 @@ export default function RequestsForDiplomaDrafts(){
                 return;
             }
         }
+        noti6.current.showToast(); 
+        setTimeout(async()=>{
+            await getAllEIR(allDiplomaNameByMU);
+        }, 100)
         //Gửi email cho các tài khoản có chức vụ Tổ trưởng  
         for(let k = 0; k<allUserLeader.length; k++){
             try{
@@ -435,11 +439,6 @@ export default function RequestsForDiplomaDrafts(){
                 return;
             }
         }
-        
-        noti6.current.showToast(); 
-        setTimeout(async()=>{
-            await getAllEIR(allDiplomaNameByMU);
-        }, 2000)
     }
 
     //Phần dưới chứa state và logic xử lý phần hiển thị các yêu cầu cấp phôi văn bằng

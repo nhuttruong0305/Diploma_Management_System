@@ -206,6 +206,11 @@ export default function CreateRequestReissue(){
             return;
         }
 
+        noti7.current.showToast();
+        setTimeout(() => {
+            getAllRequestForReissueByListMU_ID_Status(allDiplomaNameByMU, inputMaPhieuSearch, statusYC.value) 
+        }, 100);
+        
         //Gửi mail cho all tài khoản có chức vụ tổ trưởng
         let allUserLeader = [];
         allUserAccount?.forEach((user)=>{
@@ -296,11 +301,6 @@ export default function CreateRequestReissue(){
             console.log(error);
             return;
         }
-
-        noti7.current.showToast();
-        setTimeout(() => {
-            getAllRequestForReissueByListMU_ID_Status(allDiplomaNameByMU, inputMaPhieuSearch, statusYC.value) 
-        }, 2000);
     }
 
 

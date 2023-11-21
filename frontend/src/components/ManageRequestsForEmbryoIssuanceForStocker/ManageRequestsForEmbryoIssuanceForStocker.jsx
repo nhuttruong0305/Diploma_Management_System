@@ -500,6 +500,11 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
             return;
         }
 
+        noti.current.showToast();
+        setTimeout(async()=>{
+            await getAllRequestForIssuanceOfEmbryos();
+        }, 100)
+
         //Gửi mail cho tất cả tài khoản có chức vụ Thư ký
         //Step 1: lấy ra all user account có chức vụ Thư ký
 
@@ -768,11 +773,6 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
             console.log(error);
             return;
         }
-
-        noti.current.showToast();
-        setTimeout(async()=>{
-            await getAllRequestForIssuanceOfEmbryos();
-        }, 2000)
     }
     
     function scrollToDetailRequest(){

@@ -429,6 +429,11 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
             console.log(error);
             return;
         }
+        
+        noti.current.showToast();
+        setTimeout(async()=>{
+            await getAllRequestForIssuanceOfEmbryos();
+        }, 100)
 
         //Lấy ra tên cán bộ tạo yêu cầu
         let ten_cb_tao_yc = '';
@@ -584,11 +589,6 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
             console.log(error);
             return;
         }
-
-        noti.current.showToast();
-        setTimeout(async()=>{
-            await getAllRequestForIssuanceOfEmbryos();
-        }, 2000)
     }
     return(
         <>  

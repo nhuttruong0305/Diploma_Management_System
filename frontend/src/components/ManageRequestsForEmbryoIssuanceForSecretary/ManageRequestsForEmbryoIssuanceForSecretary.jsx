@@ -397,6 +397,10 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
             return;
         }
 
+        noti.current.showToast();
+        setTimeout(async()=>{
+            await getAllRequestForIssuanceOfEmbryos();
+        }, 100)
         
         //Lấy ra tên đơn vị quản lý để điền vào "Đơn vị yêu cầu"
         let don_vi_yc = '';
@@ -549,11 +553,6 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                 return; 
             }
         }
-        
-        noti.current.showToast();
-        setTimeout(async()=>{
-            await getAllRequestForIssuanceOfEmbryos();
-        }, 2000)
     }
 
     const scrollToDetailRequest = () => {

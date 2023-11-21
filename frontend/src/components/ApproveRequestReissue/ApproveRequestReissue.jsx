@@ -303,7 +303,10 @@ export default function ApproveRequestReissue(){
             console.log(error);
             return;
         }
-
+        noti.current.showToast();
+        setTimeout(()=>{
+            getAllRequestReissueByID_Status(inputMaPhieuSearch, statusYC.value);
+        },100);
         //--------------------
         let don_vi_yc = '';
         allManagementUnit?.forEach((management_unit)=>{
@@ -452,7 +455,7 @@ export default function ApproveRequestReissue(){
                                         Người xét duyệt: ${user.fullname} / ${user.mssv_cb}
                                     </div>
                                     <div style='margin-top: 15px;'>
-                                    <a href='http://localhost:3000/'>
+                                    <a href='http://localhost:3000/request_reissue_for_secretary'>
                                         <button
                                         style='
                                             border-radius: 20px;
@@ -477,10 +480,6 @@ export default function ApproveRequestReissue(){
                 return;
             }
         }
-        noti.current.showToast()
-        setTimeout(()=>{
-            getAllRequestReissueByID_Status(inputMaPhieuSearch, statusYC.value);
-        },2000)
     }
 
     const noti2 = useRef();
@@ -511,7 +510,10 @@ export default function ApproveRequestReissue(){
             console.log(error);
             return;
         }
-
+        noti2.current.showToast();
+        setTimeout(() => {
+            getAllRequestReissueByID_Status(inputMaPhieuSearch, statusYC.value);
+        }, 100);
         //--------------------
         let don_vi_yc = '';
         allManagementUnit?.forEach((management_unit)=>{
@@ -607,12 +609,7 @@ export default function ApproveRequestReissue(){
             console.log(error);
             return;
         }
-        noti2.current.showToast()
-        setTimeout(() => {
-            getAllRequestReissueByID_Status(inputMaPhieuSearch, statusYC.value);
-        }, 2000);
     }
-
 
     return(
         <>  

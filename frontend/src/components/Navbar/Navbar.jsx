@@ -128,7 +128,11 @@ export default function Navbar() {
             case "/approve_request_for_reissue":
                 var currentElement = document.querySelector("#duyet-yc-cap-lai-phoi");
                 currentElement.classList.add("active-nav-navbar");
-                break;    
+                break;   
+            case '/request_reissue_for_secretary':
+                var currentElement = document.querySelector("#xu-ly-yeu-cau-cap-lai-phoi");
+                currentElement.classList.add("active-nav-navbar");
+                break;   
             }
     })
 
@@ -240,6 +244,9 @@ export default function Navbar() {
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/manage_requests_for_embryo_issuance_for_secretary" id='quan-ly-yc-cap-phoi-cho-thu-ky'>Quản lý yêu cầu xin cấp phôi văn bằng</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/request_reissue_for_secretary" id='xu-ly-yeu-cau-cap-lai-phoi'>Xử lý yêu cầu cấp lại phôi</Link>
                                 </li>
                             </ul>
                         ) : role == "Stocker" ? (
