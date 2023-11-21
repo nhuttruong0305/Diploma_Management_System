@@ -387,7 +387,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     useEffect(()=>{
         let result = [];
         allUserAccount?.forEach((user)=>{
-            if(user.role[0] == "Secretary"){
+            if(user.role[0] == "Secretary" && user.management_unit == 13){
                 result = [...result, user];
             }
         })

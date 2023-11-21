@@ -509,7 +509,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
 
         let allUserSecretary = [];
         allUserAccount?.forEach((user) => {
-            if(user.role[0] == "Secretary"){
+            if(user.role[0] == "Secretary" && user.management_unit == 13){
                 allUserSecretary = [...allUserSecretary, user];
             }
             if(user.mssv_cb == _idYCCP_approved.mscb){

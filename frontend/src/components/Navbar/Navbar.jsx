@@ -125,6 +125,10 @@ export default function Navbar() {
                 var currentElement = document.querySelector("#tao-yc-cap-lai-phoi");
                 currentElement.classList.add("active-nav-navbar");
                 break;
+            case "/approve_request_for_reissue":
+                var currentElement = document.querySelector("#duyet-yc-cap-lai-phoi");
+                currentElement.classList.add("active-nav-navbar");
+                break;    
             }
     })
 
@@ -221,6 +225,9 @@ export default function Navbar() {
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/approve_request_for_issuance_of_embryos" id='duyet-yc-cap-phoi'>Duyệt yêu cầu xin cấp phôi văn bằng</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/approve_request_for_reissue" id='duyet-yc-cap-lai-phoi'>Duyệt yêu cầu xin cấp lại phôi</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/statistical" id='thong-ke-bao-cao'>Thống kê báo cáo</Link>

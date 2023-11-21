@@ -1,0 +1,18 @@
+#body-approve-request-reissue{
+    padding-top: 10px;
+    padding-bottom: 20px;
+    background-color: #fff;
+    border-radius: 0px 0px 5px 5px;
+}
+
+#contain-table-approve-request-reissue{
+    width: 100%;
+    overflow-y:hidden;
+    overflow-x:auto;
+}
+
+#table-approve-request-reissue{
+    text-align: center;
+    width: 2000px;
+    border: 2px solid #fed25c;
+}

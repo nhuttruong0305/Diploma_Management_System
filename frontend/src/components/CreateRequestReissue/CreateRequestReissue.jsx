@@ -11,6 +11,7 @@ import { getAllDiplomaName } from '../../redux/apiRequest';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import DetailRequestForReissue from '../DetailRequestForReissue/DetailRequestForReissue';
+import { Tooltip } from 'react-tippy';
 export default function CreateRequestReissue(){
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -246,15 +247,15 @@ export default function CreateRequestReissue(){
                                         <div style='margin-top: 10px;'>
                                             Loại phôi cần cấp: ${loai_phoi}
                                         </div>
-                                        <div style='margin-top: 10px;'>Số lượng phôi cần cấp lại: ${resultNewRequestForReissue.numberOfEmbryos}</div>
-                                        <div style='margin-top: 10px;'>Số seri: ${handleResultSeri(seri_number_start, seri_number_end)}</div>
+                                        <div style='margin-top: 10px;'>Số lượng tái cấp: ${resultNewRequestForReissue.numberOfEmbryos}</div>
+                                        <div style='margin-top: 10px;'>Số seri tái cấp: ${handleResultSeri(seri_number_start, seri_number_end)}</div>
                                         <div style='margin-top: 10px;'>Lý do: ${reason}</div>
                                         <div style='margin-top: 10px;'>
                                             Người tạo yêu cầu: ${user.fullname} / ${user.mssv_cb}
                                         </div>
                                         <div style='margin-top: 10px;'>Thời gian tạo: ${handleDateToDMY(resultNewRequestForReissue.time_create)}</div>
                                         <div style='margin-top: 15px;'>
-                                        <a href='http://localhost:3000/'>
+                                        <a href='http://localhost:3000/approve_request_for_reissue'>
                                             <button
                                             style='
                                                 border-radius: 20px;
@@ -661,14 +662,15 @@ export default function CreateRequestReissue(){
                                         <tr>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên loại phôi</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng cấp lại</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng tái cấp</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên cán bộ tạo yêu cầu</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Thời gian tạo</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Lý do</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số seri phôi bị hư</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số seri phôi tái cấp</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -686,7 +688,21 @@ export default function CreateRequestReissue(){
                                                         <td>{ten_loai_phoi}</td>
                                                         <td>{currentValue.numberOfEmbryos}</td>
                                                         <td style={{color: 'red', fontWeight: 'bold'}}>
-                                                            {currentValue.status}
+                                                            <Tooltip
+                                                                // options
+                                                                theme='dark'
+                                                                html={(
+                                                                    <div>
+                                                                    <strong>
+                                                                        {currentValue.comment}
+                                                                    </strong>
+                                                                    </div>
+                                                                )}
+                                                                arrow={true}
+                                                                position="top"
+                                                            >
+                                                                {currentValue.status}
+                                                            </Tooltip>
                                                         </td>
                                                         <td>{currentValue.fullname_create}</td>
                                                         <td>{currentValue.mscb_create}</td>
@@ -733,6 +749,7 @@ export default function CreateRequestReissue(){
                                                                 )
                                                             }
                                                         </td>
+                                                        <td></td>
                                                     </tr>
                                                 )
                                             })
@@ -791,7 +808,7 @@ export default function CreateRequestReissue(){
                 ref={noti4}
             />
             <Toast
-                message="Vui lòng nhập số lượng phôi cần cấp lại"
+                message="Vui lòng nhập số lượng phôi tái cấp"
                 type="warning"
                 ref={noti5}
             />

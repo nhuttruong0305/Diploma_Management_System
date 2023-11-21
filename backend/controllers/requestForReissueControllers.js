@@ -59,6 +59,39 @@ const requestForReissueControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+
+    //Hàm lấy all yc cấp lại phôi theo mã phiếu, trạng thái
+    getRequestForReissueByID_Status: async (req, res) => {
+        try{
+            const requestForReissue_id = req.query.requestForReissue_id;
+            let result;
+            if(requestForReissue_id == ""){
+                result = await RequestForReissueModel.find({
+                                                            status: { $regex: `${req.query.status}`, $options: 'i'}
+                                                        });
+            }else{
+                result = await RequestForReissueModel.find({
+                                                            requestForReissue_id: parseInt(requestForReissue_id),
+                                                            status: { $regex: `${req.query.status}`, $options: 'i'}
+                                                        });
+            }
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    //Hàm cập nhật request reissue theo req.body
+    updateRequestReissueByReqBody: async (req,res) => {
+        try{
+            const _id = req.params._id;
+            const options = {returnDocument: "after"};
+            const updateDoc = req.body;
+            const resultUpdate = await RequestForReissueModel.findByIdAndUpdate(_id, updateDoc, options);
+            return res.status(200).json(resultUpdate)
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

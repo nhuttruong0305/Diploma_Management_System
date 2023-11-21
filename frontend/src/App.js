@@ -27,6 +27,7 @@ import RequestForIssuanceOfEmbryosProcessed from './components/RequestForIssuanc
 import UnitPriceManagement from './components/UnitPriceManagement/UnitPriceManagement';
 import ManagementOfDamagedEmbryos from './components/ManagementOfDamagedEmbryos/ManagementOfDamagedEmbryos';
 import CreateRequestReissue from './components/CreateRequestReissue/CreateRequestReissue';
+import ApproveRequestReissue from './components/ApproveRequestReissue/ApproveRequestReissue';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -304,6 +305,17 @@ function App() {
           >
             <CreateRequestReissue/>
           </ProtectedRouteCenterDirectorHeadOfDepartment>
+        )
+      },
+      {
+        path: '/approve_request_for_reissue',
+        element: (
+          <ProtectedRouteLeader
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <ApproveRequestReissue/>
+          </ProtectedRouteLeader>
         )
       }
     ])
