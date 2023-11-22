@@ -1,0 +1,12 @@
+#body-request-reissue-processed{
+    padding-top: 10px;
+    padding-bottom: 20px;
+    background-color: #fff;
+    border-radius: 0px 0px 5px 5px;
+}
+
+#contain-request-reissue-processed{
+    width: 100%;
+    overflow-y:hidden;
+    overflow-x:auto;
+}

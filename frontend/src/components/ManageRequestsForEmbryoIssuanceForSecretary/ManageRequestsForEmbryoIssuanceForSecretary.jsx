@@ -574,7 +574,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                     <i className="fa-solid fa-sliders"></i>
                                 </div>
                                 <ul className="list-group list-group-flush">
-                                    <li style={{backgroundColor: '#1b95a2'}} className="list-group-item">Các yêu cầu xin cấp phôi đã được duyệt</li>
+                                    <li style={{backgroundColor: '#1b95a2', color:"white"}} className="list-group-item">Các yêu cầu xin cấp phôi đã được duyệt</li>
                                     <Link style={{textDecoration: 'none'}} to='/request_for_issuance_of_embryos_processed'>
                                         <li className="list-group-item">Các yêu cầu xin cấp phôi đã được thủ kho xử lý</li>
                                     </Link>

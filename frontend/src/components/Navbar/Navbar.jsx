@@ -141,6 +141,14 @@ export default function Navbar() {
                 var currentElement = document.querySelector("#xu-ly-yeu-cau-cap-lai-phoi");
                 currentElement.classList.add("active-nav-navbar");
                 break;   
+            case '/request_for_issuance_of_embryos_processed':
+                var currentElement = document.querySelector("#quan-ly-yc-cap-phoi-cho-thu-ky");
+                currentElement.classList.add("active-nav-navbar");
+                break;   
+            case '/request_reissue_processed':
+                var currentElement = document.querySelector("#xu-ly-yeu-cau-cap-lai-phoi");
+                currentElement.classList.add("active-nav-navbar");
+                break;    
             }
     })
 

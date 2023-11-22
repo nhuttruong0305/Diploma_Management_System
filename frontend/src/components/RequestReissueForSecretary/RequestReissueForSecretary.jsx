@@ -485,7 +485,7 @@ export default function RequestReissueForSecretary(){
                             </div>
                             <ul className="list-group list-group-flush">
                                 <li style={{backgroundColor: '#1b95a2', color: 'white'}} className="list-group-item">Các yêu cầu cấp lại phôi đã được duyệt</li>
-                                <Link style={{textDecoration: 'none'}} to='/'>
+                                <Link style={{textDecoration: 'none'}} to='/request_reissue_processed'>
                                     <li className="list-group-item">Các yêu cầu cấp lại phôi đã được thủ kho xử lý</li>
                                 </Link>
                             </ul>

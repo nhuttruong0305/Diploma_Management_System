@@ -605,7 +605,7 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                     <Link style={{textDecoration: 'none'}} to='/manage_requests_for_embryo_issuance_for_secretary'>
                                         <li className="list-group-item">Các yêu cầu xin cấp phôi đã được duyệt</li>
                                     </Link>
-                                    <li style={{backgroundColor: '#1b95a2'}} className="list-group-item">Các yêu cầu xin cấp phôi đã được thủ kho xử lý</li>
+                                    <li style={{backgroundColor: '#1b95a2', color: 'white'}} className="list-group-item">Các yêu cầu xin cấp phôi đã được thủ kho xử lý</li>
                                 </ul>
                             </div>
                         </div>
