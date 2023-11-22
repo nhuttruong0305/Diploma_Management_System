@@ -6,4 +6,11 @@ router.get("/get_detail_delivery_bill/:embryoIssuanceRequest_id", deliveryBillCo
 
 //Lấy phiếu xuất kho cuối cùng của 1 loại phôi nào đó, hàm này nếu chưa có phiếu xuất kho nào của loại phôi đó thì trả về null
 router.get("/get_lasted_delivery_bill_based_on_embryo_type/:embryo_type", deliveryBillControllers.getLastedDeliveryBillBasedOnembryo_type);
+
+//Tạo phiếu xuất kho cho yc cấp lại phôi
+router.post("/create_delivery_bill_for_request_reissue", deliveryBillControllers.createDeliveryBillForRequestReissue);
+
+//Lấy chi tiết phiếu xuất kho của yc cấp lại phôi
+router.get("/get_detail_delivery_bill_request_reissue/:requestForReissue_id", deliveryBillControllers.getDetailDeliveryBillRequestReissue);
+
 module.exports = router;

@@ -112,7 +112,15 @@ export default function Navbar() {
             case "/manage_requests_for_embryo_issuance_for_stocker":
                 var currentElement = document.querySelector("#xu-ly-yc-xin-cap-phoi");
                 currentElement.classList.add("active-nav-navbar");
+                var currentElement2 = document.querySelector("#xl-yeu-cau-cap-phoi");
+                currentElement2.classList.add("active-nav-navbar");
                 break;
+            case "/request_reissue_for_stocker":
+                var currentElement = document.querySelector("#xu-ly-yc-xin-cap-phoi");
+                currentElement.classList.add("active-nav-navbar");
+                var currentElement2 = document.querySelector("#xl-yeu-cau-cap-lai-phoi");
+                currentElement2.classList.add("active-nav-navbar");
+                break;   
             case "/unit_price_management":
                 var currentElement = document.querySelector("#quan-ly-gia-phoi");
                 currentElement.classList.add("active-nav-navbar");
@@ -254,8 +262,27 @@ export default function Navbar() {
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/" id='trang-chu8'>Tra cứu</Link>
                                 </li>
-                                <li className="nav-item nav-item-navbar">
-                                    <Link className="nav-link nav-link-navbar" to="/manage_requests_for_embryo_issuance_for_stocker" id='xu-ly-yc-xin-cap-phoi'>Xử lý yêu cầu xin cấp phôi văn bằng</Link>
+                                <li className="nav-item dropdown">
+                                    <a 
+                                        id='xu-ly-yc-xin-cap-phoi' 
+                                        className="nav-link dropdown-toggle" 
+                                        href="#" 
+                                        role="button" 
+                                        data-bs-toggle="dropdown" 
+                                        aria-expanded="false"
+                                        style={{fontWeight: 'bold', color: 'white'}}
+                                    >
+                                        Xử lý yêu cầu xin cấp phôi
+                                    </a>
+                                    <ul className="dropdown-menu">
+                                        <li>
+                                            <Link className="dropdown-item" id='xl-yeu-cau-cap-phoi' to="/manage_requests_for_embryo_issuance_for_stocker">Yêu cầu xin cấp phôi</Link>
+                                        </li>
+                                        <li><hr className="dropdown-divider"/></li>
+                                        <li>
+                                            <Link className="dropdown-item" id='xl-yeu-cau-cap-lai-phoi' to="/request_reissue_for_stocker">Yêu cầu xin cấp lại phôi</Link>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/unit_price_management" id='quan-ly-gia-phoi'>Quản lý giá phôi</Link>

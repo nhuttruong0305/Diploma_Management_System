@@ -8,7 +8,12 @@ const deliveryBillSchema = new mongoose.Schema(
             required: true
         },
         embryoIssuanceRequest_id:{ // id của yêu cầu cấp phôi, để phân biệt phiếu xuất kho này là của yêu cầu xin cấp phôi nào
-            type: Number
+            type: Number,
+            default: null
+        },
+        requestForReissue_id:{
+            type: Number,
+            default: null
         },
         delivery_bill_creation_time:{ //thời gian tạo phiếu
             type: String

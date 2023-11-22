@@ -403,7 +403,8 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
     const noti2 = useRef();
     const noti4 = useRef();
     const noti5 = useRef();
-    const handleAddSeriToArray = () =>{
+    const noti6 = useRef();
+    const handleAddSeriToArray = async () =>{
         if(inputSeriNumberStart == "" || inputSeriNumberStart == NaN || inputSeriNumberEnd == "" || inputSeriNumberEnd == NaN){
             noti2.current.showToast();
             return;
@@ -418,12 +419,40 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
             noti5.current.showToast();
             return;
         }
+
+        let listDamagedSerialNumber;
+        //Kiểm tra xem số seri từ bắt đầu tới kết thúc có nằm trong ds seri hư không
+        try{
+            const resultListDamagedSerialNumber = await axios.get(`http://localhost:8000/v1/damaged_embryos/get_the_damaged_serial_number/${parseInt(embryo_type)}`);
+            listDamagedSerialNumber = resultListDamagedSerialNumber.data;
+        }catch(error){
+            console.log(error);
+            return
+        }
+
+        for(let i = parseInt(inputSeriNumberStart); i<=parseInt(inputSeriNumberEnd); i++){
+            if(listDamagedSerialNumber.includes(i)){
+                noti6.current.showToast();
+                return;
+            }
+        }
+
         setSeri_number_start((prev) =>{ return [...prev, parseInt(inputSeriNumberStart)]});
         setSeri_number_end((prev) =>{ return [...prev, parseInt(inputSeriNumberEnd)]});
 
         setInputSeriNumberStart("");
         setInputSeriNumberEnd("");
-        setLowestSerialNumber(parseInt(inputSeriNumberEnd)+1);
+        
+        let index = parseInt(inputSeriNumberEnd)+1;
+        let stop = false;
+        while(!stop){
+            if(!listDamagedSerialNumber.includes(index)){
+                setLowestSerialNumber(index);
+                stop = true;
+            }else{
+                index++;
+            }
+        }
     }
 
     const [unit_price, setUnit_price] = useState(0);
@@ -441,14 +470,50 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
     const [firstLowestSerialNumber, setFirstLowestSerialNumber] = useState("");
     //Lấy phiếu xuất kho cuối cùng của loại phôi đang tạo phiếu xuất kho để biết được số seri bắt đầu
     const getLastedDeliveryBillBaseOnEmbryoType = async (embryo_type) => {
+        // try{
+        //     const lastedDeliveryBillBasedOnembryo_type = await axios.get(`http://localhost:8000/v1/delivery_bill/get_lasted_delivery_bill_based_on_embryo_type/${parseInt(embryo_type)}`);
+        //     if(lastedDeliveryBillBasedOnembryo_type.data == null){
+        //         setLowestSerialNumber(1);
+        //         setFirstLowestSerialNumber(1);
+        //     }else{
+        //         setLowestSerialNumber(lastedDeliveryBillBasedOnembryo_type.data.seri_number_end[seri_number_end.length]+1);
+        //         setFirstLowestSerialNumber(lastedDeliveryBillBasedOnembryo_type.data.seri_number_end[seri_number_end.length]+1);
+        //     }
+        // }catch(error){
+        //     console.log(error);
+        //     return;
+        // }
         try{
+            //Lấy ra phiếu xuất kho cuối cùng của 1 loại phôi
             const lastedDeliveryBillBasedOnembryo_type = await axios.get(`http://localhost:8000/v1/delivery_bill/get_lasted_delivery_bill_based_on_embryo_type/${parseInt(embryo_type)}`);
+            
+            //Lấy ra các số seri bị hư của 1 loại phôi
+            const listDamagedSerialNumber = await axios.get(`http://localhost:8000/v1/damaged_embryos/get_the_damaged_serial_number/${parseInt(embryo_type)}`);
+
             if(lastedDeliveryBillBasedOnembryo_type.data == null){
-                setLowestSerialNumber(1);
-                setFirstLowestSerialNumber(1);
+                let index = 1;
+                let stop = false;
+                while(!stop){
+                    if(!listDamagedSerialNumber.data.includes(index)){
+                        setLowestSerialNumber(index);
+                        setFirstLowestSerialNumber(index);
+                        stop = true;
+                    }else{
+                        index++;
+                    }
+                }
             }else{
-                setLowestSerialNumber(lastedDeliveryBillBasedOnembryo_type.data.seri_number_end[seri_number_end.length]+1);
-                setFirstLowestSerialNumber(lastedDeliveryBillBasedOnembryo_type.data.seri_number_end[seri_number_end.length]+1);
+                let index = lastedDeliveryBillBasedOnembryo_type.data.seri_number_end[seri_number_end.length]+1;
+                let stop = false;
+                while(!stop){
+                    if(!listDamagedSerialNumber.data.includes(index)){
+                        setLowestSerialNumber(index);
+                        setFirstLowestSerialNumber(index);
+                        stop = true;
+                    }else{
+                        index++;
+                    }
+                }
             }
         }catch(error){
             console.log(error);
@@ -1387,6 +1452,11 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
                     message="Số seri kết thúc phải lớn hơn số seri bắt đầu"
                     type="warning"
                     ref={noti5}
+                />
+                <Toast
+                    message="Trong dãy số seri được nhập có số seri của phôi hư, vui lòng nhập số khác"
+                    type="warning"
+                    ref={noti6}
                 />
             <Footer/>
         </>        

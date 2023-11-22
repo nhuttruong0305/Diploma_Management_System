@@ -1,17 +1,17 @@
-#body-create-request-reissue{
+#body-request-reissue-stocker{
     padding-top: 10px;
     padding-bottom: 20px;
     background-color: #fff;
     border-radius: 0px 0px 5px 5px;
 }
-
-#contain-table-show-all-request-reissue{
+#contain-request-reissue-for-stocker{
     width: 100%;
     overflow-y:hidden;
     overflow-x:auto;
 }
 
-#table-show-all-request-reissue{
-    width: 1700px;
+#table-request-reissue-for-stocker{
+    width: 1800px;
+    text-align: center;
     border: 2px solid #fed25c;
 }

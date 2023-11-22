@@ -708,7 +708,26 @@ export default function CreateRequestReissue(){
                                                         <td>{currentValue.mscb_create}</td>
                                                         <td>{handleDateToDMY(currentValue.time_create)}</td>
                                                         <td>{currentValue.reason}</td>
-                                                        <td>{handleResultSeri(currentValue.seri_number_start, currentValue.seri_number_end)}</td>
+                                                        <td>{
+                                                            <Tooltip    
+                                                                theme='dark'
+                                                                html={(
+                                                                    <div>
+                                                                    <strong>
+                                                                        {handleResultSeri(currentValue.seri_number_start, currentValue.seri_number_end)}
+                                                                    </strong>
+                                                                    </div>
+                                                                )}
+                                                                arrow={true}
+                                                                position="top"
+                                                            >
+                                                                <i 
+                                                                    className="fa-brands fa-periscope"
+                                                                    
+                                                                    style={{backgroundColor: "#2F4F4F", padding: '7px', borderRadius: '5px', color: 'white', width: '32px'}}  
+                                                                ></i>
+                                                            </Tooltip>
+                                                        }</td>
                                                         <td>
                                                         {
                                                                 //Nút xem chi tiết yêu cầu xin cấp phôi

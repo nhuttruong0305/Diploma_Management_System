@@ -292,8 +292,8 @@ export default function RequestReissueForSecretary(){
         }
 
         noti.current.showToast();
-        setTimeout(()=>{
-            getAllRequestReissueByID_Status(inputMaPhieuSearch, statusYC.value);
+        setTimeout(async ()=>{
+            await getAllRequestReissueByID_Status(inputMaPhieuSearch, statusYC.value);
         },100);
         
         //--------------------
@@ -375,7 +375,7 @@ export default function RequestReissueForSecretary(){
                                         Người xét duyệt: ${nguoi_duyet} / ${_IdRequestReissue.mscb_approve}
                                     </div>
                                     <div style='margin-top: 15px;'>
-                                    <a href='http://localhost:3000/'>
+                                    <a href='http://localhost:3000/request_reissue_for_stocker'>
                                         <button
                                         style='
                                             border-radius: 20px;
@@ -543,7 +543,7 @@ export default function RequestReissueForSecretary(){
                                     <table 
                                         id='table-request-reissue-forsecretary' 
                                         className='table table-striped table-hover table-bordered' 
-                                        style={{width: '1700px', border: '2px solid #fed25c', textAlign: 'center'}}
+                                        style={{width: '1800px', border: '2px solid #fed25c', textAlign: 'center'}}
                                     >
                                         <thead>
                                             <tr>
@@ -555,6 +555,7 @@ export default function RequestReissueForSecretary(){
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Thời gian tạo</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Lý do</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số seri tái cấp</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">
                                                     Cập nhật trạng thái
@@ -598,6 +599,26 @@ export default function RequestReissueForSecretary(){
                                                             <td>{currentValue.mscb_create}</td>
                                                             <td>{handleDateToDMY(currentValue.time_create)}</td>
                                                             <td>{currentValue.reason}</td>
+                                                            <td>{
+                                                                <Tooltip    
+                                                                    theme='dark'
+                                                                    html={(
+                                                                        <div>
+                                                                        <strong>
+                                                                            {handleResultSeri(currentValue.seri_number_start, currentValue.seri_number_end)}
+                                                                        </strong>
+                                                                        </div>
+                                                                    )}
+                                                                    arrow={true}
+                                                                    position="top"
+                                                                >
+                                                                    <i 
+                                                                        className="fa-brands fa-periscope"
+                                                                        
+                                                                        style={{backgroundColor: "#2F4F4F", padding: '7px', borderRadius: '5px', color: 'white', width: '32px'}}  
+                                                                    ></i>
+                                                                </Tooltip>
+                                                            }</td>
                                                             <td>
                                                                 {
                                                                     //Nút xem chi tiết yêu cầu xin cấp phôi

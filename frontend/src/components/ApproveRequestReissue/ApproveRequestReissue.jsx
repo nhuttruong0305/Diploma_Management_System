@@ -723,7 +723,24 @@ export default function ApproveRequestReissue(){
                                                         <td>{handleDateToDMY(currentValue.time_create)}</td>
                                                         <td>{currentValue.reason}</td>
                                                         <td>{
-                                                            handleResultSeri(currentValue.seri_number_start, currentValue.seri_number_end)
+                                                            <Tooltip    
+                                                                theme='dark'
+                                                                html={(
+                                                                    <div>
+                                                                    <strong>
+                                                                        {handleResultSeri(currentValue.seri_number_start, currentValue.seri_number_end)}
+                                                                    </strong>
+                                                                    </div>
+                                                                )}
+                                                                arrow={true}
+                                                                position="top"
+                                                            >
+                                                                <i 
+                                                                    className="fa-brands fa-periscope"
+                                                                    
+                                                                    style={{backgroundColor: "#2F4F4F", padding: '7px', borderRadius: '5px', color: 'white', width: '32px'}}  
+                                                                ></i>
+                                                            </Tooltip>
                                                         }</td>
                                                         <td>
                                                             {
