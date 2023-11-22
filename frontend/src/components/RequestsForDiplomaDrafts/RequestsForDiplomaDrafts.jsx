@@ -701,7 +701,7 @@ export default function RequestsForDiplomaDrafts(){
             noti5.current.showToast();
             setTimeout(async()=>{
                 await getAllEIR(allDiplomaNameByMU);
-            }, 2000)
+            }, 200)
         }catch(error){
             console.log(error);
         }
@@ -877,7 +877,6 @@ export default function RequestsForDiplomaDrafts(){
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Thêm nhật ký nhận phôi</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xóa</th>
                                         </tr>
                                     </thead>
@@ -994,13 +993,6 @@ export default function RequestsForDiplomaDrafts(){
                                                             
                                                         </td>
                                                         <td>
-                                                            {/* Nút thêm nhật ký nhận phôi */}
-                                                            <i 
-                                                                className="fa-solid fa-book"
-                                                                style={{ backgroundColor: "#2E8B57", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
-                                                            ></i>
-                                                        </td>
-                                                        <td>
                                                             {
                                                                 //nút xóa yêu cầu
                                                                 currentValue.status == "Đã gửi yêu cầu" ? (
@@ -1035,7 +1027,7 @@ export default function RequestsForDiplomaDrafts(){
                         <div className="modal fade" id="deleteYCCPmodal" tabIndex="-1" aria-labelledby="deleteYCCPmodalLabel" aria-hidden="true">
                             <div className="modal-dialog modal-dialog-centered">
                                 <div className="modal-content">
-                                <div className="modal-header">
+                                <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                     <h1 className="modal-title fs-5" id="deleteYCCPmodalLabel"></h1>
                                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>

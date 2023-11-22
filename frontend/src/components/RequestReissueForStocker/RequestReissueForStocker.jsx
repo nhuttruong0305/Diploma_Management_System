@@ -330,7 +330,7 @@ export default function RequestReissueForStocker(){
                     }
                 }
             }else{
-                let index = lastedDeliveryBillBasedOnembryo_type.data.seri_number_end[seri_number_end.length]+1;
+                let index = lastedDeliveryBillBasedOnembryo_type.data.seri_number_end[lastedDeliveryBillBasedOnembryo_type.data.seri_number_end.length-1]+1;
                 let stop = false;
                 while(!stop){
                     if(!listDamagedSerialNumber.data.includes(index)){
