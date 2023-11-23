@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack';
 import DetailRequestForReissue from '../DetailRequestForReissue/DetailRequestForReissue';
 import { Tooltip } from 'react-tippy';
 import Toast from '../Toast/Toast';
+import DetailDeliveryBill from '../DetailDeliveryBill/DetailDeliveryBill';
 export default function ApproveRequestReissue(){
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.login?.currentUser);
@@ -611,6 +612,36 @@ export default function ApproveRequestReissue(){
         }
     }
 
+    //Xử lý phần xem chi tiết phiếu xuất kho
+    const [showDeliveryBill, setShowDeliveryBill] = useState(false);
+    const [detailDeliveryBill, setDetailDeliveryBill] = useState([]);
+
+    const [closeButtonDeliveryBill, setCloseButtonDeliveryBill] = useState(null);
+
+    //Hàm call api lấy chi tiết phiếu xuất kho
+    const getDetailDeliveryBill = async (requestForReissue_id) => {
+        try{
+            const result = await axios.get(`http://localhost:8000/v1/delivery_bill/get_detail_delivery_bill_request_reissue/${requestForReissue_id}`);
+            setDetailDeliveryBill(result.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    function scrollToDeliveryBill(){
+        if(showDetailRequestReissue == false){
+            setTimeout(()=>{
+                document.body.scrollTop = 1000;
+                document.documentElement.scrollTop = 1000;
+            },200)
+        }else{
+            setTimeout(()=>{
+                document.body.scrollTop = 2850;
+                document.documentElement.scrollTop = 2850;
+            },200)
+        }
+    }
+
     return(
         <>  
             <Header/>
@@ -802,6 +833,32 @@ export default function ApproveRequestReissue(){
                                                                 )
                                                             }
                                                         </td>
+                                                        <td>
+                                                            {
+                                                                closeButtonDeliveryBill == index ? (
+                                                                    <i 
+                                                                        style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
+                                                                        className="fa-regular fa-circle-xmark"
+                                                                        onClick={(e)=>{
+                                                                            setShowDeliveryBill(false);
+                                                                            setCloseButtonDeliveryBill(null);
+                                                                        }}
+                                                                    ></i>
+                                                                ) : (
+                                                                    // nút xem chi tiết phiếu xuất kho 
+                                                                    <i 
+                                                                        className="fa-solid fa-circle-info"
+                                                                        style={{backgroundColor: "#0dcaf0", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                        onClick={(e)=>{
+                                                                            getDetailDeliveryBill(currentValue.requestForReissue_id);
+                                                                            setCloseButtonDeliveryBill(index);
+                                                                            setShowDeliveryBill(true);
+                                                                            scrollToDeliveryBill()
+                                                                        }}
+                                                                    ></i>
+                                                                )
+                                                            }
+                                                        </td>
                                                     </tr>
                                                 )
                                             })
@@ -885,6 +942,32 @@ export default function ApproveRequestReissue(){
                                 ></DetailRequestForReissue>
                             ) : ("")
                         }
+                        {
+                                showDeliveryBill ? (
+                                    detailDeliveryBill?.map((currentValue, index)=>{
+                                        return(
+                                            <div key={index}>
+                                                <DetailDeliveryBill
+                                                    delivery_bill={currentValue?.delivery_bill}
+                                                    delivery_bill_creation_time={currentValue?.delivery_bill_creation_time}
+                                                    fullname_of_consignee={currentValue?.fullname_of_consignee}
+                                                    address_department={currentValue?.address_department}
+                                                    reason={currentValue?.reason}
+                                                    export_warehouse={currentValue?.export_warehouse}
+                                                    address_export_warehouse={currentValue?.address_export_warehouse}
+                                                    embryo_type={currentValue?.embryo_type}
+                                                    numberOfEmbryos={currentValue?.numberOfEmbryos}
+                                                    seri_number_start={currentValue?.seri_number_start}
+                                                    seri_number_end={currentValue?.seri_number_end}
+                                                    unit_price={currentValue?.unit_price}
+                                                    mscb={currentValue?.mscb}
+                                                >                                    
+                                                </DetailDeliveryBill>
+                                            </div>
+                                        )
+                                    })
+                                ) : ("")
+                            }
                     </div>
                 </div>
             </div>

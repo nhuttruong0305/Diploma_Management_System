@@ -30,17 +30,31 @@ const embryoIssuanceRequestController = {
                 month = `0${month}`;
             }
 
-            const newEIR = new EmbryoIssuanceRequestModel({
-                embryoIssuanceRequest_id: lastedEIR.embryoIssuanceRequest_id + 1, //
-                management_unit_id: req.body.management_unit_id, //có
-                diploma_name_id: req.body.diploma_name_id, //có
-                examination: req.body.examination, //có
-                numberOfEmbryos: req.body.numberOfEmbryos, //có
-                mscb: req.body.mscb, //có
-                time: `${year}-${month}-${day}`
-            });
-            const EIRSaved = await newEIR.save();
-            return res.status(200).json(EIRSaved);                
+            if(lastedEIR == null){
+                const newEIR = new EmbryoIssuanceRequestModel({
+                    embryoIssuanceRequest_id: 1,
+                    management_unit_id: req.body.management_unit_id, //có
+                    diploma_name_id: req.body.diploma_name_id, //có
+                    examination: req.body.examination, //có
+                    numberOfEmbryos: req.body.numberOfEmbryos, //có
+                    mscb: req.body.mscb, //có
+                    time: `${year}-${month}-${day}`
+                });
+                const EIRSaved = await newEIR.save();
+                return res.status(200).json(EIRSaved);
+            }else{
+                const newEIR = new EmbryoIssuanceRequestModel({
+                    embryoIssuanceRequest_id: lastedEIR.embryoIssuanceRequest_id + 1, //
+                    management_unit_id: req.body.management_unit_id, //có
+                    diploma_name_id: req.body.diploma_name_id, //có
+                    examination: req.body.examination, //có
+                    numberOfEmbryos: req.body.numberOfEmbryos, //có
+                    mscb: req.body.mscb, //có
+                    time: `${year}-${month}-${day}`
+                });
+                const EIRSaved = await newEIR.save();
+                return res.status(200).json(EIRSaved);
+            }                
         }catch(error){
             return res.status(500).json(error);
         }

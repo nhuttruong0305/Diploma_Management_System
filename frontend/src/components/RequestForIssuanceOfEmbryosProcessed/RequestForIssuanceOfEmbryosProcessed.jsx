@@ -658,19 +658,19 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                 </div>
                                 <div className="row mt-3 p-3">
                                     <div id="contain-yccp-da-in">
-                                        <table className='table table-bordered' style={{width: '1800px'}}>
+                                        <table className='table table-striped table-hover table-bordered' style={{width: '1800px', textAlign: 'center', border: '2px solid #fed25c'}}>
                                             <thead>
                                                 <tr>
-                                                    <th style={{textAlign: 'center'}} scope="col">Mã phiếu</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Tên văn bằng</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Số lượng phôi</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Cán bộ tạo yêu cầu</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">MSCB</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Trạng thái</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Xem chi tiết</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">Xem phiếu xuất kho</th>
-                                                    <th style={{textAlign: 'center'}} scope="col">
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Số lượng phôi</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Cán bộ tạo yêu cầu</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">MSCB</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">
                                                         Cập nhật trạng thái
                                                         <br />
                                                         (Đã dán tem cho phôi)
@@ -711,7 +711,7 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                                             }
                                                         })
                                                         return(
-                                                            <tr style={{textAlign: 'center'}} key={index}>
+                                                            <tr key={index}>
                                                                 <td>{`#${currentValue.embryoIssuanceRequest_id}`}</td>
                                                                 <td>{ten_van_bang}</td>
                                                                 <td>{handleDateToDMY(currentValue.examination)}</td>
@@ -829,7 +829,7 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                     <div className="modal fade" id="updateStatusstampedModal" tabIndex="-1" aria-labelledby="updateStatusstampedModalLabel" aria-hidden="true">
                                         <div className="modal-dialog modal-dialog-centered">
                                             <div className="modal-content">
-                                            <div className="modal-header">
+                                            <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                                 <h1 className="modal-title fs-5" id="updateStatusstampedModalLabel"></h1>
                                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>

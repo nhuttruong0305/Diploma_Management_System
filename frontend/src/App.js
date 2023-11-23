@@ -31,6 +31,7 @@ import ApproveRequestReissue from './components/ApproveRequestReissue/ApproveReq
 import RequestReissueForSecretary from './components/RequestReissueForSecretary/RequestReissueForSecretary';
 import RequestReissueForStocker from './components/RequestReissueForStocker/RequestReissueForStocker';
 import RequestReissueProcessed from './components/RequestReissueProcessed/RequestReissueProcessed';
+import ManagementUnitSecretary from './components/ManagementUnitSecretary/ManagementUnitSecretary';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -353,7 +354,18 @@ function App() {
             <RequestReissueProcessed/>
           </ProtectedSecretary>
         )
-      }
+      },
+      {
+        path: '/management_unit_secretary',
+        element: (
+          <ProtectedSecretary
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <ManagementUnitSecretary/>
+          </ProtectedSecretary>
+        )
+      }      
     ])
     return element;
   }

@@ -253,6 +253,15 @@ export default function Navbar() {
                                     <Link className="nav-link nav-link-navbar" to="/statistical" id='thong-ke-bao-cao'>Thống kê báo cáo</Link>
                                 </li>
                             </ul>
+                        ) : role == "Secretary" && user.management_unit!=13 ? (
+                            <ul className="navbar-nav">
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/" id='trang-chu9'>Tra cứu</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/management_unit_secretary">Nhật ký nhận phôi</Link>
+                                </li>
+                            </ul>
                         ) : role == "Secretary" ? (
                             <ul className="navbar-nav">
                                 <li className="nav-item nav-item-navbar">

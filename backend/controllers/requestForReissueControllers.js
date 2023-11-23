@@ -20,20 +20,37 @@ const requestForReissueControllers = {
                 month = `0${month}`;
             }
 
-            const newRequestForReissue = new RequestForReissueModel({
-                requestForReissue_id: lastedRequestForReissue.requestForReissue_id + 1,
-                management_unit_id: req.body.management_unit_id,
-                diploma_name_id: req.body.diploma_name_id,
-                numberOfEmbryos: req.body.numberOfEmbryos,
-                mscb_create: req.body.mscb_create,
-                time_create: `${year}-${month}-${day}`,
-                reason: req.body.reason,
-                seri_number_start: req.body.seri_number_start,
-                seri_number_end: req.body.seri_number_end
-            });
-
-            const savedRequestForReissue = await newRequestForReissue.save();
-            return res.status(200).json(savedRequestForReissue);
+            if(lastedRequestForReissue == null){
+                const newRequestForReissue = new RequestForReissueModel({
+                    requestForReissue_id: 1,
+                    management_unit_id: req.body.management_unit_id,
+                    diploma_name_id: req.body.diploma_name_id,
+                    numberOfEmbryos: req.body.numberOfEmbryos,
+                    mscb_create: req.body.mscb_create,
+                    time_create: `${year}-${month}-${day}`,
+                    reason: req.body.reason,
+                    seri_number_start: req.body.seri_number_start,
+                    seri_number_end: req.body.seri_number_end
+                });
+    
+                const savedRequestForReissue = await newRequestForReissue.save();
+                return res.status(200).json(savedRequestForReissue);
+            }else{
+                const newRequestForReissue = new RequestForReissueModel({
+                    requestForReissue_id: lastedRequestForReissue.requestForReissue_id + 1,
+                    management_unit_id: req.body.management_unit_id,
+                    diploma_name_id: req.body.diploma_name_id,
+                    numberOfEmbryos: req.body.numberOfEmbryos,
+                    mscb_create: req.body.mscb_create,
+                    time_create: `${year}-${month}-${day}`,
+                    reason: req.body.reason,
+                    seri_number_start: req.body.seri_number_start,
+                    seri_number_end: req.body.seri_number_end
+                });
+    
+                const savedRequestForReissue = await newRequestForReissue.save();
+                return res.status(200).json(savedRequestForReissue);
+            }
         }catch(error){
             return res.status(500).json(error);
         }

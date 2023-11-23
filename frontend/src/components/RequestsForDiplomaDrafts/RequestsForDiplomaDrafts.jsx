@@ -1028,7 +1028,7 @@ export default function RequestsForDiplomaDrafts(){
                             <div className="modal-dialog modal-dialog-centered">
                                 <div className="modal-content">
                                 <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
-                                    <h1 className="modal-title fs-5" id="deleteYCCPmodalLabel"></h1>
+                                    <h1 className="modal-title fs-5" id="deleteYCCPmodalLabel">Xóa yêu cầu xin cấp phôi</h1>
                                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div className="modal-body">

@@ -20,25 +20,45 @@ const deliveryBillControllers = {
                 month = `0${month}`;
             }
 
-            const newDeliveryBill = new DeliveryBillModel({
-                delivery_bill: lastedDeliveryBill.delivery_bill + 1,
-                embryoIssuanceRequest_id: req.body.embryoIssuanceRequest_id,
-                delivery_bill_creation_time: `${year}-${month}-${day}`,
-                fullname_of_consignee: req.body.fullname_of_consignee,
-                address_department: req.body.address_department,
-                reason: req.body.reason,
-                export_warehouse: req.body.export_warehouse,
-                address_export_warehouse: req.body.address_export_warehouse,
-                embryo_type: req.body.embryo_type,
-                numberOfEmbryos: req.body.numberOfEmbryos,
-                seri_number_start: req.body.seri_number_start,
-                seri_number_end: req.body.seri_number_end,
-                unit_price: req.body.unit_price,
-                mscb: req.body.mscb
-            })
-            const deliverySaved = await newDeliveryBill.save();
-            return res.status(200).json(deliverySaved);
-            
+            if(lastedDeliveryBill == null){
+                const newDeliveryBill = new DeliveryBillModel({
+                    delivery_bill: 1,
+                    embryoIssuanceRequest_id: req.body.embryoIssuanceRequest_id,
+                    delivery_bill_creation_time: `${year}-${month}-${day}`,
+                    fullname_of_consignee: req.body.fullname_of_consignee,
+                    address_department: req.body.address_department,
+                    reason: req.body.reason,
+                    export_warehouse: req.body.export_warehouse,
+                    address_export_warehouse: req.body.address_export_warehouse,
+                    embryo_type: req.body.embryo_type,
+                    numberOfEmbryos: req.body.numberOfEmbryos,
+                    seri_number_start: req.body.seri_number_start,
+                    seri_number_end: req.body.seri_number_end,
+                    unit_price: req.body.unit_price,
+                    mscb: req.body.mscb
+                })
+                const deliverySaved = await newDeliveryBill.save();
+                return res.status(200).json(deliverySaved);
+            }else{
+                const newDeliveryBill = new DeliveryBillModel({
+                    delivery_bill: lastedDeliveryBill.delivery_bill + 1,
+                    embryoIssuanceRequest_id: req.body.embryoIssuanceRequest_id,
+                    delivery_bill_creation_time: `${year}-${month}-${day}`,
+                    fullname_of_consignee: req.body.fullname_of_consignee,
+                    address_department: req.body.address_department,
+                    reason: req.body.reason,
+                    export_warehouse: req.body.export_warehouse,
+                    address_export_warehouse: req.body.address_export_warehouse,
+                    embryo_type: req.body.embryo_type,
+                    numberOfEmbryos: req.body.numberOfEmbryos,
+                    seri_number_start: req.body.seri_number_start,
+                    seri_number_end: req.body.seri_number_end,
+                    unit_price: req.body.unit_price,
+                    mscb: req.body.mscb
+                })
+                const deliverySaved = await newDeliveryBill.save();
+                return res.status(200).json(deliverySaved);
+            }            
         }catch(error){
             return res.status(500).json(error);
         }

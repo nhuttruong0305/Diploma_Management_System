@@ -603,7 +603,7 @@ export default function RequestReissueForStocker(){
                                         Người xét duyệt: ${nguoi_duyet} / ${_IdRequestReissue.mscb_approve}
                                     </div>
                                     <div style='margin-top: 15px;'>
-                                    <a href='http://localhost:3000/'>
+                                    <a href='http://localhost:3000/request_reissue_processed'>
                                         <button
                                         style='
                                             border-radius: 20px;
