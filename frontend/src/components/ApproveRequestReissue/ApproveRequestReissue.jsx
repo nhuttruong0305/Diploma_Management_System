@@ -834,7 +834,7 @@ export default function ApproveRequestReissue(){
                                                             }
                                                         </td>
                                                         <td>
-                                                            {
+                                                            {/* {
                                                                 closeButtonDeliveryBill == index ? (
                                                                     <i 
                                                                         style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
@@ -855,6 +855,35 @@ export default function ApproveRequestReissue(){
                                                                             setShowDeliveryBill(true);
                                                                             scrollToDeliveryBill()
                                                                         }}
+                                                                    ></i>
+                                                                )
+                                                            } */}
+                                                            {
+                                                                //Nút xem phiếu xuất kho
+                                                                closeButtonDeliveryBill == index  ? (
+                                                                    <i 
+                                                                        style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
+                                                                        className="fa-regular fa-circle-xmark"
+                                                                        onClick={(e)=>{
+                                                                            setCloseButtonDeliveryBill(null);
+                                                                            setShowDeliveryBill(false);
+                                                                        }}
+                                                                    ></i>
+                                                                ) : currentValue.status == "Đã in phôi" || currentValue.status == "Đã dán tem" || currentValue.status == "Đã nhận phôi" ? (
+                                                                    <i
+                                                                        className="fa-solid fa-info"
+                                                                        style={{ backgroundColor: "#FF6A6A", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                        onClick={(e)=>{
+                                                                            getDetailDeliveryBill(currentValue.requestForReissue_id);
+                                                                            setCloseButtonDeliveryBill(index);
+                                                                            setShowDeliveryBill(true)
+                                                                            scrollToDeliveryBill();
+                                                                        }}
+                                                                    ></i>
+                                                                ) : (
+                                                                    <i
+                                                                        className="fa-solid fa-info"
+                                                                        style={{ backgroundColor: "grey", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
                                                                     ></i>
                                                                 )
                                                             }

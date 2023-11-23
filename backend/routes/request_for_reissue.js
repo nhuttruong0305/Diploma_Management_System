@@ -9,4 +9,7 @@ router.get("/get_all_request_for_reissue", requestForReissueControllers.getReque
 
 //Hàm cập nhật yêu cầu xin cấp lại phôi theo req.body
 router.put("/update_request_reissue_by_req_body/:_id", requestForReissueControllers.updateRequestReissueByReqBody);
+
+//Hàm xóa yc cấp lại phôi nếu chưa duyệt
+router.delete("/delete_request_reissue/:_id/:requestForReissue_id", requestForReissueControllers.deleteRequestReissue);
 module.exports = router;

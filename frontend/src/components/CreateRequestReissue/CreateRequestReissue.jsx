@@ -207,6 +207,23 @@ export default function CreateRequestReissue(){
             return;
         }
 
+        //Cập nhật danh sách hư
+        const newDamagedEmbryos = {
+            diploma_name_id: selectDiplomaNameCRR.value,
+            numberOfEmbryos: parseInt(numberOfEmbryos),
+            seri_number_start: seri_number_start,
+            seri_number_end: seri_number_end,
+            reason: reason,
+            mscb_create: user.mssv_cb
+        }
+        
+        try{
+            const res = await axios.post("http://localhost:8000/v1/damaged_embryos/create_new_damaged_embryos", newDamagedEmbryos);
+        }catch(error){
+            console.log(error);
+            return;
+        }
+
         noti7.current.showToast();
         setTimeout(() => {
             getAllRequestForReissueByListMU_ID_Status(allDiplomaNameByMU, inputMaPhieuSearch, statusYC.value) 
@@ -286,22 +303,7 @@ export default function CreateRequestReissue(){
                 return;
             }
         }
-        //Cập nhật danh sách hư
-        const newDamagedEmbryos = {
-            diploma_name_id: selectDiplomaNameCRR.value,
-            numberOfEmbryos: parseInt(numberOfEmbryos),
-            seri_number_start: seri_number_start,
-            seri_number_end: seri_number_end,
-            reason: reason,
-            mscb_create: user.mssv_cb
-        }
         
-        try{
-            const res = await axios.post("http://localhost:8000/v1/damaged_embryos/create_new_damaged_embryos", newDamagedEmbryos);
-        }catch(error){
-            console.log(error);
-            return;
-        }
     }
 
 
@@ -474,6 +476,27 @@ export default function CreateRequestReissue(){
         }
     }
 
+    //Xử lý phần xóa yêu cầu xin cấp lại phôi
+
+    //State chứa object của yc xin cấp lại phôi sẽ được xóa
+    const [objectDelete, setObjectDelete] = useState({});
+    
+    //Hàm xóa
+    const noti8 = useRef();
+    const handleDeleteRequestReissue = async () => {
+        try{
+            const deleteRequestReissue = await axios.delete(`http://localhost:8000/v1/request_for_reissue/delete_request_reissue/${objectDelete._id}/${objectDelete.requestForReissue_id}`);
+            noti8.current.showToast();
+            setTimeout(() => {
+                getAllRequestForReissueByListMU_ID_Status(allDiplomaNameByMU, inputMaPhieuSearch, statusYC.value);
+            }, 200);
+        }catch(error){
+            console.log(error);
+            return;
+        }
+    }
+    
+    
     return(
         <>
             <Header/>
@@ -702,6 +725,7 @@ export default function CreateRequestReissue(){
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số seri phôi tái cấp</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xóa</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -801,26 +825,51 @@ export default function CreateRequestReissue(){
                                                         </td>
                                                         <td>
                                                             {
-                                                                closeButtonDeliveryBill == index ? (
+                                                                //Nút xem phiếu xuất kho
+                                                                closeButtonDeliveryBill == index  ? (
                                                                     <i 
                                                                         style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
                                                                         className="fa-regular fa-circle-xmark"
                                                                         onClick={(e)=>{
-                                                                            setShowDeliveryBill(false);
                                                                             setCloseButtonDeliveryBill(null);
+                                                                            setShowDeliveryBill(false);
                                                                         }}
                                                                     ></i>
-                                                                ) : (
-                                                                    // nút xem chi tiết phiếu xuất kho 
-                                                                    <i 
-                                                                        className="fa-solid fa-circle-info"
-                                                                        style={{backgroundColor: "#0dcaf0", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                ) : currentValue.status == "Đã in phôi" || currentValue.status == "Đã dán tem" || currentValue.status == "Đã nhận phôi" ? (
+                                                                    <i
+                                                                        className="fa-solid fa-info"
+                                                                        style={{ backgroundColor: "#FF6A6A", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
                                                                         onClick={(e)=>{
                                                                             getDetailDeliveryBill(currentValue.requestForReissue_id);
                                                                             setCloseButtonDeliveryBill(index);
-                                                                            setShowDeliveryBill(true);
-                                                                            scrollToDeliveryBill()
+                                                                            setShowDeliveryBill(true)
+                                                                            scrollToDeliveryBill();
                                                                         }}
+                                                                    ></i>
+                                                                ) : (
+                                                                    <i
+                                                                        className="fa-solid fa-info"
+                                                                        style={{ backgroundColor: "grey", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                    ></i>
+                                                                )
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            {
+                                                                //nút xóa yêu cầu
+                                                                currentValue.status == "Đã gửi yêu cầu" ? (
+                                                                    <i 
+                                                                        className="fa-solid fa-eraser"
+                                                                        style={{ backgroundColor: "red", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                        data-bs-toggle="modal" data-bs-target="#deleteRequestReissue"
+                                                                        onClick={(e)=>{
+                                                                            setObjectDelete(currentValue);
+                                                                        }}
+                                                                    ></i>
+                                                                ) : (
+                                                                    <i 
+                                                                        className="fa-solid fa-eraser"
+                                                                        style={{ backgroundColor: "grey", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
                                                                     ></i>
                                                                 )
                                                             }
@@ -831,6 +880,32 @@ export default function CreateRequestReissue(){
                                         }
                                     </tbody>
                                 </table>
+                            </div>
+
+                            {/* Modal xóa yc xin cấp lại phôi */}
+                            <div className="modal fade" id="deleteRequestReissue" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="deleteRequestReissueLabel" aria-hidden="true">
+                                <div className="modal-dialog modal-dialog-centered">
+                                    <div className="modal-content">
+                                    <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
+                                        <h1 className="modal-title fs-5" id="deleteRequestReissueLabel">Xóa yêu cầu xin cấp lại phôi</h1>
+                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div className="modal-body">
+                                        <h5>Bạn có chắc muốn xóa yêu cầu xin cấp lại phôi này không?</h5>
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button 
+                                            type="button" 
+                                            className="btn"
+                                            style={{backgroundColor: '#1b95a2'}}
+                                            onClick={(e)=>{
+                                                handleDeleteRequestReissue()
+                                            }}
+                                        >Xóa</button>
+                                    </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="d-flex justify-content-center mt-3">
@@ -922,6 +997,11 @@ export default function CreateRequestReissue(){
                 message="Tạo yêu cầu xin cấp lại phôi thành công"
                 type="success"
                 ref={noti7}
+            />
+            <Toast
+                message="Xóa yêu cầu thành công"
+                type="success"
+                ref={noti8}
             />
         </>
     )

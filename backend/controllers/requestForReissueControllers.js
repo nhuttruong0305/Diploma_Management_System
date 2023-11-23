@@ -1,5 +1,5 @@
 const RequestForReissueModel = require("../models/RequestForReissue");
-
+const DamagedEmbryosModel = require("../models/DamagedEmbryos");
 const requestForReissueControllers = {
     createRequestForReissue: async (req, res) =>{
         try{
@@ -106,6 +106,20 @@ const requestForReissueControllers = {
             const updateDoc = req.body;
             const resultUpdate = await RequestForReissueModel.findByIdAndUpdate(_id, updateDoc, options);
             return res.status(200).json(resultUpdate)
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+
+    deleteRequestReissue: async (req, res) => {
+        try{
+            //Step 1: xóa yc cấp lại phôi theo _id
+            const deleteRequestReissue = await RequestForReissueModel.findByIdAndDelete(req.params._id);
+
+            //Step 2: xóa danh sách hư
+            const damagedEmbryosDelete = await DamagedEmbryosModel.deleteMany({requestForReissue_id: parseInt(req.params.requestForReissue_id)});
+
+            return res.status(200).json("Xóa thành công");
         }catch(error){
             return res.status(500).json(error);
         }

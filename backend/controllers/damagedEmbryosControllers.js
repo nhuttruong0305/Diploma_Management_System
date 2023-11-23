@@ -1,5 +1,5 @@
 const DamagedEmbryosModel = require("../models/DamagedEmbryos");
-
+const RequestForReissueModel = require("../models/RequestForReissue");
 const damagedEmbryosControllers = {
     createNewDamagedEmbryos: async (req, res) => {
         try{
@@ -20,9 +20,13 @@ const damagedEmbryosControllers = {
                 month = `0${month}`;
             }
 
+            //Lấy yêu cầu xin cấp lại phôi mới nhất vừa dc tạo để lấy làm id cho trường requestForReissue_id
+            const lastedRequestReissue = await RequestForReissueModel.findOne({}, {}, { sort: { 'createdAt': -1 } });
+
             if(lastedDamagedEmbryos == null){
                 const newDamagedEmbryos = new DamagedEmbryosModel({
                     damagedEmbryos_id: 1,
+                    requestForReissue_id: lastedRequestReissue.requestForReissue_id,
                     diploma_name_id: req.body.diploma_name_id,
                     numberOfEmbryos: req.body.numberOfEmbryos,
                     seri_number_start: req.body.seri_number_start,
@@ -36,6 +40,7 @@ const damagedEmbryosControllers = {
             }else{
                 const newDamagedEmbryos = new DamagedEmbryosModel({
                     damagedEmbryos_id: lastedDamagedEmbryos.damagedEmbryos_id + 1,
+                    requestForReissue_id: lastedRequestReissue.requestForReissue_id,
                     diploma_name_id: req.body.diploma_name_id,
                     numberOfEmbryos: req.body.numberOfEmbryos,
                     seri_number_start: req.body.seri_number_start,

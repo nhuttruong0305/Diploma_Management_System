@@ -7,6 +7,10 @@ const damagedEmbryosSchema = new mongoose.Schema(
             unique: true,
             required: true
         },
+        requestForReissue_id: { //mã để phân biệt phôi hư này là từ yc xin cấp lại phôi nào
+            type:Number,
+            default: null
+        },
         diploma_name_id: { //lưu id của loại phôi bị hư hỏng
             type: Number,
             required: true
