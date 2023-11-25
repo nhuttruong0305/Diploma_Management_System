@@ -80,6 +80,78 @@ const damagedEmbryosControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    //Hàm này dùng cho trang quản lý phôi hư
+    GetTheDamagedSerialNumberForManaged: async(req, res) => {
+        try{
+            let result;
+            if(req.query.diploma_name_id == ""){
+                result = await DamagedEmbryosModel.find();
+            }else{
+                result = await DamagedEmbryosModel.find({diploma_name_id: parseInt(req.query.diploma_name_id)})
+            }
+            return res.status(200).json(result);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    //Thêm danh sách phôi hư dùng trong file ManagementDamagedEmbryos.jsx
+    addListSeriNumberDamaged: async(req, res) => {
+        try{
+            //Lấy ngày hiện tại để điền time tạo yêu cầu
+            const today = new Date();
+            let day = today.getDate();
+            let month = today.getMonth() + 1;
+            const year = today.getFullYear();
+
+            if(day<10){
+                day = `0${day}`;
+            }
+
+            if(month<10){
+                month = `0${month}`;
+            }
+
+            //Lấy yc xin cấp lại phôi cuối cùng để lấy id
+            const lastedDamagedEmbryos = await DamagedEmbryosModel.findOne({}, {}, { sort: { 'createdAt': -1 } });
+            if(lastedDamagedEmbryos == null){
+                const newDamagedEmbryos = new DamagedEmbryosModel({
+                    damagedEmbryos_id: 1,
+                    diploma_name_id: req.body.diploma_name_id,
+                    numberOfEmbryos: req.body.numberOfEmbryos,
+                    seri_number_start: req.body.seri_number_start,
+                    seri_number_end: req.body.seri_number_end,
+                    reason: req.body.reason,
+                    time_create: `${year}-${month}-${day}`,
+                    mscb_create: req.body.mscb_create
+                })
+                const saved = await newDamagedEmbryos.save();
+                return res.status(200).json(saved);
+            }else{
+                const newDamagedEmbryos = new DamagedEmbryosModel({
+                    damagedEmbryos_id: lastedDamagedEmbryos.damagedEmbryos_id + 1,
+                    diploma_name_id: req.body.diploma_name_id,
+                    numberOfEmbryos: req.body.numberOfEmbryos,
+                    seri_number_start: req.body.seri_number_start,
+                    seri_number_end: req.body.seri_number_end,
+                    reason: req.body.reason,
+                    time_create: `${year}-${month}-${day}`,
+                    mscb_create: req.body.mscb_create
+                })
+                const saved = await newDamagedEmbryos.save();
+                return res.status(200).json(saved);
+            }
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    deleteSeriDamaged: async (req, res)=>{
+        try{
+            const deleteSeri = await DamagedEmbryosModel.findByIdAndDelete(req.params._id);
+            return res.status(200).json(deleteSeri);
+        }catch(error){
+            return res.status(500).json(error);
+        }
     }
 }
 

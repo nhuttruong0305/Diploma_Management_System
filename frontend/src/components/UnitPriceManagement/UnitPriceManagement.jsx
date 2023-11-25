@@ -67,13 +67,13 @@ export default function UnitPriceManagement(){
                             </div>
                             <div className="row mt-3" style={{padding: '0px 50px'}}>
                                 <div id="contain-table-unit-price">
-                                    <table className='table table-striped table-hover table-bordered' style={{ border: '2px solid #fed25c'}}>
+                                    <table className='table table-striped table-hover table-bordered' style={{ border: '2px solid #fed25c', textAlign: 'center'}}>
                                         <thead>
                                             <tr>
-                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">STT</th>
-                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên loại phôi</th>
-                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Giá mỗi phôi</th>
-                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Điều chỉnh giá</th>
+                                                <th style={{backgroundColor: '#fed25c'}} scope="col">STT</th>
+                                                <th style={{backgroundColor: '#fed25c'}} scope="col">Tên loại phôi</th>
+                                                <th style={{backgroundColor: '#fed25c'}} scope="col">Giá mỗi phôi</th>
+                                                <th style={{backgroundColor: '#fed25c'}} scope="col">Điều chỉnh giá</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -81,7 +81,7 @@ export default function UnitPriceManagement(){
                                                 {
                                                     allDiplomaName?.map((currentValue, index)=>{
                                                         return(
-                                                            <tr key={index} style={{textAlign: 'center'}}>
+                                                            <tr key={index}>
                                                                 <td>
                                                                     {index + 1}
                                                                 </td>
