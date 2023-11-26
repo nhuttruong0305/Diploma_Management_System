@@ -12,4 +12,9 @@ router.put("/update_request_reissue_by_req_body/:_id", requestForReissueControll
 
 //Hàm xóa yc cấp lại phôi nếu chưa duyệt
 router.delete("/delete_request_reissue/:_id/:requestForReissue_id", requestForReissueControllers.deleteRequestReissue);
+//Thống kê theo tháng các yêu cầu xin cấp lại phôi được tạo
+router.get("/statistical_request_reissue_by_month", requestForReissueControllers.statisticalRequestReissueByMonth);
+
+//Thống kê theo DVQL số yêu cầu cấp lại dc tạo trong 1 khoảng time
+router.get("/thongke_so_yc_cap_lai_dc_tao_theo_dvql", requestForReissueControllers.thongKe_YC_caplai_dc_tao_theo_DVQL);
 module.exports = router;

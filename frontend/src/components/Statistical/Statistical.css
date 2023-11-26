@@ -8,43 +8,19 @@
 .info-statistical{
     width: 100%;
     margin: 0 auto;
-    height: 200px;
+    height: 140px;
     border-radius: 10px;
-    position: relative;
-}
-
-.chart-img{
-    position: absolute;
-    bottom: 0px;
-    left: 90px;
-    display: block;
-    margin: 0 auto;
-    width: 40%;
+    padding: 20px
 }
 
 .count-statistical{
     color: white; 
     font-size: 40px;
-    position: absolute;
-    top: 10px;
-    left: 30px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .count-type-statistical{
     color: white; 
-    position: absolute; 
-    top: 70px; 
-    left: 22px; 
     font-size: 20px;
-}
-
-.detail-count-type-statistical{
-    background-color: white;
-    width: 40px;
-    text-align: center;
-    border-radius: 5px;
-    font-size: 20px;
-    position: absolute;
-    right: 20px;
-    top: 28px;
 }

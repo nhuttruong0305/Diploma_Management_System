@@ -1,5 +1,6 @@
 const RequestForReissueModel = require("../models/RequestForReissue");
 const DamagedEmbryosModel = require("../models/DamagedEmbryos");
+const ManagementUnitModel = require("../models/ManagementUnit");
 const requestForReissueControllers = {
     createRequestForReissue: async (req, res) =>{
         try{
@@ -120,6 +121,75 @@ const requestForReissueControllers = {
             const damagedEmbryosDelete = await DamagedEmbryosModel.deleteMany({requestForReissue_id: parseInt(req.params.requestForReissue_id)});
 
             return res.status(200).json("Xóa thành công");
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    //Thống kê theo tháng các yêu cầu xin cấp lại phôi được tạo (đã chạy đúng)
+    statisticalRequestReissueByMonth: async(req, res) => {
+        try{
+            const yearStatistical = parseInt(req.query.year);
+            //Đầu tiên lấy ra all yêu cầu cấp lại phôi
+            const allRequestReissue = await RequestForReissueModel.find();
+
+            //lọc của năm dc chọn ra
+            let result = [];
+            allRequestReissue?.forEach((currentValue) => {
+                const timeSplit = currentValue.time_create.split("-");
+                if(timeSplit[0] == yearStatistical){
+                    result =[... result, currentValue]
+                }
+            })
+
+
+            let finalResult = [];
+            for(let i = 1; i<=12; i++){
+                let amount = 0;
+                result.forEach((currentValue)=>{
+                    const timeSplit = currentValue.time_create.split("-");
+                    if(parseInt(timeSplit[1]) == i){
+                        amount++;
+                    }
+                })
+                finalResult = [...finalResult, amount];
+            }
+            return res.status(200).json(finalResult);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    },
+    //Thống kê theo DVQL số yêu cầu cấp lại dc tạo trong 1 khoảng time (đã chạy đúng)
+    thongKe_YC_caplai_dc_tao_theo_DVQL: async(req, res) => {
+        try{
+            const fromDate = new Date(req.query.from).getTime();
+            const toDate = new Date(req.query.to).getTime();
+
+            //Đầu tiên lấy ra all yêu cầu cấp lại trước
+            const allRequestReissue = await RequestForReissueModel.find();
+
+            //sau đó lấy ra all management unit trừ "Tổ ql vbcc ra"
+            const allManagementUnit = await ManagementUnitModel.find();
+                        
+            let managementUnitHandle = [];
+            allManagementUnit?.forEach((currentValue)=>{
+                if(currentValue.management_unit_id != 13){
+                    managementUnitHandle = [...managementUnitHandle, currentValue];
+                }
+            })
+
+            let finalResult = [];
+            for(let i = 0; i<managementUnitHandle.length; i++){
+                let amount = 0;
+                allRequestReissue.forEach((currentValue)=>{
+                    let time_create = new Date(currentValue.time_create).getTime();
+                    if(currentValue.management_unit_id == managementUnitHandle[i].management_unit_id && time_create>=fromDate && time_create<=toDate){
+                        amount++;
+                    }
+                })
+                finalResult = [...finalResult, amount];
+            }
+            return res.status(200).json(finalResult);
+
         }catch(error){
             return res.status(500).json(error);
         }

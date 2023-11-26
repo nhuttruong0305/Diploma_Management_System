@@ -103,7 +103,9 @@ export default function DiplomaName(){
         await addDiplomaName(DiplomaNameInfor, dispatch, user.accessToken);
         noti.current.showToast();  
         // await getAllDiplomaName(dispatch);    
-        searchDiplomaName(dispatch, inputSearch, "");  
+        setTimeout(async() => {
+            await searchDiplomaName(dispatch, inputSearch, "");  
+        }, 200);
     }
 
     //Hàm submit để chỉnh sửa thông tin tên văn bằng
@@ -132,9 +134,9 @@ export default function DiplomaName(){
 
         await editDiplomaName(DiplomaNameEditInfor, dispatch, user.accessToken, DiplomaNameIdEdit);
         noti.current.showToast();  
-        console.log("msg: ", msg);
-        // await getAllDiplomaName(dispatch);
-        searchDiplomaName(dispatch, inputSearch, "");  
+        setTimeout(async()=>{
+            await searchDiplomaName(dispatch, inputSearch, "");   
+        }, 200)
     }
     //Xử lý logic cho phần xóa tên văn bằng
     const msgDelete = useSelector((state) => state.diplomaName?.msgDelete);
@@ -143,9 +145,9 @@ export default function DiplomaName(){
     const handleDeleteDiplomaName = async (diploma_name_id) => {
         await deleteDiplomaName(dispatch, user.accessToken, diploma_name_id);
         noti4.current.showToast();
-        setTimeout(()=>{
-            searchDiplomaName(dispatch, inputSearch, "");  
-        }, 2000)
+        setTimeout( async()=>{
+            await searchDiplomaName(dispatch, inputSearch, "");  
+        }, 200)
     }
 
     //State để quyết định xem có hiển thị phần thông tin thêm khi chỉnh sửa văn bằng không
@@ -170,7 +172,7 @@ export default function DiplomaName(){
         }
     }, [allDiplomaByDiplomaNameID])
 
-    console.log(allDiplomaByDiplomaNameID);
+
     return(
         <>
             <Header/>

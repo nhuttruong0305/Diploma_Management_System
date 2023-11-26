@@ -85,7 +85,9 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
         }
         await decentralizationDiplomaName(dataUpdate, dispatch, user.accessToken, idDiplomaName);
         noti5.current.showToast();
-        await searchDiplomaName(dispatch, inputSearch, status);
+        setTimeout( async() => {
+            await searchDiplomaName(dispatch, inputSearch, status);
+        }, 200);
     }
 
     // useLayoutEffect(()=>{
@@ -108,7 +110,9 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
         }
         await addDiplomaName(DiplomaNameInfor, dispatch, user.accessToken);
         noti.current.showToast();
-        await searchDiplomaName(dispatch, inputSearch, status);
+        setTimeout(async()=>{
+            await searchDiplomaName(dispatch, inputSearch, status);
+        }, 200)
     }
 
     return(
@@ -375,7 +379,8 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
                                 <button 
                                     type="submit" 
                                     form="formShow_MU_OfDiplomaName"
-                                    className="btn btn-primary"
+                                    className="btn"
+                                    style={{backgroundColor: '#1b95a2'}}
                                 >Lưu</button>
                             ) : (
                                 <button
