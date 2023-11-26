@@ -19,4 +19,9 @@ router.get("/thong_ke_so_yc_tao_moi_theo_dvql", embryoIssuanceRequestController.
 
 //Thống kê các yêu cầu đã dc xử lý theo DVQL, và thống kê số phôi đã cấp theo DVQL
 router.get("/tk_yc_dc_xl_so_phoi_da_cap_theo_dvql", embryoIssuanceRequestController.TK_Yc_Da_XL_SoPhoi_Da_Cap);
+
+
+//Tìm kiếm yêu cầu xin cấp phôi theo: trạng thái
+router.get("/search_YCCP_theo_nhieu_dk", embryoIssuanceRequestController.searchYCCPTheoNhieuDK);
+
 module.exports = router;

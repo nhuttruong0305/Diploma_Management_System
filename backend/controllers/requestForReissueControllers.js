@@ -194,6 +194,59 @@ const requestForReissueControllers = {
             return res.status(500).json(error);
         }
     }
+    ,
+    //Tìm kiếm yêu cầu cấp lại theo nhiều điều kiện (đã chạy đúng)
+    timYC_CL_Theo_nhieu_dk: async (req, res) =>{
+        try{
+            //1. Lọc theo đơn vị quản lý
+            let resultFilterMU;
+            if(req.query.management_unit_id != ""){
+                const management_unit_id = parseInt(req.query.management_unit_id);
+                const result = await RequestForReissueModel.find({
+                                                                        management_unit_id: management_unit_id,
+                                                                        status: { $regex: `${req.query.status}`, $options: 'i'}
+                                                                    });
+                resultFilterMU = result;
+            }else{
+                const result = await RequestForReissueModel.find({
+                                                                        status: { $regex: `${req.query.status}`, $options: 'i'}
+                                                                    });
+                resultFilterMU = result;
+            }
+
+            //2. Lọc theo loại phôi
+            let resultFilterDiplomaName = [];
+            if(req.query.diploma_name_id != ""){
+                const diploma_name_id = parseInt(req.query.diploma_name_id);
+                resultFilterMU.forEach((currentValue)=>{
+                    if(currentValue.diploma_name_id == diploma_name_id){
+                        resultFilterDiplomaName = [...resultFilterDiplomaName, currentValue];
+                    }
+                })
+            }else{
+                resultFilterDiplomaName = [...resultFilterDiplomaName, ...resultFilterMU];
+            }
+            
+            //3. Lọc theo ngày tạo
+            let resultFilterCreateDate = [];
+            if(req.query.from != "" && req.query.to != ""){
+                const fromDate = new Date(req.query.from).getTime();
+                const toDate = new Date(req.query.to).getTime();
+
+                resultFilterDiplomaName.forEach((currentValue)=>{
+                    const time_create = new Date(currentValue.time_create).getTime();
+                    if(time_create>=fromDate && time_create<=toDate){
+                        resultFilterCreateDate = [...resultFilterCreateDate, currentValue];
+                    }
+                })
+            }else{
+                resultFilterCreateDate = [...resultFilterCreateDate, ...resultFilterDiplomaName];
+            }
+            return res.status(200).json(resultFilterCreateDate);
+        }catch(err){
+            return res.status(500).json(err);
+        }
+    }
 }
 
 module.exports = requestForReissueControllers;

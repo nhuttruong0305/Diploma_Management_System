@@ -17,4 +17,7 @@ router.get("/statistical_request_reissue_by_month", requestForReissueControllers
 
 //Thống kê theo DVQL số yêu cầu cấp lại dc tạo trong 1 khoảng time
 router.get("/thongke_so_yc_cap_lai_dc_tao_theo_dvql", requestForReissueControllers.thongKe_YC_caplai_dc_tao_theo_DVQL);
+
+//Tìm kiếm yêu cầu cấp lại theo nhiều điều kiện
+router.get("/tim_kiem_yc_cap_lai_theo_nhieu_dk",requestForReissueControllers.timYC_CL_Theo_nhieu_dk);
 module.exports = router;
