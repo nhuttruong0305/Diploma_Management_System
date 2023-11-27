@@ -1,5 +1,5 @@
 const DiplomaModel = require("../models/Diploma");
-
+const ManagementUnitModel = require("../models/ManagementUnit");
 const diplomaControllers = {
     addNewDiploma: async (req, res) => {
         try{
@@ -269,6 +269,152 @@ const diplomaControllers = {
             return res.status(500).json(error);
         }
     },
+
+    //Thống kê số văn bằng dc nhập theo tháng (đã chạy đúng)
+    tk_vanbang_theo_thang: async(req, res) => {
+        try{
+            const yearStatistical = parseInt(req.query.year);
+            //Đầu tiên lấy ra all văn bằng trước
+            const allDiploma = await DiplomaModel.find();
+
+            //lọc của năm dc chọn ra
+            //result1 dùng để lọc ra các vb dc nhập
+            //result2 dùng để lọc ra các vb dc duyệt
+            //result3 dùng để lọc ra các vb ko dc duyệt
+            let result1 = [];
+            let result2 = [];
+            let result3 = [];
+            allDiploma?.forEach((currentValue) => {
+                //-----------
+                const timeSplit1 = currentValue.time_import.split("-");
+                if(parseInt(timeSplit1[0]) == yearStatistical){
+                    result1 =[... result1, currentValue]
+                }
+
+                if(currentValue.status != "Chờ duyệt"){
+                    const timeSplit2 = currentValue.time.split("-");
+                    if(parseInt(timeSplit2[0]) == yearStatistical && currentValue.status == "Đã duyệt"){
+                        result2 =[... result2, currentValue]
+                    }
+
+                    if(parseInt(timeSplit2[0]) == yearStatistical && currentValue.status == "Không duyệt"){
+                        result3 =[... result3, currentValue]
+                    }
+                }
+            })
+
+            let finalResult1 = [];
+            let finalResult2 = [];
+            let finalResult3 = [];
+
+            for(let i = 1; i<=12; i++){
+                let amount1 = 0;
+                let amount2 = 0;
+                let amount3 = 0;
+
+                result1.forEach((currentValue)=>{
+                    const timeSplit1 = currentValue.time_import.split("-");
+                    if(parseInt(timeSplit1[1]) == i){
+                        amount1++;
+                    }
+                })
+                finalResult1 = [...finalResult1, amount1];
+
+                result2.forEach((currentValue)=>{
+                    const timeSplit2 = currentValue.time.split("-");
+                    if(parseInt(timeSplit2[1]) == i){
+                        amount2++;
+                    }
+                })
+                finalResult2 = [...finalResult2, amount2];
+
+                result3.forEach((currentValue)=>{
+                    const timeSplit3 = currentValue.time.split("-");
+                    if(parseInt(timeSplit3[1]) == i){
+                        amount3++;
+                    }
+                })
+                finalResult3 = [...finalResult3, amount3];
+            }
+
+            return res.status(200).json({
+                finalResult1,
+                finalResult2,
+                finalResult3
+            });
+        }catch(err){
+            return res.status(500).json(err);
+        }
+    },
+    //Thống kê văn bằng theo DVQL (đã chạy đúng)
+    thongke_VB_theo_DVQL: async (req, res) => {
+        try{
+            const fromDate = new Date(req.query.from).getTime();
+            const toDate = new Date(req.query.to).getTime();
+
+            //Đầu tiên lấy all Diploma ra
+            const allDiploma = await DiplomaModel.find({});
+
+            //sau đó lấy ra all management unit trừ "Tổ ql vbcc ra"
+            const allManagementUnit = await ManagementUnitModel.find();
+            
+            let managementUnitHandle = [];
+            allManagementUnit?.forEach((currentValue)=>{
+                if(currentValue.management_unit_id != 13){
+                    managementUnitHandle = [...managementUnitHandle, currentValue];
+                }
+            })
+
+            let resultHandle1 = [...allDiploma];
+            let resultHandle2 = [];
+            let resultHandle3 = [];
+
+            allDiploma.forEach((currentValue)=>{
+                if(currentValue.status == "Đã duyệt"){
+                    resultHandle2 = [...resultHandle2, currentValue];
+                }else if(currentValue.status == "Không duyệt"){
+                    resultHandle3 = [...resultHandle3, currentValue];
+                }
+            })
+
+            let finalResult1 = [];
+            let finalResult2 = [];
+            let finalResult3 = [];
+
+            for(let i = 0; i<managementUnitHandle.length; i++){
+                let amount1 = 0;
+                let amount2 = 0;
+                let amount3 = 0;
+                
+                resultHandle1.forEach((currentValue) => {
+                    const time_import = new Date(currentValue.time_import).getTime();
+                    if(time_import>=fromDate && time_import<=toDate && currentValue.management_unit_id == managementUnitHandle[i].management_unit_id){
+                        amount1++;
+                    }
+                })
+                finalResult1 = [...finalResult1, amount1];
+
+                resultHandle2.forEach((currentValue) => {
+                    const time = new Date(currentValue.time).getTime();
+                    if(time>=fromDate && time<=toDate && currentValue.management_unit_id == managementUnitHandle[i].management_unit_id){
+                        amount2++;
+                    }
+                })
+                finalResult2 = [...finalResult2, amount2];
+
+                resultHandle3.forEach((currentValue)=>{
+                    const time = new Date(currentValue.time).getTime();
+                    if(time>=fromDate && time<=toDate && currentValue.management_unit_id == managementUnitHandle[i].management_unit_id){
+                        amount3++;
+                    }
+                })
+                finalResult3 = [...finalResult3, amount3];
+            }
+            return res.status(200).json({finalResult1, finalResult2, finalResult3});
+        }catch(err){
+            return res.status(500).json(err);
+        }
+    }
 }
 
 module.exports = diplomaControllers;

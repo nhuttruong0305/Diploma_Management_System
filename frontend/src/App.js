@@ -33,6 +33,7 @@ import RequestReissueForStocker from './components/RequestReissueForStocker/Requ
 import RequestReissueProcessed from './components/RequestReissueProcessed/RequestReissueProcessed';
 import ManagementUnitSecretary from './components/ManagementUnitSecretary/ManagementUnitSecretary';
 import ManagementUnitSecretaryRequestReissue from './components/ManagementUnitSecretary/ManagementUnitSecretaryRequestReissue';
+import DiplomaStatistics from './components/DiplomaStatistics/DiplomaStatistics';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -377,7 +378,18 @@ function App() {
             <ManagementUnitSecretaryRequestReissue/>
           </ProtectedSecretary>
         )
-      }      
+      },
+      {
+        path: '/diploma_statistics',
+        element: (
+          <ProtectedRouteCenterDirectorHeadOfDepartment
+            isAuthenticated = {!user ? false : true}
+            role = {user?.role[0]}
+          >
+            <DiplomaStatistics/>
+          </ProtectedRouteCenterDirectorHeadOfDepartment>
+        )
+      }  
     ])
     return element;
   }

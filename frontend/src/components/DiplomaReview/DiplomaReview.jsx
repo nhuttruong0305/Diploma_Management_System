@@ -146,10 +146,23 @@ export default function DiplomaReview(){
         //Tên cán bộ
         const officerNameReview = user?.fullname;
         
+        // const today = new Date();
+        // const day = today.getDate();
+        // const month = today.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
+        // const year = today.getFullYear();
+        //Lấy ngày hiện tại để điền time tạo yêu cầu
         const today = new Date();
-        const day = today.getDate();
-        const month = today.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
+        let day = today.getDate();
+        let month = today.getMonth() + 1;
         const year = today.getFullYear();
+
+        if(day<10){
+            day = `0${day}`;
+        }
+
+        if(month<10){
+            month = `0${month}`;
+        }
 
         //Time
         const dayResult = `${year}-${month}-${day}`;
@@ -174,10 +187,22 @@ export default function DiplomaReview(){
         //Tên cán bộ
         const officerNameReview = user?.fullname;
         
+        // const today = new Date();
+        // const day = today.getDate();
+        // const month = today.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
+        // const year = today.getFullYear();
         const today = new Date();
-        const day = today.getDate();
-        const month = today.getMonth() + 1; // Lưu ý rằng tháng bắt đầu từ 0
+        let day = today.getDate();
+        let month = today.getMonth() + 1;
         const year = today.getFullYear();
+
+        if(day<10){
+            day = `0${day}`;
+        }
+
+        if(month<10){
+            month = `0${month}`;
+        }
 
         //Time
         const dayResult = `${year}-${month}-${day}`;

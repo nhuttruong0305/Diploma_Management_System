@@ -45,8 +45,8 @@ export default function Navbar() {
                         currentElement.classList.add("active-nav-navbar");  
                     }
                     break;
-                }else if(role == "Secretary"){
-                    var currentElement = document.querySelector("#trang-chu7");
+                }else if(role == "Secretary" && user.management_unit != 13){
+                    var currentElement = document.querySelector("#trang-chu9");
                     if(currentElement!=null){
                         currentElement.classList.add("active-nav-navbar");  
                     }
@@ -57,8 +57,13 @@ export default function Navbar() {
                         currentElement.classList.add("active-nav-navbar");  
                     }
                     break;
-                }
-                else{
+                }else if(role == "Secretary"){
+                    var currentElement = document.querySelector("#trang-chu7");
+                    if(currentElement!=null){
+                        currentElement.classList.add("active-nav-navbar");  
+                    }
+                    break;
+                }else{
                     var currentElement = document.querySelector("#trang-chu4");
                     if(currentElement!=null){
                         currentElement.classList.add("active-nav-navbar");  
@@ -149,6 +154,18 @@ export default function Navbar() {
                 var currentElement = document.querySelector("#xu-ly-yeu-cau-cap-lai-phoi");
                 currentElement.classList.add("active-nav-navbar");
                 break;    
+            case '/management_unit_secretary':
+                var currentElement = document.querySelector("#nhat-ky-nhan-phoi");
+                currentElement.classList.add("active-nav-navbar");
+                break;    
+            case "/management_unit_secretary_request_reissue":
+                var currentElement = document.querySelector("#nhat-ky-nhan-phoi");
+                currentElement.classList.add("active-nav-navbar");
+                break;   
+            case "/diploma_statistics":
+                var currentElement = document.querySelector("#thong-ke-van-bang");
+                currentElement.classList.add("active-nav-navbar");
+                break; 
             }
     })
 
@@ -237,6 +254,9 @@ export default function Navbar() {
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/create_request_reissue" id='tao-yc-cap-lai-phoi'>Tạo yêu cầu xin cấp lại phôi</Link>
                                 </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/diploma_statistics" id='thong-ke-van-bang'>Thống kê văn bằng</Link>
+                                </li>
                             </ul>
                         ) : role == "Leader" ? (
                             <ul className="navbar-nav">
@@ -259,7 +279,7 @@ export default function Navbar() {
                                     <Link className="nav-link nav-link-navbar" to="/" id='trang-chu9'>Tra cứu</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
-                                    <Link className="nav-link nav-link-navbar" to="/management_unit_secretary">Nhật ký nhận phôi</Link>
+                                    <Link className="nav-link nav-link-navbar" id='nhat-ky-nhan-phoi' to="/management_unit_secretary">Nhật ký nhận phôi</Link>
                                 </li>
                             </ul>
                         ) : role == "Secretary" ? (

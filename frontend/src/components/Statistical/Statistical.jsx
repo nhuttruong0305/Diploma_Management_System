@@ -134,7 +134,9 @@ export default function Statistical() {
     const getRequestIssuanceCreatedByMonth = async () => {
         try {
             const res = await axios.get(`http://localhost:8000/v1/embryo_issuance_request/statistical_request_issuance?year=${statistical_year}`);
-            setYc_dc_tao_theo_thang(res.data)
+            setTimeout(() => {
+                setYc_dc_tao_theo_thang(res.data)
+            }, 1000);
         } catch (error) {
             console.log(error);
         }
@@ -144,7 +146,9 @@ export default function Statistical() {
     const getRequestReissueCreateByMonth = async () => {
         try {
             const res = await axios.get(`http://localhost:8000/v1/request_for_reissue/statistical_request_reissue_by_month?year=${statistical_year}`);
-            setYc_xin_cap_lai_theo_thang(res.data);
+            setTimeout(() => {
+                setYc_xin_cap_lai_theo_thang(res.data);    
+            }, 1000);
         } catch (error) {
             console.log(error);
         }
@@ -154,8 +158,10 @@ export default function Statistical() {
     const getSoPhoi_YCByMonth = async () => {
         try {
             const res = await axios.get(`http://localhost:8000/v1/embryo_issuance_request/statistical_yc_dc_xl_by_month?year=${statistical_year}`);
-            setYc_da_dc_xl_theo_thang(res.data.finalResultYC_Processed);
-            setSo_phoi_da_cap_theo_thang(res.data.finalResult_SoPhoi_DaCap);
+            setTimeout(() => {
+                setYc_da_dc_xl_theo_thang(res.data.finalResultYC_Processed);
+                setSo_phoi_da_cap_theo_thang(res.data.finalResult_SoPhoi_DaCap);
+            }, 1000);
         } catch (error) {
             console.log(error);
         }
@@ -165,7 +171,9 @@ export default function Statistical() {
     const getRequestIssuanceCreatedByDVQL = async () => {
         try {
             const res = await axios.get(`http://localhost:8000/v1/embryo_issuance_request/thong_ke_so_yc_tao_moi_theo_dvql?from=${startDate}&to=${endDate}`);
-            setYc_xin_cap_moi_theo_dvql(res.data);
+            setTimeout(() => {
+                setYc_xin_cap_moi_theo_dvql(res.data);
+            }, 1000);
         } catch (error) {
             console.log(error)
         }
@@ -174,7 +182,9 @@ export default function Statistical() {
     const getRequestReissueCreateByDVQL = async () => {
         try {
             const res = await axios.get(`http://localhost:8000/v1/request_for_reissue/thongke_so_yc_cap_lai_dc_tao_theo_dvql?from=${startDate}&to=${endDate}`);
-            setYc_xin_cap_lai_theo_dvql(res.data);
+            setTimeout(() => {
+                setYc_xin_cap_lai_theo_dvql(res.data);
+            }, 1000);
         } catch (error) {
             console.log(error)
         }
@@ -182,8 +192,10 @@ export default function Statistical() {
     const getSoPhoi_YCByDVQL = async () => {
         try {
             const res = await axios.get(`http://localhost:8000/v1/embryo_issuance_request/tk_yc_dc_xl_so_phoi_da_cap_theo_dvql?from=${startDate}&to=${endDate}`);
-            setYc_da_dc_xl_theo_dvql(res.data.finalResultYC_Processed)
-            setPhoi_da_cap_theo_dvql(res.data.finalResult_SoPhoi_DaCap)
+            setTimeout(() => {
+                setYc_da_dc_xl_theo_dvql(res.data.finalResultYC_Processed)
+                setPhoi_da_cap_theo_dvql(res.data.finalResult_SoPhoi_DaCap)    
+            }, 1000);
         } catch (error) {
             console.log(error)
         }
