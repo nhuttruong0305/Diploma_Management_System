@@ -12,9 +12,12 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import DetailRequest from '../DetailRequest/DetailRequest';
 import { Tooltip } from 'react-tippy';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import DetailRequestForReissue from '../DetailRequestForReissue/DetailRequestForReissue';
 import { getAllDiplomaName, getAllDiplomaType } from '../../redux/apiRequest';
 export default function Statistical() {
+    const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
     const dispatch = useDispatch();
     const allDiplomaName = useSelector((state) => state.diplomaName.diplomaNames?.allDiplomaName); //state đại diện cho all diploma name để lấy ra tên văn bằng
     //State chứa all management unit trong DB, trừ tổ quản lý VBCC ra
@@ -358,12 +361,6 @@ export default function Statistical() {
         }
         setAllDSHVByEIR(data);
     }
-    const scrollToDetailRequest = () => {
-        setTimeout(() => {
-            document.body.scrollTop = 3700;
-            document.documentElement.scrollTop = 3700;
-        }, 200)
-    }
 
     //Xử lý việc xem chi tiết yêu cầu xin cấp lại phôi
     const [closeButtonDetailRequestReissue, setCloseButtonDetailRequestReissue] = useState(null);
@@ -383,7 +380,7 @@ export default function Statistical() {
         setSearchRequestType(selectedOption);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         setShowRequestDetail(false);
         setCloseButton(null);
         setShowDetailRequestReissue(false);
@@ -457,6 +454,67 @@ export default function Statistical() {
 
     const [allRequestIssuance_YCCP, setAllRequestIssuance_YCCP] = useState([]);
     const [allRequestReissue_YCCL, setAllRequestReissue_YCCL] = useState([]);
+
+    //Phân trang
+    const [allRequestIssuance_YCCP_PT, setAllRequestIssuance_YCCP_PT] = useState([]);
+    const [allRequestReissue_YCCL_PT, setAllRequestReissue_YCCL_PT] = useState([]);
+
+    const [page, setPage] = useState(1);
+    const handleChange = (event, value) => {
+        setPage(value);
+    };
+
+    useEffect(() => {
+        if (page != undefined && allRequestIssuance_YCCP != undefined) {
+            if (allRequestIssuance_YCCP.length > 5) {
+                const numberOfPage = Math.ceil(allRequestIssuance_YCCP?.length / 5);
+                const startElement = (page - 1) * 5;
+                let endElement = 0;
+                if (page == numberOfPage) {
+                    endElement = allRequestIssuance_YCCP.length - 1;
+                } else {
+                    endElement = page * 5 - 1;
+                }
+
+                let result = [];
+                for (let i = startElement; i <= endElement; i++) {
+                    result = [...result, allRequestIssuance_YCCP[i]];
+                }
+                setAllRequestIssuance_YCCP_PT(result);
+            } else {
+                setAllRequestIssuance_YCCP_PT(allRequestIssuance_YCCP);
+            }
+        }
+    }, [page, allRequestIssuance_YCCP])
+
+    const [page_YCCL, setPage_YCCL] = useState(1);
+    const handleChange_YCCL = (event, value) => {
+        setPage_YCCL(value);
+    };
+
+    useEffect(() => {
+        if (page_YCCL != undefined && allRequestReissue_YCCL != undefined) {
+            if (allRequestReissue_YCCL.length > 5) {
+                const numberOfPage = Math.ceil(allRequestReissue_YCCL?.length / 5);
+                const startElement = (page_YCCL - 1) * 5;
+                let endElement = 0;
+                if (page_YCCL == numberOfPage) {
+                    endElement = allRequestReissue_YCCL.length - 1;
+                } else {
+                    endElement = page_YCCL * 5 - 1;
+                }
+
+                let result = [];
+                for (let i = startElement; i <= endElement; i++) {
+                    result = [...result, allRequestReissue_YCCL[i]];
+                }
+                setAllRequestReissue_YCCL_PT(result);
+            } else {
+                setAllRequestReissue_YCCL_PT(allRequestReissue_YCCL);
+            }
+        }
+    }, [page_YCCL, allRequestReissue_YCCL])
+
     //Hàm tìm YCCP theo nhiều DK
     const handleSearchYCCP_NHIEUDK = async () => {
         try {
@@ -544,6 +602,116 @@ export default function Statistical() {
         resultSeri += `${handleSeri(seri_number_start[seri_number_start.length - 1])} - ${handleSeri(seri_number_end[seri_number_end.length - 1])}`;
         return resultSeri;
     }
+
+    //Tìm kiếm tổng hợp phiếu xuất kho
+    const [muReceiveDBill, setMuReceiveDBill] = useState({ value: '', label: 'Tất cả đơn vị quản lý' });
+    const handleChangeMuReceiveDBill = (selectedOption) => {
+        setMuReceiveDBill(selectedOption);
+    }
+
+    const [receiver, setReceiver] = useState("");
+
+    const [diplomaNameDBill, setDiplomaNameDBill] = useState({ value: '', label: 'Tất cả loại phôi' });
+    const [optionsDiplomaNameDBill, setOptionsDiplomaNameDBill] = useState([]);
+    const handleChangeDiplomaNameDBill = (selectedOption) => {
+        setDiplomaNameDBill(selectedOption);
+    }
+
+    const getAllDiplomaNameByMU2 = async (management_unit_id) => {
+        try {
+            if (management_unit_id != "") {
+                const res = await axios.get(`http://localhost:8000/v1/diploma_name/get_all_diplomaNameByMU/${management_unit_id}`);
+                let resultOption = [{ value: '', label: 'Tất cả loại phôi' }];
+                res.data.forEach((currentValue) => {
+                    const newOption = { value: currentValue.diploma_name_id, label: currentValue.diploma_name_name };
+                    resultOption = [...resultOption, newOption];
+                })
+                setOptionsDiplomaNameDBill(resultOption);
+            } else {
+                const res = await axios.get("http://localhost:8000/v1/diploma_name/get_all_diploma_name");
+                let resultOption = [{ value: '', label: 'Tất cả loại phôi' }];
+                res.data.forEach((currentValue) => {
+                    const newOption = { value: currentValue.diploma_name_id, label: currentValue.diploma_name_name };
+                    resultOption = [...resultOption, newOption];
+                })
+                setOptionsDiplomaNameDBill(resultOption);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        setDiplomaNameDBill({ value: '', label: 'Tất cả loại phôi' });
+        getAllDiplomaNameByMU2(muReceiveDBill.value)
+    }, [muReceiveDBill])
+
+
+    const [creatorDBill, setCreatorDBill] = useState("");
+    const [startDateDBill, setStartDateDBill] = useState("");
+    const [endDateDBill, setEndDateDBill] = useState("");
+
+    const [allPhieuXK, setAllPhieuXK] = useState([]);
+    const [allPhieuXK_PT, setAllPhieuXK_PT] = useState([]);
+
+    const [page_XK, setPage_XK] = useState(1);
+    const handleChange_XK = (event, value) => {
+        setPage_XK(value);
+    };
+
+    useEffect(() => {
+        if (page_XK != undefined && allPhieuXK != undefined) {
+            if (allPhieuXK.length > 5) {
+                const numberOfPage = Math.ceil(allPhieuXK?.length / 5);
+                const startElement = (page_XK - 1) * 5;
+                let endElement = 0;
+                if (page_XK == numberOfPage) {
+                    endElement = allPhieuXK.length - 1;
+                } else {
+                    endElement = page_XK * 5 - 1;
+                }
+
+                let result = [];
+                for (let i = startElement; i <= endElement; i++) {
+                    result = [...result, allPhieuXK[i]];
+                }
+                setAllPhieuXK_PT(result);
+            } else {
+                setAllPhieuXK_PT(allPhieuXK);
+            }
+        }
+    }, [page_XK, allPhieuXK])
+
+    //Hàm tìm phiếu xuất kho theo nhiều điều kiện
+    const handleTimPhieuXKNhieuDk = async () => {
+        try {
+            const res = await axios.get(`http://localhost:8000/v1/delivery_bill/tim_phieu_xk_theo_nhieu_dk?address_department=${muReceiveDBill.value}&fullname_of_consignee=${receiver}&embryo_type=${diplomaNameDBill.value}&from=${startDateDBill}&to=${endDateDBill}`);
+
+            for (let i = 0; i < res.data.length; i++) {
+                for (let j = 0; j < allUserAccount.length; j++) {
+                    if (res.data[i].mscb == allUserAccount[j].mssv_cb) {
+                        res.data[i]['fullname_create'] = allUserAccount[j].fullname;
+                    }
+                }
+            }
+
+            //Tiến hành lọc theo tên người tạo yêu cầu
+            if (creatorDBill != "") {
+                let result = [];
+                res.data.forEach((currentValue) => {
+                    if (currentValue.fullname_create.toLowerCase().includes(creatorDBill.toLowerCase())) {
+                        result = [...result, currentValue]
+                    }
+                })
+                setAllPhieuXK(result);
+            } else {
+                setAllPhieuXK(res.data);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
         <>
             <Header />
@@ -559,6 +727,10 @@ export default function Statistical() {
                                     <i
                                         style={{ fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black' }}
                                         className="fa-solid fa-magnifying-glass"
+                                        onClick={(e)=>{
+                                            document.body.scrollTop = 2300;
+                                            document.documentElement.scrollTop = 2300;
+                                        }}
                                     >
                                     </i>
                                 </div>
@@ -574,6 +746,10 @@ export default function Statistical() {
                                     <i
                                         style={{ fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black' }}
                                         className="fa-solid fa-magnifying-glass"
+                                        onClick={(e)=>{
+                                            document.body.scrollTop = 2300;
+                                            document.documentElement.scrollTop = 2300;
+                                        }}
                                     >
                                     </i>
                                 </div>
@@ -589,6 +765,10 @@ export default function Statistical() {
                                     <i
                                         style={{ fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black' }}
                                         className="fa-solid fa-magnifying-glass"
+                                        onClick={(e)=>{
+                                            document.body.scrollTop = 5000;
+                                            document.documentElement.scrollTop = 5000;
+                                        }}
                                     >
                                     </i>
                                 </div>
@@ -793,8 +973,8 @@ export default function Statistical() {
                                 />
                             </div>
                             <div className="col-md-1 text-center">
-                                <i id='nut-loc'
-                                    className="fa-solid fa-filter"
+                                <i
+                                    className="fa-solid fa-filter nut-loc"
                                     style={{ marginLeft: '35px', backgroundColor: "#b7b4b3", padding: '9px', marginTop: '1px', borderRadius: '5px', color: 'white', width: '37px' }}
                                     onClick={(e) => {
                                         handleSearchYCCP_NHIEUDK()
@@ -810,7 +990,7 @@ export default function Statistical() {
                                 searchRequestType.value == "Yêu cầu xin cấp mới phôi" ? (
                                     <>
                                         {/* Table yêu cầu cấp mới */}
-                                        <table className='table table-striped table-hover table-bordered' style={{ width: '1700px', border: '2px solid #fed25c', textAlign: 'center' }} >
+                                        <table className='table table-striped table-hover table-bordered' style={{ width: '1900px', border: '2px solid #fed25c', textAlign: 'center' }} >
                                             <thead>
                                                 <tr>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Mã phiếu</th>
@@ -827,7 +1007,7 @@ export default function Statistical() {
                                             </thead>
                                             <tbody>
                                                 {
-                                                    allRequestIssuance_YCCP?.map((currentValue, index) => {
+                                                    allRequestIssuance_YCCP_PT?.map((currentValue, index) => {
                                                         let don_vi_yc = '';
                                                         allManagementUnit?.forEach((MU) => {
                                                             if (currentValue.management_unit_id == MU.management_unit_id) {
@@ -890,7 +1070,6 @@ export default function Statistical() {
                                                                                     setNumberOfEmbryosInPhieuYC(currentValue.numberOfEmbryos)
                                                                                     setOptionsOfDiplomaName(optionsOfDiplomaName);
                                                                                     getAllDSHVByEIR(currentValue.embryoIssuanceRequest_id, optionsOfDiplomaName)
-                                                                                    scrollToDetailRequest();
                                                                                 }}
                                                                             >
                                                                             </i>
@@ -903,11 +1082,22 @@ export default function Statistical() {
                                                 }
                                             </tbody>
                                         </table>
+                                        <div className="d-flex justify-content-center mt-3 mb-3">
+                                            <Stack spacing={2}>
+                                                <Pagination
+                                                    count={Math.ceil(allRequestIssuance_YCCP?.length / 5)}
+                                                    variant="outlined"
+                                                    page={page}
+                                                    onChange={handleChange}
+                                                    color="info"
+                                                />
+                                            </Stack>
+                                        </div>
                                     </>
                                 ) : (
                                     <>
                                         {/* Table yêu cầu cấp lại */}
-                                        <table className='table table-striped table-hover table-bordered' style={{ width: '1700px', border: '2px solid #fed25c', textAlign: 'center' }} >
+                                        <table className='table table-striped table-hover table-bordered' style={{ width: '1900px', border: '2px solid #fed25c', textAlign: 'center' }} >
                                             <thead>
                                                 <tr>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Mã phiếu</th>
@@ -925,7 +1115,7 @@ export default function Statistical() {
                                             </thead>
                                             <tbody>
                                                 {
-                                                    allRequestReissue_YCCL?.map((currentValue, index) => {
+                                                    allRequestReissue_YCCL_PT?.map((currentValue, index) => {
                                                         let don_vi_yc = '';
                                                         allManagementUnit?.forEach((MU) => {
                                                             if (currentValue.management_unit_id == MU.management_unit_id) {
@@ -1001,7 +1191,6 @@ export default function Statistical() {
                                                                                     setNumberOfEmbryos_CV(currentValue.numberOfEmbryos);
                                                                                     setReason_CV(currentValue.reason);
                                                                                     setResultSeri(handleResultSeri(currentValue.seri_number_start, currentValue.seri_number_end))
-                                                                                    
                                                                                 }}
                                                                             >
                                                                             </i>
@@ -1014,6 +1203,17 @@ export default function Statistical() {
                                                 }
                                             </tbody>
                                         </table>
+                                        <div className="d-flex justify-content-center mt-3 mb-3">
+                                            <Stack spacing={2}>
+                                                <Pagination
+                                                    count={Math.ceil(allRequestReissue_YCCL?.length / 5)}
+                                                    variant="outlined"
+                                                    page={page_YCCL}
+                                                    onChange={handleChange_YCCL}
+                                                    color="info"
+                                                />
+                                            </Stack>
+                                        </div>
                                     </>
                                 )
                             }
@@ -1052,27 +1252,37 @@ export default function Statistical() {
                         }
                     </div>
 
-<hr />
+                    <hr />
                     <div className='title-list-yc-xin-cap-phoi' style={{ marginTop: "30px" }}>
                         TÌM KIẾM TỔNG HỢP PHIẾU XUẤT KHO
                     </div>
-                    {/* <div style={{ backgroundColor: '#A2B5CD', padding: '25px', borderRadius: '10px', marginTop: '20px' }}>
+                    <div style={{ backgroundColor: '#A2B5CD', padding: '25px', borderRadius: '10px', marginTop: '20px' }}>
                         <div className="row">
                             <div className="col-md-3">
                                 <Select
                                     placeholder="Chọn đơn vị nhận phôi"
+                                    options={optionsMU_YCCP}
+                                    value={muReceiveDBill}
+                                    onChange={handleChangeMuReceiveDBill}
                                 />
                             </div>
                             <div className="col-md-3">
-                                <input 
+                                <input
                                     type="text"
                                     placeholder='Tìm theo tên người nhận'
                                     className='form-control'
+                                    value={receiver}
+                                    onChange={(e) => {
+                                        setReceiver(e.target.value)
+                                    }}
                                 />
                             </div>
                             <div className="col-md-3">
                                 <Select
                                     placeholder='Chọn loại phôi xuất'
+                                    options={optionsDiplomaNameDBill}
+                                    value={diplomaNameDBill}
+                                    onChange={handleChangeDiplomaNameDBill}
                                 />
                             </div>
                             <div className="col-md-3">
@@ -1080,34 +1290,137 @@ export default function Statistical() {
                                     type="text"
                                     placeholder='Người tạo'
                                     className='form-control'
+                                    value={creatorDBill}
+                                    onChange={(e) => {
+                                        setCreatorDBill(e.target.value)
+                                    }}
                                 />
                             </div>
                         </div>
-                        <div className="row mt-3">                            
+                        <div className="row mt-3">
                             <div className="col-md-2 offset-3">
                                 <input
                                     type="date"
                                     className='form-control'
+                                    value={startDateDBill}
+                                    onChange={(e) => {
+                                        setStartDateDBill(e.target.value)
+                                    }}
                                 />
                             </div>
-                            <div className="col-md-1" style={{textAlign: 'center'}}>
-                                <i className="fa-solid fa-arrow-right" style={{ marginTop: '10px'}}></i>
+                            <div className="col-md-1" style={{ textAlign: 'center' }}>
+                                <i className="fa-solid fa-arrow-right" style={{ marginTop: '10px' }}></i>
                             </div>
                             <div className="col-md-2">
                                 <input
                                     type="date"
                                     className='form-control'
+                                    value={endDateDBill}
+                                    onChange={(e) => {
+                                        setEndDateDBill(e.target.value);
+                                    }}
                                 />
                             </div>
                             <div className="col-md-1">
-                                <i  id='nut-loc'
-                                    className="fa-solid fa-filter"
-                                    style={{ backgroundColor: "white", padding: '9px', marginTop: '1px', borderRadius: '5px', color: 'black', width:'37px'}}
+                                <i
+                                    className="fa-solid fa-filter nut-loc"
+                                    style={{ backgroundColor: "white", padding: '9px', marginTop: '1px', borderRadius: '5px', color: 'black', width: '37px' }}
+                                    onClick={(e) => {
+                                        handleTimPhieuXKNhieuDk()
+                                    }}
                                 ></i>
                             </div>
                         </div>
-                    </div>                 */}
+                    </div>
+                    <div className="row mt-3">
+                        <div style={{ width: '100%', overflowY: 'hidden', overflowX: 'auto' }}>
+                            <table className='table table-striped table-hover table-bordered' style={{ width: '2100px', border: '2px solid #fed25c', textAlign: 'center' }}>
+                                <thead>
+                                    <tr>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Mã phiếu</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Người tạo</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">MSCB</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Ngày tạo phiếu (D/M/Y)</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Tên người nhận</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Địa chỉ/bộ phận nhận</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Lý do xuất</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Kho xuất</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Loại phôi</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Số lượng xuất</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Số seri phôi xuất</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Giá mỗi phôi</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Tổng</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        allPhieuXK_PT?.map((currentValue, index) => {
+                                            let bo_phan_nhan = "";
+                                            allManagementUnit?.forEach((MU) => {
+                                                if (MU.management_unit_id == currentValue.address_department) {
+                                                    bo_phan_nhan = MU.management_unit_name;
+                                                }
+                                            })
+                                            let loai_phoi = "";
+                                            allDiplomaName?.forEach((diplomaName) => {
+                                                if (currentValue.embryo_type == diplomaName.diploma_name_id) {
+                                                    loai_phoi = diplomaName.diploma_name_name;
+                                                }
+                                            })
+                                            return (
+                                                <tr key={index}>
+                                                    <td>#{currentValue.delivery_bill}</td>
+                                                    <td>{currentValue.fullname_create}</td>
+                                                    <td>{currentValue.mscb}</td>
+                                                    <td>{handleDateToDMY(currentValue.delivery_bill_creation_time)}</td>
+                                                    <td>{currentValue.fullname_of_consignee}</td>
+                                                    <td>{bo_phan_nhan}</td>
+                                                    <td>{currentValue.reason}</td>
+                                                    <td>{currentValue.export_warehouse}</td>
+                                                    <td style={{ width: '300px' }}>{loai_phoi}</td>
+                                                    <td>{currentValue.numberOfEmbryos}</td>
+                                                    <td>{
+                                                        <Tooltip
+                                                            theme='dark'
+                                                            html={(
+                                                                <div>
+                                                                    <strong>
+                                                                        {handleResultSeri(currentValue.seri_number_start, currentValue.seri_number_end)}
+                                                                    </strong>
+                                                                </div>
+                                                            )}
+                                                            arrow={true}
+                                                            position="top"
+                                                        >
+                                                            <i
+                                                                className="fa-brands fa-periscope"
 
+                                                                style={{ backgroundColor: "#2F4F4F", padding: '7px', borderRadius: '5px', color: 'white', width: '32px' }}
+                                                            ></i>
+                                                        </Tooltip>
+                                                    }</td>
+                                                    <td>{formatter.format(currentValue.unit_price)}</td>
+                                                    <td>{formatter.format(currentValue.unit_price*currentValue.numberOfEmbryos)}</td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                            <div className="d-flex justify-content-center mt-3 mb-3">
+                                <Stack spacing={2}>
+                                    <Pagination
+                                        count={Math.ceil(allPhieuXK?.length / 5)}
+                                        variant="outlined"
+                                        page={page_XK}
+                                        onChange={handleChange_XK}
+                                        color="info"
+                                    />
+                                </Stack>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div >
             <Footer />

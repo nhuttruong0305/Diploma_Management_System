@@ -134,6 +134,58 @@ const deliveryBillControllers = {
             return res.status(500).json(error);
         }
     }
+    //Tìm phiếu xuất kho theo nhiều điều kiện (Đã chạy đúng)
+    ,timPhieuXKTheoNhieuDK: async(req, res )=>{
+        try{
+            //1. Lọc theo DVQL nhận phôi và tên người nhận
+            let resultFilterMU;
+            if(req.query.address_department != ""){
+                const address_department = parseInt(req.query.address_department);
+                const result = await DeliveryBillModel.find({ 
+                                                                address_department: address_department, 
+                                                                fullname_of_consignee: { $regex: `${req.query.fullname_of_consignee}`, $options: 'i'}
+                                                            });
+                resultFilterMU = result;
+            }else{
+                const result = await DeliveryBillModel.find({
+                                                                fullname_of_consignee: { $regex: `${req.query.fullname_of_consignee}`, $options: 'i'}                                            
+                                                            });
+                resultFilterMU = result;
+            }
+
+            //2. Lọc theo loại phôi được xuất
+            let resultFilterEmbryoType = [];
+            if(req.query.embryo_type != ""){
+                const embryo_type = parseInt(req.query.embryo_type);
+                resultFilterMU?.forEach((currentValue)=>{
+                    if(currentValue.embryo_type == embryo_type){
+                        resultFilterEmbryoType = [...resultFilterEmbryoType, currentValue];
+                    }
+                })
+            }else{
+                resultFilterEmbryoType = [...resultFilterEmbryoType, ...resultFilterMU];
+            }
+
+            //3. Lọc theo ngày
+            let resultFilterDate = [];
+            if(req.query.from != "" && req.query.to != ""){
+                const fromDate = new Date(req.query.from).getTime();
+                const toDate = new Date(req.query.to).getTime();
+                
+                resultFilterEmbryoType?.forEach((currentValue)=>{
+                    const time_create = new Date(currentValue.delivery_bill_creation_time).getTime();          
+                    if(time_create>=fromDate && time_create<=toDate){
+                        resultFilterDate = [...resultFilterDate, currentValue];
+                    }
+                })
+            }else{
+                resultFilterDate = [...resultFilterDate, ...resultFilterEmbryoType];
+            }
+            return res.status(200).json(resultFilterDate);
+        }catch(err){
+            return res.status(500).json(err);
+        }
+    }
 }
 
 module.exports = deliveryBillControllers;

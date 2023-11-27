@@ -415,7 +415,7 @@ export default function ManageRequestsForEmbryoIssuanceForStocker(){
             return;
         }
         
-        if( parseInt(inputSeriNumberEnd)<=parseInt(inputSeriNumberStart)){
+        if( parseInt(inputSeriNumberEnd)<parseInt(inputSeriNumberStart)){
             noti5.current.showToast();
             return;
         }

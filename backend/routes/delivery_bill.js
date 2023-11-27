@@ -13,4 +13,7 @@ router.post("/create_delivery_bill_for_request_reissue", deliveryBillControllers
 //Lấy chi tiết phiếu xuất kho của yc cấp lại phôi
 router.get("/get_detail_delivery_bill_request_reissue/:requestForReissue_id", deliveryBillControllers.getDetailDeliveryBillRequestReissue);
 
+
+//Hàm tìm phiếu xuất kho theo nhiều điều kiện
+router.get("/tim_phieu_xk_theo_nhieu_dk", deliveryBillControllers.timPhieuXKTheoNhieuDK);
 module.exports = router;
