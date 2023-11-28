@@ -563,6 +563,12 @@ export default function UserAccountManagement() {
                     case "Thủ kho":
                         chuc_vu = "Stocker";
                         break;    
+                    case "Tổ trưởng":
+                        chuc_vu = "Leader";
+                        break;
+                    case "Nhân viên":
+                        chuc_vu = "Employee";
+                        break;
                 }
 
                 const newUserAccountObject = {
@@ -812,6 +818,8 @@ export default function UserAccountManagement() {
                                                         quyen = "Thư ký"
                                                     }else if(currentValue.role[0] == "Stocker"){
                                                         quyen = "Thủ kho"
+                                                    }else if(currentValue.role[0] == "Employee"){
+                                                        quyen = "Nhân viên"
                                                     }
                                                     return(
                                                         <tr key={index}>
@@ -1698,6 +1706,7 @@ export default function UserAccountManagement() {
                                                                                     {value: "Leader", label: "Tổ trưởng"},
                                                                                     {value: "Secretary", label: "Thư ký"},
                                                                                     {value: "Stocker", label: "Thủ kho"},
+                                                                                    {value: "Employee", label: "Nhân viên"},
                                                                                 ]}
                                                                                 value={role}
                                                                                 onChange={handleChangeSelectRole}

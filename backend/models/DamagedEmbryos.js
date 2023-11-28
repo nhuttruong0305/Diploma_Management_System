@@ -39,7 +39,15 @@ const damagedEmbryosSchema = new mongoose.Schema(
         status:{
             type: String,
             default: "Chưa hủy"
-        }
+        },
+        employee_cancel:{
+            type: Array,
+            default: []
+        },
+        cancel_day:{
+            type: String,
+            default:''
+        } 
     },
     {timestamps: true}
 );

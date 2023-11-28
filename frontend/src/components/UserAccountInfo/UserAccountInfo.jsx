@@ -66,6 +66,8 @@ export default function UserAccountInfo(){
             setRoleOfUser("Thư ký");
         }else if(user?.role[0] == "Stocker"){
             setRoleOfUser("Thủ kho");
+        }else if(user?.role[0] == "Employee"){
+            setRoleOfUser("Nhân viên");
         }
     }, [])
 

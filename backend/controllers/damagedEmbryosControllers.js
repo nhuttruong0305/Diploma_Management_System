@@ -152,6 +152,36 @@ const damagedEmbryosControllers = {
         }catch(error){
             return res.status(500).json(error);
         }
+    },
+    huy_phoi: async (req, res) =>{
+        try{
+            //Lấy ngày hiện tại để điền time tạo yêu cầu
+            const today = new Date();
+            let day = today.getDate();
+            let month = today.getMonth() + 1;
+            const year = today.getFullYear();
+
+            if(day<10){
+                day = `0${day}`;
+            }
+
+            if(month<10){
+                month = `0${month}`;
+            }
+
+            const updateDoc = {
+                employee_cancel: req.body.employee_cancel,
+                cancel_day: `${year}-${month}-${day}`,
+                status: "Đã hủy"
+            }
+
+            const options = {returnDocument: "after"};
+
+            const huyPhoi = await DamagedEmbryosModel.findByIdAndUpdate(req.params._id, updateDoc, options);
+            return res.status(200).json(huyPhoi);
+        }catch(err){
+            return res.status(500).json(err);
+        }
     }
 }
 

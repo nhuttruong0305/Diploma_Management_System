@@ -9,4 +9,6 @@ router.get("/get_the_damaged_serial_number/:diploma_name_id", damagedEmbryosCont
 router.get("/get_all_damaged_serial_number_for_managed", damagedEmbryosControllers.GetTheDamagedSerialNumberForManaged);
 router.post("/add_list_seri_number_damaged", damagedEmbryosControllers.addListSeriNumberDamaged);
 router.delete("/delete_seri_damaged/:_id", damagedEmbryosControllers.deleteSeriDamaged);
+
+router.put("/huy_phoi/:_id", damagedEmbryosControllers.huy_phoi);
 module.exports = router;

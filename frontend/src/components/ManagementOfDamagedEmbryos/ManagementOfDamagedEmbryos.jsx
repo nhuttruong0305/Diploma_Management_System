@@ -16,6 +16,7 @@ export default function ManagementOfDamagedEmbryos() {
 
     useEffect(() => {
         getAllDiplomaName(dispatch);
+        getAllUserAccount()
     }, [])
 
     const [optionsDiplomaName, setOptionsDiplomaName] = useState([]);
@@ -149,15 +150,72 @@ export default function ManagementOfDamagedEmbryos() {
     const noti5 = useRef();
     const [_IdDelete, set_IdDelete] = useState("");
     const handleDeleteSeriDamaged = async () => {
-        try{
+        try {
             const res = await axios.delete(`http://localhost:8000/v1/damaged_embryos/delete_seri_damaged/${_IdDelete}`);
             noti5.current.showToast();
             setSelectedDiplomaName({ value: '', label: 'Tất cả loại phôi' });
-        }catch (error) {
+        } catch (error) {
             console.log(error)
         }
     }
 
+    function handleDateToDMY(date) {
+        const splitDate = date.split("-");
+        const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
+        return result;
+    }
+
+    const [allEmployee, setAllEmployee] = useState([]);
+    //Hàm gọi api lấy all user trong DB
+    const getAllUserAccount = async () => {
+        try {
+            const res = await axios.get("http://localhost:8000/v1/user_account/get_all_useraccount");
+            let result = [];
+            res.data.forEach((user) => {
+                if (user.role[0] == "Employee") {
+                    result = [...result, user];
+                }
+            })
+            setAllEmployee(result);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const [checkEmployee, setCheckEmployee] =useState([]);//State để lưu mảng option trong modal thêm tên văn bằng
+    function handlecheckEmployee(option) {
+        setCheckEmployee((prev) => {
+          const exist = checkEmployee.includes(option);
+          if (exist) {
+            return prev.filter((currentValue) => {
+              return currentValue != option;
+            });
+          } else {
+            return [...prev, option];
+          }
+        });
+    }
+    
+    const [_idHuy, set_idHuy] = useState("");
+    
+    const noti6 = useRef();
+    
+    const handleHuyPhoi = async () =>{
+        try{
+            const updateDoc = {
+                employee_cancel: checkEmployee
+            }
+
+            const res = await axios.put(`http://localhost:8000/v1/damaged_embryos/huy_phoi/${_idHuy}`, updateDoc);
+            noti6.current.showToast();
+            setSelectedDiplomaName({ value: '', label: 'Tất cả loại phôi' });
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+// console.log(checkEmployee);
+// console.log(_idHuy);
     return (
         <>
             <Header />
@@ -335,7 +393,7 @@ export default function ManagementOfDamagedEmbryos() {
                         <div className="row mt-3">
                             <p className='title-list-yc-xin-cap-phoi'>DANH SÁCH SỐ SERI PHÔI BỊ HƯ</p>
                         </div>
-                        <div className="row mt-3" style={{ padding: '0px 50px' }}>
+                        <div className="row mt-3" style={{ padding: '0px 0px' }}>
                             <div style={{ height: '300px', overflowY: 'auto' }}>
                                 <table className='table table-striped table-hover table-bordered' style={{ border: '2px solid #fed25c', textAlign: 'center' }}>
                                     <thead>
@@ -344,8 +402,13 @@ export default function ManagementOfDamagedEmbryos() {
                                             <th style={{ backgroundColor: '#fed25c' }} scope="col">Tên loại phôi</th>
                                             <th style={{ backgroundColor: '#fed25c' }} scope="col">Số seri bị hư</th>
                                             <th style={{ backgroundColor: '#fed25c' }} scope="col">Lý do hư</th>
+                                            <th style={{ backgroundColor: '#fed25c' }} scope="col">Ngày hư</th>
                                             <th style={{ backgroundColor: '#fed25c' }} scope="col">Trạng thái</th>
+                                            <th style={{ backgroundColor: '#fed25c' }} scope="col">Ngày hủy</th>
+                                            <th style={{ backgroundColor: '#fed25c' }} scope="col">Người hủy</th>
+
                                             <th style={{ backgroundColor: '#fed25c' }} scope="col">Xóa</th>
+                                            <th style={{ backgroundColor: '#fed25c' }} scope="col">Hủy</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -357,40 +420,54 @@ export default function ManagementOfDamagedEmbryos() {
                                                         ten_loai_phoi = diplomaName.diploma_name_name;
                                                     }
                                                 })
+                                                
+                                                let nguoi_huy='';
+                                                for(let i =0; i<currentValue.employee_cancel.length; i++){
+                                                    let name;
+                                                    allEmployee.forEach((user)=>{
+                                                        if(user.mssv_cb == currentValue.employee_cancel[i]){
+                                                            name = user.fullname;
+                                                        }
+                                                    })
+                                                    if(i==(currentValue.employee_cancel.length-1)){
+                                                        nguoi_huy+=`${name}/${currentValue.employee_cancel[i]}`
+                                                    }else{
+                                                        nguoi_huy+=`${name}/${currentValue.employee_cancel[i]} - `
+                                                    }
+                                                }
+
                                                 return (
                                                     <tr key={index}>
                                                         <td>{index + 1}</td>
-                                                        <td>{ten_loai_phoi}</td>
+                                                        <td style={{width: '220px'}}>{ten_loai_phoi}</td>
                                                         <td>{
-                                                            // <Tooltip
-                                                            //     theme='dark'
-                                                            //     html={(
-                                                            //         <div>
-                                                            //             <strong>
-                                                            //                 {handleResultSeri(currentValue.seri_number_start, currentValue.seri_number_end)}
-                                                            //             </strong>
-                                                            //         </div>
-                                                            //     )}
-                                                            //     arrow={true}
-                                                            //     position="top"
-                                                            // >
-                                                            //     <i
-                                                            //         className="fa-brands fa-periscope"
-
-                                                            //         style={{ backgroundColor: "#2F4F4F", padding: '7px', borderRadius: '5px', color: 'white', width: '32px' }}
-                                                            //     ></i>
-                                                            // </Tooltip>
                                                             handleResultSeri(currentValue.seri_number_start, currentValue.seri_number_end)
                                                         }</td>
                                                         <td>{currentValue.reason}</td>
+                                                        <td>{handleDateToDMY(currentValue.time_create)}</td>
                                                         <td>{currentValue.status}</td>
+
+                                                        <td>{handleDateToDMY(currentValue.cancel_day)}</td>
+                                                        <td>
+                                                            {nguoi_huy}
+                                                        </td>
                                                         <td>
                                                             <i
                                                                 className="fa-solid fa-trash"
                                                                 style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width: '32px' }}
                                                                 data-bs-toggle="modal" data-bs-target="#deleteSeriDamagedModal"
-                                                                onClick={(e)=>{
+                                                                onClick={(e) => {
                                                                     set_IdDelete(currentValue._id);
+                                                                }}
+                                                            ></i>
+                                                        </td>
+                                                        <td>
+                                                            <i
+                                                                className="fa-solid fa-ban"
+                                                                style={{ backgroundColor: "grey", padding: '7px', borderRadius: '5px', color: 'white', width: '32px' }}
+                                                                data-bs-toggle="modal" data-bs-target="#huyModal"
+                                                                onClick={(e)=>{
+                                                                    set_idHuy(currentValue._id);
                                                                 }}
                                                             ></i>
                                                         </td>
@@ -400,11 +477,61 @@ export default function ManagementOfDamagedEmbryos() {
                                         }
                                     </tbody>
                                 </table>
+                                {/* Modal hủy */}
+                                <div className="modal fade" id="huyModal" tabIndex="-1" aria-labelledby="huyModalLabel" aria-hidden="true">
+                                    <div className="modal-dialog modal-dialog-centered modal-lg">
+                                        <div className="modal-content">
+                                            <div className="modal-header" style={{ backgroundColor: '#feefbf' }}>
+                                                <h1 className="modal-title fs-5" id="huyModalLabel">Chọn nhân viên tham gia hủy phôi</h1>
+                                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div className="modal-body">
+                                                {
+                                                    allEmployee?.map((currentValue, index) => {
+                                                        return (
+                                                            <div key={index} className='row'>
+                                                                <div className="col-5 offset-2">
+                                                                    <div className="form-check">
+                                                                        <input
+                                                                            className="form-check-input"
+                                                                            type="checkbox"
+                                                                        checked={checkEmployee.includes(currentValue.mssv_cb)}
+                                                                        onChange={(e)=>{
+                                                                            handlecheckEmployee(currentValue.mssv_cb)
+                                                                        }}
+                                                                        />
+                                                                        <label className="form-check-label">
+                                                                            {currentValue.fullname} / {currentValue.mssv_cb}
+                                                                        </label>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+
+
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                <button 
+                                                onClick={(e)=>{
+                                                    handleHuyPhoi()
+                                                }}
+                                                type="button" className="btn" style={{ backgroundColor: '#1b95a2' }}>Cập nhật</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
                                 {/* Modal xóa */}
-                                <div className="modal fade" id="deleteSeriDamagedModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteSeriDamagedModalLabel" aria-hidden="true">
+                                <div className="modal fade" id="deleteSeriDamagedModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="deleteSeriDamagedModalLabel" aria-hidden="true">
                                     <div className="modal-dialog modal-dialog-centered">
                                         <div className="modal-content">
-                                            <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
+                                            <div className="modal-header" style={{ backgroundColor: '#feefbf' }}>
                                                 <h1 className="modal-title fs-5" id="deleteSeriDamagedModalLabel"></h1>
                                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
@@ -413,11 +540,11 @@ export default function ManagementOfDamagedEmbryos() {
                                             </div>
                                             <div className="modal-footer">
                                                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                                                <button 
-                                                    type="button" 
-                                                    className="btn" 
-                                                    style={{backgroundColor: '#1b95a2'}}
-                                                    onClick={(e)=>{
+                                                <button
+                                                    type="button"
+                                                    className="btn"
+                                                    style={{ backgroundColor: '#1b95a2' }}
+                                                    onClick={(e) => {
                                                         handleDeleteSeriDamaged()
                                                     }}
                                                 >Xóa</button>
@@ -456,6 +583,11 @@ export default function ManagementOfDamagedEmbryos() {
                 message="Xóa thành công"
                 type="success"
                 ref={noti5}
+            />
+            <Toast
+                message="Hủy thành công"
+                type="success"
+                ref={noti6}
             />
         </>
     )
