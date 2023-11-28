@@ -377,6 +377,10 @@ export default function DiplomaStatistics() {
                                     <i
                                         style={{ width: '42px', fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black' }}
                                         className="fa-solid fa-book"
+                                        onClick={(e)=>{
+                                            document.body.scrollTop = 5000;
+                                            document.documentElement.scrollTop = 5000;
+                                        }}
                                     >
                                     </i>
                                 </div>
@@ -392,7 +396,10 @@ export default function DiplomaStatistics() {
                                     <i
                                         style={{ fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black' }}
                                         className="fa-solid fa-check"
-
+                                        onClick={(e)=>{
+                                            document.body.scrollTop = 5000;
+                                            document.documentElement.scrollTop = 5000;
+                                        }}
                                     >
                                     </i>
                                 </div>
@@ -408,7 +415,10 @@ export default function DiplomaStatistics() {
                                     <i
                                         style={{ textAlign: 'center', width: '42px', fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black' }}
                                         className="fa-solid fa-x"
-
+                                        onClick={(e)=>{
+                                            document.body.scrollTop = 5000;
+                                            document.documentElement.scrollTop = 5000;
+                                        }}
                                     >
                                     </i>
                                 </div>

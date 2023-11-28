@@ -14,6 +14,7 @@ import DetailRequest from '../DetailRequest/DetailRequest';
 import { Tooltip } from 'react-tippy';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import DetailDeliveryBill from '../DetailDeliveryBill/DetailDeliveryBill';
 import DetailRequestForReissue from '../DetailRequestForReissue/DetailRequestForReissue';
 import { getAllDiplomaName, getAllDiplomaType } from '../../redux/apiRequest';
 export default function Statistical() {
@@ -725,6 +726,32 @@ export default function Statistical() {
         }
     }
 
+    //Xử lý việc xem chi tiết phiếu xuất kho
+    const [showDeliveryBill, setShowDeliveryBill] = useState(false);
+    const [detailDeliveryBill, setDetailDeliveryBill] = useState([]);
+
+    const [closeButtonDeliveryBill, setCloseButtonDeliveryBill] = useState(null);
+
+    //Hàm call api lấy chi tiết phiếu xuất kho
+    const getDetailDeliveryBill1 = async (embryoIssuanceRequest_id) => {
+        try{
+            const result = await axios.get(`http://localhost:8000/v1/delivery_bill/get_detail_delivery_bill/${embryoIssuanceRequest_id}`);
+            setDetailDeliveryBill(result.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+    const getDetailDeliveryBill2 = async (requestForReissue_id) => {
+        try{
+            const result = await axios.get(`http://localhost:8000/v1/delivery_bill/get_detail_delivery_bill_request_reissue/${requestForReissue_id}`);
+            setDetailDeliveryBill(result.data);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
+
     return (
         <>
             <Header />
@@ -738,8 +765,8 @@ export default function Statistical() {
                                 }</div>
                                 <div>
                                     <i
-                                        style={{ fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black' }}
-                                        className="fa-solid fa-magnifying-glass"
+                                        style={{ fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black', width: '45px', textAlign:'center' }}
+                                        className="fa-solid fa-book"
                                         onClick={(e)=>{
                                             document.body.scrollTop = 2300;
                                             document.documentElement.scrollTop = 2300;
@@ -757,8 +784,8 @@ export default function Statistical() {
                                 <div>{count2}</div>
                                 <div>
                                     <i
-                                        style={{ fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black' }}
-                                        className="fa-solid fa-magnifying-glass"
+                                        style={{ fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black', width: '45px', textAlign: 'center' }}
+                                        className="fa-solid fa-check-double"
                                         onClick={(e)=>{
                                             document.body.scrollTop = 2300;
                                             document.documentElement.scrollTop = 2300;
@@ -777,7 +804,7 @@ export default function Statistical() {
                                 <div>
                                     <i
                                         style={{ fontSize: '27px', backgroundColor: "white", padding: '7px', borderRadius: '5px', color: 'black' }}
-                                        className="fa-solid fa-magnifying-glass"
+                                        className="fa-solid fa-money-bill"
                                         onClick={(e)=>{
                                             document.body.scrollTop = 5000;
                                             document.documentElement.scrollTop = 5000;
@@ -1347,7 +1374,7 @@ export default function Statistical() {
                     </div>
                     <div className="row mt-3">
                         <div style={{ width: '100%', overflowY: 'hidden', overflowX: 'auto' }}>
-                            <table className='table table-striped table-hover table-bordered' style={{ width: '2100px', border: '2px solid #fed25c', textAlign: 'center' }}>
+                            <table className='table table-striped table-hover table-bordered' style={{ width: '2200px', border: '2px solid #fed25c', textAlign: 'center' }}>
                                 <thead>
                                     <tr>
                                         <th style={{ backgroundColor: '#fed25c' }} scope="col">Mã phiếu</th>
@@ -1363,6 +1390,7 @@ export default function Statistical() {
                                         <th style={{ backgroundColor: '#fed25c' }} scope="col">Số seri phôi xuất</th>
                                         <th style={{ backgroundColor: '#fed25c' }} scope="col">Giá mỗi phôi</th>
                                         <th style={{ backgroundColor: '#fed25c' }} scope="col">Tổng</th>
+                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">Chi tiết phiếu xuất kho</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1414,6 +1442,41 @@ export default function Statistical() {
                                                     }</td>
                                                     <td>{formatter.format(currentValue.unit_price)}</td>
                                                     <td>{formatter.format(currentValue.unit_price*currentValue.numberOfEmbryos)}</td>
+                                                    <td>{
+                                                            closeButtonDeliveryBill == index ? (
+                                                                <i 
+                                                                    style={{ backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white', width:'32px'}}
+                                                                    className="fa-regular fa-circle-xmark"
+                                                                    onClick={(e)=>{
+                                                                        setShowDeliveryBill(false);
+                                                                        setCloseButtonDeliveryBill(null);
+                                                                    }}
+                                                                ></i>
+                                                            ) : currentValue.embryoIssuanceRequest_id != null ? (
+                                                                //nút show chi tiết phiếu xuất kho
+                                                                <i 
+                                                                    className="fa-solid fa-circle-info"
+                                                                    style={{backgroundColor: "#0dcaf0", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                    onClick={(e)=>{
+                                                                        getDetailDeliveryBill1(currentValue.embryoIssuanceRequest_id)
+                                                                        setCloseButtonDeliveryBill(index);
+                                                                        setShowDeliveryBill(true);
+                                                                    }}
+                                                                ></i>
+                                                            ) : (
+                                                                //nút show chi tiết phiếu xuất kho
+                                                                <i 
+                                                                    className="fa-solid fa-circle-info"
+                                                                    style={{backgroundColor: "#0dcaf0", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                    onClick={(e)=>{
+                                                                        getDetailDeliveryBill2(currentValue.requestForReissue_id)
+                                                                        setCloseButtonDeliveryBill(index);
+                                                                        setShowDeliveryBill(true);
+                                                                    }}
+                                                                ></i>
+                                                            )
+                                                        }
+                                                    </td>
                                                 </tr>
                                             )
                                         })
@@ -1433,6 +1496,35 @@ export default function Statistical() {
                             </div>
                         </div>
 
+                    </div>
+                    <div className="row mt-4">
+                        {
+                            showDeliveryBill ? (
+                                //Lưu ý mỗi yêu cầu xin cấp phôi chỉ có duy nhất 1 delivery bill trong DB
+                                detailDeliveryBill?.map((currentValue, index) => {
+                                    return(
+                                        <div key={index}>
+                                            <DetailDeliveryBill
+                                                delivery_bill={currentValue?.delivery_bill}
+                                                delivery_bill_creation_time={currentValue?.delivery_bill_creation_time}
+                                                fullname_of_consignee={currentValue?.fullname_of_consignee}
+                                                address_department={currentValue?.address_department}
+                                                reason={currentValue?.reason}
+                                                export_warehouse={currentValue?.export_warehouse}
+                                                address_export_warehouse={currentValue?.address_export_warehouse}
+                                                embryo_type={currentValue?.embryo_type}
+                                                numberOfEmbryos={currentValue?.numberOfEmbryos}
+                                                seri_number_start={currentValue?.seri_number_start}
+                                                seri_number_end={currentValue?.seri_number_end}
+                                                unit_price={currentValue?.unit_price}
+                                                mscb={currentValue?.mscb}
+                                            >    
+                                            </DetailDeliveryBill>
+                                        </div>
+                                    )
+                                })
+                            ) : ("")
+                        }
                     </div>
                 </div>
             </div >
