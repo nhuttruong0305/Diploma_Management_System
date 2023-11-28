@@ -422,20 +422,21 @@ export default function ManagementOfDamagedEmbryos() {
                                                 })
                                                 
                                                 let nguoi_huy='';
-                                                for(let i =0; i<currentValue.employee_cancel.length; i++){
-                                                    let name;
-                                                    allEmployee.forEach((user)=>{
-                                                        if(user.mssv_cb == currentValue.employee_cancel[i]){
-                                                            name = user.fullname;
+                                                if(currentValue.status == "Đã hủy"){
+                                                    for(let i =0; i<currentValue.employee_cancel.length; i++){
+                                                        let name;
+                                                        allEmployee.forEach((user)=>{
+                                                            if(user.mssv_cb == currentValue.employee_cancel[i]){
+                                                                name = user.fullname;
+                                                            }
+                                                        })
+                                                        if(i==(currentValue.employee_cancel.length-1)){
+                                                            nguoi_huy+=`${name}/${currentValue.employee_cancel[i]}`
+                                                        }else{
+                                                            nguoi_huy+=`${name}/${currentValue.employee_cancel[i]} - `
                                                         }
-                                                    })
-                                                    if(i==(currentValue.employee_cancel.length-1)){
-                                                        nguoi_huy+=`${name}/${currentValue.employee_cancel[i]}`
-                                                    }else{
-                                                        nguoi_huy+=`${name}/${currentValue.employee_cancel[i]} - `
                                                     }
                                                 }
-
                                                 return (
                                                     <tr key={index}>
                                                         <td>{index + 1}</td>
@@ -447,9 +448,17 @@ export default function ManagementOfDamagedEmbryos() {
                                                         <td>{handleDateToDMY(currentValue.time_create)}</td>
                                                         <td>{currentValue.status}</td>
 
-                                                        <td>{handleDateToDMY(currentValue.cancel_day)}</td>
+                                                        <td>{
+                                                            currentValue.status == "Đã hủy" ? (
+                                                                handleDateToDMY(currentValue.cancel_day)
+                                                            ) : ("")
+                                                            }</td>
                                                         <td>
-                                                            {nguoi_huy}
+                                                            {
+                                                            currentValue.status == "Đã hủy" ? (
+                                                                nguoi_huy
+                                                            ) : ("")
+                                                            }
                                                         </td>
                                                         <td>
                                                             <i
