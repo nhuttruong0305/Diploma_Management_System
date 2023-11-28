@@ -91,7 +91,6 @@ const BarChart_TK_Diploma = ({
                 },
             },
         };
-        console.log(data);
         return <Bar data={data} options={options} />;
     }
     if(statisticalType == "Thống kê theo đơn vị quản lý"){

@@ -121,6 +121,7 @@ export default function Statistical() {
                 setShowStatisticalMU(false);
                 setStartDate("");
                 setEndDate("");
+                setStatistical_year(currentYear);
             }
             if (statisticalType.value == "Thống kê theo đơn vị quản lý") {
                 setshowMonthStatistical(false);

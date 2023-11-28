@@ -415,6 +415,65 @@ const diplomaControllers = {
             return res.status(500).json(err);
         }
     }
+    //Hàm tìm kiếm tổng hợp văn bằng (đã chạy đúng)
+    ,TKTH_VB: async (req, res)=>{
+        try{
+            //đầu tiên lấy vb theo tên người nhận, trạng thái, số hiệu, số vào sổ trước
+            const result1 = await DiplomaModel.find({
+                fullname: { $regex: `${req.query.fullname}`, $options: 'i'},
+                status: { $regex: `${req.query.status}`, $options: 'i'},
+                diploma_number: { $regex: `${req.query.diploma_number}`, $options: 'i'},
+                numbersIntoTheNotebook: { $regex: `${req.query.numbersIntoTheNotebook}`, $options: 'i'}
+            })
+
+            //Tiếp theo lọc theo diploma_name
+            let resultFilterDiplomaName = [];
+            if(req.query.diploma_name_id != ""){
+                const diploma_name_id = parseInt(req.query.diploma_name_id);
+                result1.forEach((currentValue)=>{
+                    if(currentValue.diploma_name_id == diploma_name_id){
+                        resultFilterDiplomaName = [...resultFilterDiplomaName, currentValue];
+                    }
+                })
+            }else{
+                resultFilterDiplomaName = [...resultFilterDiplomaName, ...result1];
+            }
+
+            //Tiếp theo lọc theo DCVB
+            let resultFilterIssuance = [];
+            if(req.query.diploma_issuance_id != ""){
+                const diploma_issuance_id = parseInt(req.query.diploma_issuance_id);
+                resultFilterDiplomaName.forEach((currentValue) => {
+                    if(currentValue.diploma_issuance_id == diploma_issuance_id){
+                        resultFilterIssuance = [...resultFilterIssuance, currentValue];
+                    }
+                })
+            }else{
+                resultFilterIssuance = [...resultFilterIssuance, ...resultFilterDiplomaName];
+            }
+
+            //Tiếp theo lọc theo ngày tạo
+            let finalResult = [];
+            if(req.query.from != "" && req.query.to != ""){
+                const fromDate = new Date(req.query.from).getTime();
+                const toDate = new Date(req.query.to).getTime();
+
+                resultFilterIssuance.forEach((currentValue)=>{
+                    const time_create = new Date(currentValue.time_import).getTime()
+                    if(time_create>=fromDate && time_create<=toDate){
+                        finalResult = [...finalResult, currentValue];
+                    }
+                })
+
+            }else{
+                finalResult = [...finalResult, ...resultFilterIssuance];
+            }
+
+            return res.status(200).json(finalResult);
+        }catch(error){
+            return res.status(500).json(error);
+        }
+    }
 }
 
 module.exports = diplomaControllers;

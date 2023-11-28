@@ -105,6 +105,14 @@ const diplomaIssuanceController = {
             return res.status(500).json(error);
         }
     }
+    ,getAll_dcvb:async (req, res) => {
+        try{
+            const result = await DiplomaIssuanceModel.find();
+            return res.status(200).json(result);
+        }catch(err){
+            return res.status(500).json(err);
+        }
+    }
 }
 
 module.exports = diplomaIssuanceController;

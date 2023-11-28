@@ -20,4 +20,7 @@ router.get("/get_all_diploma_in_DB", diplomaControllers.getAllDiploma);
 router.get("/tk_vb_theo_thang", diplomaControllers.tk_vanbang_theo_thang);
 //Lấy số văn bằng dc nhập, ddc duyệt, ko duyệt theo dvql
 router.get("/tk_vb_theo_dvql", diplomaControllers.thongke_VB_theo_DVQL);
+
+//Tìm kiếm tổng hợp văn bằng
+router.get("/tkth_vb",diplomaControllers.TKTH_VB);
 module.exports = router;
