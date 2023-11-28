@@ -242,6 +242,9 @@ export default function Navbar() {
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/review-diploma" id='duyet-van-bang'>Duyệt văn bằng</Link>
                                 </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/diploma_statistics" id='thong-ke-van-bang'>Thống kê văn bằng</Link>
+                                </li>
                             </ul>
                         ) : role == 'Center Director_Head of Department' ? (
                             <ul className="navbar-nav">
@@ -293,6 +296,9 @@ export default function Navbar() {
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/request_reissue_for_secretary" id='xu-ly-yeu-cau-cap-lai-phoi'>Xử lý yêu cầu cấp lại phôi</Link>
                                 </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/statistical" id='thong-ke-bao-cao'>Thống kê báo cáo</Link>
+                                </li>
                             </ul>
                         ) : role == "Stocker" ? (
                             <ul className="navbar-nav">
@@ -326,6 +332,9 @@ export default function Navbar() {
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/management_of_damaged_embryos" id='quan-ly-phoi-hu'>Quản lý phôi bị hư</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link className="nav-link nav-link-navbar" to="/statistical" id='thong-ke-bao-cao'>Thống kê báo cáo</Link>
                                 </li>
                             </ul>
                         ) : (

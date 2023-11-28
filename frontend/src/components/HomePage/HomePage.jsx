@@ -234,16 +234,17 @@ export default function HomePage() {
                 </form>
 
                 <div className="row">
-                    <table className="table">
+                    <div style={{ width: '100%', overflowY: 'hidden', overflowX: 'auto', marginTop: '20px' }}>
+                    <table className='table table-striped table-hover table-bordered' style={{width: '1700px', border: '2px solid #fed25c', textAlign: 'center'}}>
                         <thead>
                             <tr>
-                                <th scope="col">STT</th>
-                                <th scope="col">Tên văn bằng</th>
-                                <th scope="col">Họ tên</th>
-                                <th scope="col">Ngày sinh</th>
-                                <th scope="col">Số hiệu</th>
-                                <th scope="col">Số vào sổ</th>
-                                <th scope='col'></th>
+                                <th style={{backgroundColor: '#fed25c'}} scope="col">STT</th>
+                                <th style={{backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                <th style={{backgroundColor: '#fed25c'}} scope="col">Họ tên</th>
+                                <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày sinh</th>
+                                <th style={{backgroundColor: '#fed25c'}} scope="col">Số hiệu</th>
+                                <th style={{backgroundColor: '#fed25c'}} scope="col">Số vào sổ</th>
+                                <th style={{backgroundColor: '#fed25c'}} scope='col'></th>
                                 
                             </tr>
                         </thead>
@@ -311,12 +312,12 @@ export default function HomePage() {
                             })}
                         </tbody>
                     </table>
-
+                    </div>
                     {/* Modal hiển thị thông tin chi tiết văn bằng */}
                     <div className="modal fade" id="showDiplomaModal" tabIndex="-1" aria-labelledby="showDiplomaModalLabel" aria-hidden="true">
                         <div className="modal-dialog modal-lg modal-dialog-centered">
                             <div className="modal-content">
-                            <div className="modal-header">
+                            <div className="modal-header" style={{backgroundColor: '#fed25c'}}>
                                 <h1 className="modal-title fs-5" id="showDiplomaModalLabel">Thông tin chi tiết văn bằng</h1>
                                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
@@ -735,7 +736,7 @@ export default function HomePage() {
                         </div>
                     </div>
 
-                    <div className='d-flex justify-content-center'>
+                    <div className='d-flex justify-content-center mt-3'>
                         <Stack spacing={2}>
                             {/* <Typography className='text-center'>Trang: {page}</Typography> */}
                             <Pagination 

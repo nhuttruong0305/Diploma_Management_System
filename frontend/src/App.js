@@ -249,14 +249,8 @@ function App() {
       },
       {
         path: '/statistical',
-        element: (
-          <ProtectedRouteLeader
-            isAuthenticated = {!user ? false : true}
-            role = {user?.role[0]}
-          >
+        element: 
             <Statistical/>
-          </ProtectedRouteLeader>
-        )
       },
       {
         path: '/manage_requests_for_embryo_issuance_for_stocker',
@@ -381,14 +375,8 @@ function App() {
       },
       {
         path: '/diploma_statistics',
-        element: (
-          <ProtectedRouteCenterDirectorHeadOfDepartment
-            isAuthenticated = {!user ? false : true}
-            role = {user?.role[0]}
-          >
-            <DiplomaStatistics/>
-          </ProtectedRouteCenterDirectorHeadOfDepartment>
-        )
+        element:
+          <DiplomaStatistics/>
       }  
     ])
     return element;
