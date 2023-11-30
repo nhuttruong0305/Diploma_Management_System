@@ -39,8 +39,6 @@ export default function DiplomaDiary(){
         getAllDiplomaForDiplomaDiary(officerName, mscb, status?.value);
     }, [officerName, mscb, status]);
 
-    console.log(allApprovedDiploma);
-
     return(
         <>
             <Header/>
@@ -88,18 +86,18 @@ export default function DiplomaDiary(){
                         <div className="row mt-2 p-4">
                             <div id='contain-table-show-DD'>
                                 <table
-                                    className="table table-bordered"
+                                    className='table table-striped table-hover table-bordered' style={{width: '1700px', border: '2px solid #fed25c', textAlign:'center'}}
                                     id='table-show-DD'
                                 >   
                                     <thead>
                                         <tr>
-                                            <th style={{width: '50px'}} scope="col">STT</th>
-                                            <th scope="col">Mã cán bộ</th>
-                                            <th scope="col">Tên cán bộ</th>
-                                            <th scope="col">Mã văn bằng</th>
-                                            <th scope="col">Thao tác</th>
-                                            <th scope="col">Thời điểm</th>
-                                            <th scope="col">Diễn giải</th>
+                                            <th style={{backgroundColor: '#fed25c', width: '50px'}} scope="col">STT</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Mã cán bộ</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Tên cán bộ</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Mã văn bằng</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Thao tác</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Thời điểm</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Diễn giải</th>
                                         </tr>
                                     </thead>
                                     <tbody>

@@ -1772,7 +1772,7 @@ export default function ImportDiploma(){
                         <div className="modal fade" id="addDiplomaModal" tabIndex="-1" aria-labelledby="addDiplomaModalLabel" aria-hidden="true">
                             <div className="modal-lg modal-dialog modal-dialog-centered">
                                 <div className="modal-content">
-                                <div className="modal-header">
+                                <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                     <h1 className="modal-title fs-5" id="addDiplomaModalLabel">Thêm văn bằng</h1>
                                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
@@ -2326,7 +2326,8 @@ export default function ImportDiploma(){
                                     <button 
                                         type="submit"
                                         form='form-add-diploma-IP' 
-                                        className="btn btn-primary"
+                                        className="btn"
+                                        style={{backgroundColor: '#1b95a2', color: 'white'}}
                                     >Thêm mới</button>
                                 </div>
                                 </div>

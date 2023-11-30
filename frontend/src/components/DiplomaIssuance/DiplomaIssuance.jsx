@@ -315,7 +315,7 @@ export default function DiplomaIssuance(){
                         <div className="modal fade" id="modalAddDiplomaIssuance" tabIndex="-1" aria-labelledby="modalAddDiplomaIssuanceLabel" aria-hidden="true">
                             <div className="modal-dialog modal-lg modal-dialog-centered">
                                 <div className="modal-content">
-                                <div className="modal-header">
+                                <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                     <h1 className="modal-title fs-5" id="modalAddDiplomaIssuanceLabel">Thêm đợt cấp văn bằng mới</h1>
                                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>

@@ -55,7 +55,12 @@ export default function Header(){
                                     <div className="d-flex">
                                         <button 
                                                 id='btn-userinfor-login-header' 
-                                                className='btn btn-primary'><Link style={{color: 'white', textDecoration: 'none'}} to='/user-account-info'>{user.fullname}</Link></button>
+                                                className='btn btn-primary'><Link 
+                                                                                style={{color: 'white', textDecoration: 'none'}} 
+                                                                                to='/user-account-info'>
+                                                                                    {
+                                                                                        user.fullname == "System administrator" ? ("Người quản trị") : (user.fullname)
+                                                                                    }</Link></button>
                                         <button 
                                             className='btn btn-primary' 
                                             id='btn-show-logout'

@@ -488,7 +488,7 @@ export default function ManagementOfDamagedEmbryos() {
                                 </table>
                                 {/* Modal hủy */}
                                 <div className="modal fade" id="huyModal" tabIndex="-1" aria-labelledby="huyModalLabel" aria-hidden="true">
-                                    <div className="modal-dialog modal-dialog-centered modal-lg">
+                                    <div className="modal-dialog modal-dialog-centered">
                                         <div className="modal-content">
                                             <div className="modal-header" style={{ backgroundColor: '#feefbf' }}>
                                                 <h1 className="modal-title fs-5" id="huyModalLabel">Chọn nhân viên tham gia hủy phôi</h1>

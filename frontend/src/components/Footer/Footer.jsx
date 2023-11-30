@@ -1,6 +1,6 @@
 import Vy291 from '../../assets/Vy-291.jpg';
 import Vy420 from '../../assets/Vy-420.jpg';
-import Vy468 from '../../assets/Vy-468.jpg';
+import Vy358 from '../../assets/Vy-358.jpg';
 import './Footer.css';
 import BackToTop from '../BackToTop/BackToTop';
 export default function Footer(){
@@ -15,7 +15,7 @@ export default function Footer(){
                         <img src={Vy420} alt="" style={{width: '100%'}}/>
                     </div>
                     <div className="col-md-4">
-                        <img src={Vy468} alt="" style={{width: '100%'}}/>
+                        <img src={Vy358} alt="" style={{width: '100%'}}/>
                     </div>
                 </div>
                 <div style={{backgroundColor: '#3a454b', height:'70px'}} className="row d-flex align-items-center">

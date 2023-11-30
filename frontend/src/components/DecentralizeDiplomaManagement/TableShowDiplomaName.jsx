@@ -183,7 +183,7 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
             <div className="modal fade" id="modalShow_MU_OfDiplomaName" tabIndex="-1" aria-labelledby="modalShow_MU_OfDiplomaNameLabel" aria-hidden="true">
                 <div className="modal-dialog modal-lg modal-dialog-centered">
                     <div className="modal-content">
-                    <div className="modal-header">
+                    <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                         <h1 className="modal-title fs-5" id="modalShow_MU_OfDiplomaNameLabel">Thông tin chung</h1>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>

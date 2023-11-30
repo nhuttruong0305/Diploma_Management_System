@@ -161,7 +161,7 @@ export default function DiplomaType(){
                                 <div className="modal fade" id="modalEditDiplomaType" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="modalEditDiplomaTypeLabel" aria-hidden="true">
                                     <div className="modal-dialog modal-dialog-centered">
                                         <div className="modal-content">
-                                        <div className="modal-header">
+                                        <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                             <h1 className="modal-title fs-5" id="modalEditDiplomaTypeLabel">Chỉnh sửa loại văn bằng</h1>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
@@ -214,7 +214,7 @@ export default function DiplomaType(){
                                 <div className="modal fade" id="modalAddDiplomaType" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="modalAddDiplomaTypeLabel" aria-hidden="true">
                                     <div className="modal-dialog modal-dialog-centered">
                                         <div className="modal-content">
-                                        <div className="modal-header">
+                                        <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                             <h1 className="modal-title fs-5" id="modalAddDiplomaTypeLabel">Thêm mới loại văn bằng</h1>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>

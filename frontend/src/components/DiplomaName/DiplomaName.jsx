@@ -286,7 +286,7 @@ export default function DiplomaName(){
                                 <div className="modal fade" id="modalAddDiplomaName" tabIndex="-1" aria-labelledby="modalAddDiplomaNameLabel" aria-hidden="true">
                                     <div className="modal-dialog modal-lg modal-dialog-centered">
                                         <div className="modal-content">
-                                        <div className="modal-header">
+                                        <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                             <h1 className="modal-title fs-5" id="modalAddDiplomaNameLabel">Thêm tên văn bằng mới</h1>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
@@ -564,7 +564,7 @@ export default function DiplomaName(){
                                 <div className="modal fade" id="modalEditDiplomaName" tabIndex="-1" aria-labelledby="modalEditDiplomaNameLabel" aria-hidden="true">
                                     <div className="modal-dialog modal-lg modal-dialog-centered">
                                         <div className="modal-content">
-                                        <div className="modal-header">
+                                        <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                             <h1 className="modal-title fs-5" id="modalEditDiplomaNameLabel">Sửa thông tin tên văn bằng</h1>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
