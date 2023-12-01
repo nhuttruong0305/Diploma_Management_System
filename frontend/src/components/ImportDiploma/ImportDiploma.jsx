@@ -30,6 +30,19 @@ export default function ImportDiploma(){
         }
     }
     
+    //State lấy ra all user trong DB để lấy tên cán bộ tạo yêu cầu
+    const [allUserAccount, setAllUserAccount] = useState([]);
+
+    //Hàm gọi api lấy all user trong DB
+    const getAllUserAccount = async () => {
+        try {
+            const res = await axios.get("http://localhost:8000/v1/user_account/get_all_useraccount");
+            setAllUserAccount(res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     //state này để lấy ra các tên (loại văn bằng) được quản lý bởi đơn vị quản lý của tài khoản Diploma importer dùng cho select có id select-DiplomaName-ID
     const [allDiplomaNameByMU, setAllDiplomaNameByMU] = useState([]); 
     //options cho component Select có id select-DiplomaName-ID và select có id = select-diplomaName-in-formadd-ID
@@ -71,6 +84,8 @@ export default function ImportDiploma(){
         getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
         getAllManagementUnit();
         getAllMajorsShowModal();
+        getAllUserAccount();
+        getAllDiploma_XL_Count()
     },[])
 
     useEffect(()=>{
@@ -926,6 +941,9 @@ export default function ImportDiploma(){
         setPage(value);
     };
 
+    const [count1, setCount1] = useState(0);
+    const [count2, setCount2] = useState(0);
+    const [count3, setCount3] = useState(0);
     useEffect(()=>{
         if(page!=undefined && allDiplomaByListOfDiplomaNameImport!=undefined){
             if(allDiplomaByListOfDiplomaNameImport.length>5){
@@ -947,7 +965,48 @@ export default function ImportDiploma(){
                 setAllDiplomaByListOfDiplomaNameImportShow(allDiplomaByListOfDiplomaNameImport);
             }         
         }
-    });
+    }, [page, allDiplomaByListOfDiplomaNameImport]);
+
+    const handleDateToDMY = (date) => {
+        let splitDate = date.split("-");
+        const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
+        return result;
+    }
+
+    //Xử lý phần đếm count
+    const getAllDiploma_XL_Count = async () => {
+        try{
+            const res = await axios.get("http://localhost:8000/v1/diploma/get_all_diploma_in_DB");
+            let result = [];
+            
+            res.data.forEach((currentValue)=>{
+                if(user.listOfDiplomaNameImport.includes(currentValue.diploma_name_id)){
+                    result = [...result, currentValue];
+                }
+            })
+            let resultCount1 = 0;
+            let resultCount2 = 0;
+            let resultCount3 = 0;
+
+            result.forEach((currentValue)=>{
+                if(currentValue.mscb_import == user.mssv_cb){
+                    resultCount1++;
+                }
+                if(currentValue.status == "Đã duyệt" && currentValue.mscb_import == user.mssv_cb){
+                    resultCount2++;
+                }
+                if(currentValue.status == "Không duyệt" && currentValue.mscb_import == user.mssv_cb){
+                    resultCount3++;
+                }
+            })
+            setCount1(resultCount1);
+            setCount2(resultCount2);
+            setCount3(resultCount3);
+            
+        }catch(error){
+            console.log(error);
+        }
+    }
 
     return(
         <>
@@ -1120,7 +1179,55 @@ export default function ImportDiploma(){
                             </div>
                         </div>
 
-                        <div className="row mt-2 p-4">
+                        <div className="row p-4">
+                            <div className="col-4" style={{ padding: '10px'}}>
+                                <div style={{backgroundColor: '#21acdd', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                    <div className="row" style={{padding: '10px'}}>
+                                        <div className="col-7">
+                                            <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count1}</div>
+                                            <div style={{fontSize: '20px', fontWeight: 'bold'}}>Văn bằng bạn đã nhập</div>
+                                        </div>
+                                        <div className="col-5">
+                                            <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                <i className="fa-brands fa-usps"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-4" style={{ padding: '10px'}}>
+                                <div style={{backgroundColor: '#63c5de', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                    <div className="row" style={{padding: '10px'}}>
+                                        <div className="col-7">
+                                            <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count2}</div>
+                                            <div style={{fontSize: '20px', fontWeight: 'bold'}}>Văn bằng đã được duyệt</div>
+                                        </div>
+                                        <div className="col-5">
+                                            <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                <i className="fa-solid fa-check-double"></i>
+                                            </div>
+                                        </div>
+                                    </div>  
+                                </div>
+                            </div>
+                            <div className="col-4" style={{ padding: '10px'}}>
+                                <div style={{backgroundColor: '#fd6b6b', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                    <div className="row" style={{padding: '10px'}}>
+                                        <div className="col-7">
+                                            <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count3}</div>
+                                            <div style={{fontSize: '20px', fontWeight: 'bold'}}>Văn bằng không duyệt</div>
+                                        </div>
+                                        <div className="col-5">
+                                            <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                <i className="fa-solid fa-ban"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="row p-4">
                             <div 
                                 // className='table-wrapper table-responsive'
                                 id='contain-table-show-diploma-ID'
@@ -1143,22 +1250,32 @@ export default function ImportDiploma(){
                                             <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày ký</th>
                                             <th style={{backgroundColor: '#fed25c'}} scope="col">Số hiệu</th>
                                             <th style={{backgroundColor: '#fed25c'}} scope="col">Số vào sổ</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Người nhập</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày nhập</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
                                             allDiplomaByListOfDiplomaNameImportShow?.map((currentValue, index)=>{
-                                                let gioiTinhInTable;
-                                                if(currentValue.sex == true){
-                                                    gioiTinhInTable = "Nam"
-                                                }else{
-                                                    gioiTinhInTable = "Nữ"
-                                                }
+                                                
 
                                                 let ten_van_bang = "";
                                                 allDiplomaNameByMU?.forEach((element)=>{
                                                     if(element.diploma_name_id == currentValue.diploma_name_id){
                                                         ten_van_bang = element.diploma_name_name;
+                                                    }
+                                                })
+                                                let gioiTinhInTable;
+                                                if(currentValue.sex){
+                                                    gioiTinhInTable = "Nam"
+                                                }else{
+                                                    gioiTinhInTable = "Nữ"
+                                                }
+
+                                                let nguoi_nhap ='';
+                                                allUserAccount?.forEach((user)=>{
+                                                    if(user.mssv_cb == currentValue.mscb_import){
+                                                        nguoi_nhap = user.fullname;
                                                     }
                                                 })
                                                 return(
@@ -1214,7 +1331,7 @@ export default function ImportDiploma(){
                                                             className="fa-solid fa-eye"></i></td>
                                                         <th scope="row">{index + 1}</th>
                                                         <td>{ten_van_bang}</td>
-                                                        <td style={{fontWeight: 'bold', color: 'red'}}>
+                                                        <td>
                                                             <Tooltip
                                                                 // options
                                                                 theme='dark'
@@ -1228,7 +1345,9 @@ export default function ImportDiploma(){
                                                                 arrow={true}
                                                                 position="top"
                                                             >
-                                                                {currentValue.status}
+                                                                <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                    {currentValue.status}
+                                                                </div>
                                                             </Tooltip>
                                                         </td>
                                                         <td>{currentValue.fullname}</td>
@@ -1239,6 +1358,12 @@ export default function ImportDiploma(){
                                                         <td>{currentValue.sign_day}</td>
                                                         <td>{currentValue.diploma_number}</td>
                                                         <td>{currentValue.numbersIntoTheNotebook}</td>
+                                                        <td>
+                                                            {nguoi_nhap}
+                                                        </td>
+                                                        <td>
+                                                            {handleDateToDMY(currentValue.time_import)}
+                                                        </td>
                                                     </tr>
                                                 )
                                             })
@@ -1263,7 +1388,7 @@ export default function ImportDiploma(){
                         <div className="modal fade" id="editDiplomaModal" tabIndex="-1" aria-labelledby="editDiplomaModalLabel" aria-hidden="true">
                             <div className="modal-lg modal-dialog modal-dialog-centered">
                                 <div className="modal-content">
-                                <div className="modal-header">
+                                <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                     <h1 className="modal-title fs-5" id="editDiplomaModalLabel">Thông tin văn bằng</h1>
                                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
@@ -1739,7 +1864,8 @@ export default function ImportDiploma(){
                                                 <button 
                                                     type="submit"
                                                     form='edit-or-delete-diploma' 
-                                                    className="btn btn-primary"
+                                                    style={{backgroundColor: '#1b95a2'}}
+                                                    className="btn"
                                                 >Sửa</button>
                                                 <button 
                                                     type="button" 

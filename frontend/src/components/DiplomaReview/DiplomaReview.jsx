@@ -47,10 +47,25 @@ export default function DiplomaReview(){
         }
     }
 
+    //State lấy ra all user trong DB để lấy tên cán bộ tạo yêu cầu
+    const [allUserAccount, setAllUserAccount] = useState([]);
+
+    //Hàm gọi api lấy all user trong DB
+    const getAllUserAccount = async () => {
+        try {
+            const res = await axios.get("http://localhost:8000/v1/user_account/get_all_useraccount");
+            setAllUserAccount(res.data);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(()=>{
         getAllDiplomaNameByMU(user.management_unit);
         getAllDiplomaIssuanceByMU(dispatch, user.management_unit);
         getAllMajorsShowModal();
+        getAllUserAccount();
+        getAllDiploma_XL_Count();
     }, [])
 
     useEffect(()=>{
@@ -251,6 +266,49 @@ export default function DiplomaReview(){
         }
     },[allDiplomaByListOfDiplomaName, page]);//nếu chạy lỗi thì bỏ depen này
 
+    const handleDateToDMY = (date) => {
+        let splitDate = date.split("-");
+        const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
+        return result;
+    }
+
+    //Xử lý phần count
+    const [count1, setCount1] = useState(0);
+    const [count2, setCount2] = useState(0);
+    const [count3, setCount3] = useState(0);
+
+    //Xử lý phần đếm count
+    const getAllDiploma_XL_Count = async () => {
+        try{
+            const res = await axios.get("http://localhost:8000/v1/diploma/get_all_diploma_in_DB");
+            let result = [];     
+            res.data.forEach((currentValue)=>{
+                if(user.listOfDiplomaNameReview.includes(currentValue.diploma_name_id)){
+                    result = [...result, currentValue];
+                }
+            })
+            let resultCount1 = 0;
+            let resultCount2 = 0;
+            let resultCount3 = 0;
+            result.forEach((currentValue)=>{
+                if(currentValue.status == "Chờ duyệt"){
+                    resultCount1++;
+                }
+                if(currentValue.status == "Đã duyệt" && currentValue.mscb == user.mssv_cb){
+                    resultCount2++;
+                }
+                if(currentValue.status == "Không duyệt" && currentValue.mscb == user.mssv_cb){
+                    resultCount3++;
+                }
+            })
+            setCount1(resultCount1);
+            setCount2(resultCount2);
+            setCount3(resultCount3);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     return(
         <>
             <Header/>
@@ -331,6 +389,55 @@ export default function DiplomaReview(){
                             </div>
                         </div>
 
+                        <div className="row p-4">
+                            <div className="col-4" style={{ padding: '10px'}}>
+                                <div style={{backgroundColor: '#21acdd', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                    <div className="row" style={{padding: '10px'}}>
+                                        <div className="col-7">
+                                            <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count1}</div>
+                                            <div style={{fontSize: '20px', fontWeight: 'bold'}}>Văn bằng chưa xử lý</div>
+                                        </div>
+                                        <div className="col-5">
+                                            <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                <i className="fa-brands fa-usps"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-4" style={{ padding: '10px'}}>
+                                <div style={{backgroundColor: '#63c5de', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                    <div className="row" style={{padding: '10px'}}>
+                                        <div className="col-7">
+                                            <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count2}</div>
+                                            <div style={{fontSize: '20px', fontWeight: 'bold'}}>Văn bằng được bạn duyệt</div>
+                                        </div>
+                                        <div className="col-5">
+                                            <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                <i className="fa-solid fa-check-double"></i>
+                                            </div>
+                                        </div>
+                                    </div>  
+                                </div>
+                            </div>
+                            <div className="col-4" style={{ padding: '10px'}}>
+                                <div style={{backgroundColor: '#fd6b6b', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                    <div className="row" style={{padding: '10px'}}>
+                                        <div className="col-7">
+                                            <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count3}</div>
+                                            <div style={{fontSize: '20px', fontWeight: 'bold'}}>Văn bằng không duyệt</div>
+                                        </div>
+                                        <div className="col-5">
+                                            <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                <i className="fa-solid fa-ban"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div className="row mt-2 p-4">
                             <div 
                                 id='contain-table-show-diploma-DR'
@@ -353,6 +460,10 @@ export default function DiplomaReview(){
                                             <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày ký</th>
                                             <th style={{backgroundColor: '#fed25c'}} scope="col">Số hiệu</th>
                                             <th style={{backgroundColor: '#fed25c'}} scope="col">Số vào sổ</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Người nhập</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày nhập</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Người duyệt</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày duyệt</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -383,6 +494,17 @@ export default function DiplomaReview(){
                                                 allMajorInDB?.forEach((major)=>{
                                                     if(major.majors_id == currentValue.nganh_dao_tao){
                                                         nganh_dao_tao = major.majors_name;
+                                                    }
+                                                })
+
+                                                let nguoi_nhap='';
+                                                let nguoi_duyet=''
+                                                allUserAccount?.forEach((user)=>{
+                                                    if(user.mssv_cb == currentValue.mscb_import){
+                                                        nguoi_nhap = user.fullname;
+                                                    }
+                                                    if(user.mssv_cb == currentValue.mscb){
+                                                        nguoi_duyet = user.fullname;
                                                     }
                                                 })
                                                 return(
@@ -423,7 +545,7 @@ export default function DiplomaReview(){
                                                     </td>
                                                     <th scope="row">{index+1}</th>
                                                     <td>{ten_van_bang}</td>
-                                                    <td style={{fontWeight: 'bold', color: 'red'}}>
+                                                    <td>
                                                         <Tooltip
                                                             // options
                                                             theme='dark'
@@ -437,7 +559,9 @@ export default function DiplomaReview(){
                                                             arrow={true}
                                                             position="top"
                                                         >
-                                                            {currentValue.status}
+                                                            <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                {currentValue.status}
+                                                            </div>
                                                         </Tooltip>
                                                     </td>
                                                     <td>{currentValue.fullname}</td>
@@ -448,6 +572,10 @@ export default function DiplomaReview(){
                                                     <td>{currentValue.sign_day}</td>
                                                     <td>{currentValue.diploma_number}</td>
                                                     <td>{currentValue.numbersIntoTheNotebook}</td>
+                                                    <td>{nguoi_nhap} / {currentValue.mscb_import}</td>
+                                                    <td>{handleDateToDMY(currentValue.time_import)}</td>
+                                                    <td>{nguoi_duyet} / {currentValue.mscb}</td>
+                                                    <td>{currentValue.time == "" ? ("") : (handleDateToDMY(currentValue.time))}</td>
                                                 </tr>
                                                 )
                                             })

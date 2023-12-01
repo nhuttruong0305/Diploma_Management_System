@@ -638,11 +638,12 @@ export default function DiplomaStatistics() {
                         </div>
                     </div>
                     <div style={{ width: '100%', overflowY: 'hidden', overflowX: 'auto', marginTop: '20px' }}>
-                        <table className='table table-striped table-hover table-bordered' style={{ width: '2200px', border: '2px solid #fed25c', textAlign: 'center' }}>
+                        <table className='table table-striped table-hover table-bordered' style={{ width: '2300px', border: '2px solid #fed25c', textAlign: 'center' }}>
                             <thead>
                                 <tr>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">STT</th>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Tên văn bằng</th>
+                                    <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Trạng thái</th>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Họ tên</th>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Giới tính</th>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Ngày sinh</th>
@@ -651,10 +652,10 @@ export default function DiplomaStatistics() {
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Ngày ký</th>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Số hiệu</th>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Số vào sổ</th>
-                                    <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Trạng thái</th>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Người nhập</th>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Ngày nhập</th>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Người duyệt</th>
+                                    <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Ngày duyệt</th>
                                     <th style={{ textAlign: 'center', backgroundColor: '#fed25c' }} scope="col">Xem chi tiết</th>
                                 </tr>
                             </thead>
@@ -698,14 +699,6 @@ export default function DiplomaStatistics() {
                                             <tr key={index}>
                                                 <td>{(index + 1)}</td>
                                                 <td>{ten_vb}</td>
-                                                <td>{currentValue.fullname}</td>
-                                                <td>{gioitinh}</td>
-                                                <td>{handleDateToDMY(currentValue.dateofbirth)}</td>
-                                                <td>{currentValue.address}</td>
-                                                <td>{currentValue.cccd}</td>
-                                                <td>{handleDateToDMY(currentValue.sign_day)}</td>
-                                                <td>{currentValue.diploma_number}</td>
-                                                <td>{currentValue.numbersIntoTheNotebook}</td>
                                                 <td>
                                                     <Tooltip
                                                         // options
@@ -725,6 +718,14 @@ export default function DiplomaStatistics() {
                                                         </div>
                                                     </Tooltip>
                                                 </td>
+                                                <td>{currentValue.fullname}</td>
+                                                <td>{gioitinh}</td>
+                                                <td>{handleDateToDMY(currentValue.dateofbirth)}</td>
+                                                <td>{currentValue.address}</td>
+                                                <td>{currentValue.cccd}</td>
+                                                <td>{handleDateToDMY(currentValue.sign_day)}</td>
+                                                <td>{currentValue.diploma_number}</td>
+                                                <td>{currentValue.numbersIntoTheNotebook}</td>
                                                 <td>
                                                     {`${nguoi_nhap} / ${currentValue.mscb_import}`}
                                                 </td>
@@ -734,6 +735,10 @@ export default function DiplomaStatistics() {
                                                 <td>
                                                     {nguoi_duyet == "" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb}`)}
                                                 </td>
+                                                <td>
+                                                    {currentValue.time == "" ? ("") : (handleDateToDMY(currentValue.time))}
+                                                </td>
+
                                                 <td>
                                                     <i
                                                         className="fa-solid fa-eye"
@@ -776,7 +781,7 @@ export default function DiplomaStatistics() {
                             <div className="modal fade" id="showDiplomaModal_TKTH" tabIndex="-1" aria-labelledby="showDiplomaModal_TKTHLabel" aria-hidden="true">
                                 <div className="modal-dialog modal-lg modal-dialog-centered">
                                     <div className="modal-content">
-                                        <div className="modal-header">
+                                        <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                             <h1 className="modal-title fs-5" id="showDiplomaModal_TKTHLabel">Thông tin văn bằng</h1>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>

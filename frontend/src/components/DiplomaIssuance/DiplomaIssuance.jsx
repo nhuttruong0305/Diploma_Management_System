@@ -294,7 +294,7 @@ export default function DiplomaIssuance(){
                                     <div className='mx-2'>
                                         <button 
                                             className='btn' 
-                                            style={{border: '1px solid black', width:'110px'}}
+                                            style={{ width:'110px', color: 'white', backgroundColor: 'grey'}}
                                             onClick={(e) => {
                                                 setInputSelectDiplomaIssuanceName(null);
                                                 setInputDiplomaIssuanceName('');

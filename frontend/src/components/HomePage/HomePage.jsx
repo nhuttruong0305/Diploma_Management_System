@@ -17,7 +17,7 @@ export default function HomePage() {
     //State dùng để chứa all tên(loại) văn bằng
     const allDiplomaName = useSelector((state) => state.diplomaName.diplomaNames?.allDiplomaName); //state lấy ra all diploma name
     const [optionDiplomaName, setOptionDiplomaName] = useState([]);
-    const [selectedDiplomaName, setSelectedDiplomaName] = useState();
+    const [selectedDiplomaName, setSelectedDiplomaName] = useState({value: '', label: ''});
     const handleChangeSelectedDiplomaName = (selectedOption) => {
         setSelectedDiplomaName(selectedOption);
     }
@@ -64,11 +64,27 @@ export default function HomePage() {
         setPage(value);
       };
 
+    const noti2 = useRef();
+    const noti3 = useRef();
+
     const handleSubmitSearch = async (e) => {
-        e.preventDefault();
-        if(selectedDiplomaName == undefined){
+        if(selectedDiplomaName.value == ""){
             noti.current.showToast();
+            return;
         }
+
+        if(user == null || user.position == "Student"){
+            if(diplomaNumber == ""){
+                noti2.current.showToast();
+                return;
+            }
+
+            if(numberInNote == ""){
+                noti3.current.showToast();
+                return;
+            }
+        } 
+        
         try{
             let result;
             if(user==null || user.position=="Student"){
@@ -85,14 +101,14 @@ export default function HomePage() {
 
     useEffect(()=>{
         if(page!=undefined && allDiplomaSearch!=undefined){
-            if(allDiplomaSearch?.length>3){
-                const numberOfPage = Math.ceil(allDiplomaSearch?.length/3);
-                const startElement = (page - 1) * 3;
+            if(allDiplomaSearch?.length>5){
+                const numberOfPage = Math.ceil(allDiplomaSearch?.length/5);
+                const startElement = (page - 1) * 5;
                 let endElement = 0;
                 if(page == numberOfPage){
                     endElement = allDiplomaSearch.length-1;
                 }else{
-                    endElement = page * 3-1;
+                    endElement = page * 5-1;
                 }
                                 
                 let result = [];
@@ -134,11 +150,17 @@ export default function HomePage() {
     //State chứa options của diplomaName được chọn khi xem chi tiết diploma
     const [optionsOfDiplomaName, setOptionsOfDiplomaName] = useState([]);
     
+    function handleDateToDMY(date){
+        const splitDate = date.split("-");
+        const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
+        return result;
+    }
+
     return (
         <>
             <Header />
             <div className="container" id='body-homepage'>
-                <form style={{backgroundColor: '#ffffff', borderRadius: '10px'}} onSubmit={(e)=>{handleSubmitSearch(e)}}>
+                <div style={{backgroundColor: '#ffffff', borderRadius: '10px'}}>
                     <div id='form-search-homepage'>
                         <div id='bg-orange-homepage'>
                             <h5 id='tittle-in-bg-orange-homepage'>
@@ -226,22 +248,43 @@ export default function HomePage() {
                             <div className="col-2 offset-md-2">
                             </div>
                             <div className="col-3">
-                                <button className='btn' type='submit' id='search-btn-homepage'><i className="fa-solid fa-magnifying-glass"></i> Tìm kiếm</button>
-                                <button className='btn btn-success ms-4' type='reset' ><i className="fa-solid fa-rotate"></i> Làm mới</button>
+                                <button 
+                                    className='btn' 
+                                    id='search-btn-homepage'
+                                    onClick={(e)=>{
+                                        handleSubmitSearch();
+                                    }}
+                                ><i className="fa-solid fa-magnifying-glass"></i> Tìm kiếm</button>
+                                <button 
+                                    className='btn btn-success ms-4' 
+                                    onClick={(e)=>{
+                                        setFullName("")
+                                        setDiplomaNumber("")
+                                        setNumberInNote("")
+                                    }}
+                                ><i className="fa-solid fa-rotate"></i> Làm mới</button>
                             </div>
                         </div>
                     </div>
-                </form>
-
+                </div>
                 <div className="row">
                     <div style={{ width: '100%', overflowY: 'hidden', overflowX: 'auto', marginTop: '20px' }}>
+                        <div>
+                            <div style={{backgroundColor: '#fed25c', width: '250px', paddingTop: '20px', paddingBottom: '20px', borderRadius: '10px', textAlign: 'center'}}>
+                                Có {allDiplomaSearch.length} kết quả được tìm thấy
+                            </div>
+                            <div className='triangle'></div>
+                        </div>
                     <table className='table table-striped table-hover table-bordered' style={{width: '1700px', border: '2px solid #fed25c', textAlign: 'center'}}>
                         <thead>
                             <tr>
                                 <th style={{backgroundColor: '#fed25c'}} scope="col">STT</th>
                                 <th style={{backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
                                 <th style={{backgroundColor: '#fed25c'}} scope="col">Họ tên</th>
+                                <th style={{backgroundColor: '#fed25c'}} scope="col">Giới tính</th>
                                 <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày sinh</th>
+                                <th style={{backgroundColor: '#fed25c'}} scope="col">Nơi sinh</th>
+                                <th style={{backgroundColor: '#fed25c'}} scope="col">CCCD</th>
                                 <th style={{backgroundColor: '#fed25c'}} scope="col">Số hiệu</th>
                                 <th style={{backgroundColor: '#fed25c'}} scope="col">Số vào sổ</th>
                                 <th style={{backgroundColor: '#fed25c'}} scope='col'></th>
@@ -256,12 +299,21 @@ export default function HomePage() {
                                         diploma_name = diplomaName.diploma_name_name;
                                     }
                                 })
+                                let gioi_tinh;
+                                if(currentValue.sex){
+                                    gioi_tinh = "Nam"
+                                }else{
+                                    gioi_tinh = "Nữ"
+                                }
                                 return(
                                     <tr key={index}>
                                         <th scope="row">{index+1}</th>        
                                         <td>{diploma_name}</td>
                                         <td>{currentValue.fullname}</td>
-                                        <td>{currentValue.dateofbirth}</td>
+                                        <td>{gioi_tinh}</td>
+                                        <td>{handleDateToDMY(currentValue.dateofbirth)}</td>
+                                        <td>{currentValue.address}</td>
+                                        <td>{currentValue.cccd}</td>
                                         <td>{currentValue.diploma_number}</td>
                                         <td>{currentValue.numbersIntoTheNotebook}</td>
                                         <td><i 
@@ -738,14 +790,12 @@ export default function HomePage() {
 
                     <div className='d-flex justify-content-center mt-3'>
                         <Stack spacing={2}>
-                            {/* <Typography className='text-center'>Trang: {page}</Typography> */}
                             <Pagination 
-                                count={Math.ceil(allDiplomaSearch?.length/3)}
+                                count={Math.ceil(allDiplomaSearch?.length/5)}
                                 variant="outlined"
                                 page={page}
                                 onChange={handleChange}
                                 color="info"
-                        
                                 />
                         </Stack>
                     </div>
@@ -756,6 +806,16 @@ export default function HomePage() {
                 message="Vui lòng chọn tên văn bằng"
                 type="warning"
                 ref={noti}
+            />
+            <Toast
+                message="Vui lòng nhập số hiệu"
+                type="warning"
+                ref={noti2}
+            />
+            <Toast
+                message="Vui lòng nhập số vào sổ"
+                type="warning"
+                ref={noti3}
             />
         </>
     );

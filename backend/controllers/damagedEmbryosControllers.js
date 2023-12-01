@@ -74,8 +74,6 @@ const damagedEmbryosControllers = {
 
                 }
             }
-            
-            console.log(finalResult.length);
             return res.status(200).json(finalResult);
         }catch(error){
             return res.status(500).json(error);

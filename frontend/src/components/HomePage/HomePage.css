@@ -36,4 +36,15 @@
 
 #search-btn-homepage{
     background-color: #1b95a2;
+    color: white;
+}
+
+.triangle{
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 30.7px solid #fed25c; 
+    transform: rotate(180deg);
+    margin-left: 20px;
 }

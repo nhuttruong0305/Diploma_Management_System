@@ -875,6 +875,10 @@ export default function RequestsForDiplomaDrafts(){
                                             </th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng phôi</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Người tạo</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày tạo</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Người duyệt</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày duyệt</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xóa</th>
@@ -897,28 +901,53 @@ export default function RequestsForDiplomaDrafts(){
                                                         optionsOfDiplomaName = element.options;
                                                     }
                                                 })
+
+                                                let nguoi_tao = '';
+                                                let nguoi_duyet = '';
+                                                allUserAccount?.forEach((user)=>{
+                                                    if(user.mssv_cb == currentValue.mscb){
+                                                        nguoi_tao = user.fullname;
+                                                    }
+                                                    if(user.mssv_cb == currentValue.mscb_approve){
+                                                        nguoi_duyet = user.fullname;
+                                                    }
+                                                })
                                                 return(
                                                     <tr style={{textAlign: 'center'}} key={index}>
                                                         <td scope="row">{`#${currentValue.embryoIssuanceRequest_id}`}</td>
                                                         <td>{diplomaName}</td>
                                                         <td>{handleDateToDMY(currentValue.examination)}</td>
                                                         <td>{currentValue.numberOfEmbryos}</td>
-                                                        <td style={{color:"red", fontWeight: 'bold'}}>
-                                                        <Tooltip
-                                                            // options
-                                                            theme='dark'
-                                                            html={(
-                                                                <div>
-                                                                  <strong>
-                                                                    {currentValue.comment}
-                                                                  </strong>
+                                                        <td>
+                                                            <Tooltip
+                                                                // options
+                                                                theme='dark'
+                                                                html={(
+                                                                    <div>
+                                                                    <strong>
+                                                                        {currentValue.comment}
+                                                                    </strong>
+                                                                    </div>
+                                                                )}
+                                                                arrow={true}
+                                                                position="top"
+                                                            >
+                                                                <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                    {currentValue.status}
                                                                 </div>
-                                                              )}
-                                                            arrow={true}
-                                                            position="top"
-                                                        >
-                                                            {currentValue.status}
-                                                        </Tooltip>
+                                                            </Tooltip>
+                                                        </td>
+                                                        <td>
+                                                            {nguoi_tao} / {currentValue.mscb}
+                                                        </td>
+                                                        <td>
+                                                            {handleDateToDMY(currentValue.time)}
+                                                        </td>
+                                                        <td>
+                                                            {currentValue.mscb_approve == "" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb_approve}`)}
+                                                        </td>
+                                                        <td>
+                                                            {currentValue.time_approve == "" ? ("") : (handleDateToDMY(currentValue.time_approve))}
                                                         </td>
                                                         <td>
                                                             {

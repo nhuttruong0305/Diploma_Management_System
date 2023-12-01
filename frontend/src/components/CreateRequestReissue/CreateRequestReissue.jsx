@@ -718,10 +718,11 @@ export default function CreateRequestReissue(){
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên loại phôi</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng tái cấp</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên cán bộ tạo yêu cầu</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Thời gian tạo</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Lý do</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Người tạo</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày tạo</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Người duyệt</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày duyệt</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số seri phôi tái cấp</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
@@ -735,6 +736,12 @@ export default function CreateRequestReissue(){
                                                 allDiplomaName?.forEach((diplomaName)=>{
                                                     if(currentValue.diploma_name_id == diplomaName.diploma_name_id){
                                                         ten_loai_phoi = diplomaName.diploma_name_name
+                                                    }
+                                                })
+                                                let nguoi_duyet = '';
+                                                allUserAccount?.forEach((user)=>{
+                                                    if(user.mssv_cb == currentValue.mscb_approve){
+                                                        nguoi_duyet = user.fullname;
                                                     }
                                                 })
                                                 return(
@@ -759,10 +766,16 @@ export default function CreateRequestReissue(){
                                                                 {currentValue.status}
                                                             </Tooltip>
                                                         </td>
-                                                        <td>{currentValue.fullname_create}</td>
-                                                        <td>{currentValue.mscb_create}</td>
-                                                        <td>{handleDateToDMY(currentValue.time_create)}</td>
                                                         <td>{currentValue.reason}</td>
+                                                        <td>{currentValue.fullname_create} / {currentValue.mscb_create}</td>
+                                                        <td>{handleDateToDMY(currentValue.time_create)}</td>
+                                                        <td>
+                                                            {currentValue.mscb_approve == "" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb_approve}`)}
+                                                        </td>
+                                                        <td>
+                                                            {currentValue.time_approve == "" ? ("") : (handleDateToDMY(currentValue.time_approve))}
+                                                        </td>
+
                                                         <td>{
                                                             <Tooltip    
                                                                 theme='dark'
