@@ -5,8 +5,9 @@ import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import bie from '../../assets/pngtree-pie-chart-illustration-image_1407432-removebg-preview.png'
 import Select from 'react-select';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import BarChart from '../BarChart/BarChart';
+import Toast from '../Toast/Toast';
 import BarChart_TK_SoPhoi from '../BarChart/BarChart_TK_SoPhoi';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -528,10 +529,18 @@ export default function Statistical() {
             }
         }
     }, [page_YCCL, allRequestReissue_YCCL])
-
+    const noti = useRef();
     //Hàm tìm YCCP theo nhiều DK
     const handleSearchYCCP_NHIEUDK = async () => {
         try {
+            if(startDate_YCCP != "" || endDate_YCCP != ""){
+                if(startDate_YCCP == "" || endDate_YCCP == ""){
+                    noti.current.showToast();
+                    return;
+                }
+            }
+
+
             if (searchRequestType.value == "Yêu cầu xin cấp mới phôi") {
                 const res = await axios.get(`http://localhost:8000/v1/embryo_issuance_request/search_YCCP_theo_nhieu_dk?management_unit_id=${selectedMU_YCCP.value}&diploma_name_id=${selectedDiplomaName_YCCP.value}&from=${startDate_YCCP}&to=${endDate_YCCP}&status=${selectedStatus_YCCP.value}`);
 
@@ -699,6 +708,14 @@ export default function Statistical() {
     //Hàm tìm phiếu xuất kho theo nhiều điều kiện
     const handleTimPhieuXKNhieuDk = async () => {
         try {
+
+            if(startDateDBill != "" || endDateDBill != ""){
+                if(startDateDBill == "" || endDateDBill == ""){
+                    noti.current.showToast();
+                    return;
+                }
+            }
+
             const res = await axios.get(`http://localhost:8000/v1/delivery_bill/tim_phieu_xk_theo_nhieu_dk?address_department=${muReceiveDBill.value}&fullname_of_consignee=${receiver}&embryo_type=${diplomaNameDBill.value}&from=${startDateDBill}&to=${endDateDBill}`);
 
             for (let i = 0; i < res.data.length; i++) {
@@ -1529,6 +1546,11 @@ export default function Statistical() {
                 </div>
             </div >
             <Footer />
+            <Toast
+                message="Vui lòng nhập đầy đủ ngày lọc"
+                type="warning"
+                ref={noti}
+            />
         </>
     )
 }

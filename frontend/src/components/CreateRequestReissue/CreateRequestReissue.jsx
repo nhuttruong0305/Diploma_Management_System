@@ -749,7 +749,7 @@ export default function CreateRequestReissue(){
                                                         <td>#{currentValue.requestForReissue_id}</td>
                                                         <td>{ten_loai_phoi}</td>
                                                         <td>{currentValue.numberOfEmbryos}</td>
-                                                        <td style={{color: 'red', fontWeight: 'bold'}}>
+                                                        <td>
                                                             <Tooltip
                                                                 // options
                                                                 theme='dark'
@@ -763,7 +763,9 @@ export default function CreateRequestReissue(){
                                                                 arrow={true}
                                                                 position="top"
                                                             >
-                                                                {currentValue.status}
+                                                                <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                    {currentValue.status}
+                                                                </div>
                                                             </Tooltip>
                                                         </td>
                                                         <td>{currentValue.reason}</td>

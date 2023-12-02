@@ -2,13 +2,14 @@ import './DiplomaStatistics.css'
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import Select from 'react-select';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import BarChart_TK_Diploma from '../BarChart/BarChart_TK_Diploma';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tooltip } from 'react-tippy';
+import Toast from '../Toast/Toast';
 import { getAllDiplomaName, getAllDiplomaType } from '../../redux/apiRequest';
 export default function DiplomaStatistics() {
     const dispatch = useDispatch();
@@ -307,10 +308,17 @@ export default function DiplomaStatistics() {
             }
         }
     }, [page, allVB])
-
+    const noti = useRef();
     //Hàm tìm kiếm tổng hợp văn bằng
     const TKTH_VB = async () => {
         try {
+            if(startDate_TKTH != "" || endDate_TKTH != ""){
+                if(startDate_TKTH == "" || endDate_TKTH == ""){
+                    noti.current.showToast();
+                    return;
+                }
+            }
+
             const res = await axios.get(`http://localhost:8000/v1/diploma/tkth_vb?fullname=${receiver_TKTH}&status=${status_TKTH.value}&diploma_number=${soHieu_TKTH}&numbersIntoTheNotebook=${soVaoSo_TKTH}&diploma_name_id=${diplomaName_TKTH.value}&diploma_issuance_id=${dcvb_TKTH.value}&from=${startDate_TKTH}&to=${endDate_TKTH}`);
             setAllVB(res.data);
 
@@ -564,7 +572,7 @@ export default function DiplomaStatistics() {
                                     placeholder='Chọn trạng thái'
                                     value={status_TKTH}
                                     options={[
-                                        { value: 'Tất cả trạng thái', label: 'Tất cả trạng thái' },
+                                        { value: '', label: 'Tất cả trạng thái' },
                                         { value: 'Chờ duyệt', label: 'Chờ duyệt' },
                                         { value: 'Đã duyệt', label: 'Đã duyệt' },
                                         { value: 'Không duyệt', label: 'Không duyệt' }
@@ -1015,6 +1023,11 @@ export default function DiplomaStatistics() {
                 </div>
             </div>
             <Footer />
+            <Toast
+                message="Vui lòng nhập đầy đủ ngày tìm kiếm"
+                type="warning"
+                ref={noti}
+            />
         </>
     )
 }

@@ -184,12 +184,12 @@ function App() {
       {
         path: '/diploma-diary',
         element: (
-          <ProtectedRouteSystemAdministrator
+          <ProtectedRouteCenterDirectorHeadOfDepartment
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
           >
             <DiplomaDiary/>
-          </ProtectedRouteSystemAdministrator>
+          </ProtectedRouteCenterDirectorHeadOfDepartment>
         )
       },
       {

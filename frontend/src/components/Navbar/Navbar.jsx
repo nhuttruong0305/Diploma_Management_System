@@ -202,13 +202,6 @@ export default function Navbar() {
                                         id='quan-ly-nguoi-dung'
                                     >Quản lý người dùng</Link>
                                 </li>
-                                <li className="nav-item nav-item-navbar">
-                                    <Link 
-                                        className="nav-link nav-link-navbar" 
-                                        to="/diploma-diary"
-                                        id='nhat-ky-van-bang'
-                                    >Nhật ký văn bằng</Link>
-                                </li>
                             </ul>
                         ) : role == 'Diploma importer' ? (
                             <ul className="navbar-nav">
@@ -259,6 +252,13 @@ export default function Navbar() {
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/diploma_statistics" id='thong-ke-van-bang'>Thống kê văn bằng</Link>
+                                </li>
+                                <li className="nav-item nav-item-navbar">
+                                    <Link 
+                                        className="nav-link nav-link-navbar" 
+                                        to="/diploma-diary"
+                                        id='nhat-ky-van-bang'
+                                    >Nhật ký văn bằng</Link>
                                 </li>
                             </ul>
                         ) : role == "Leader" ? (
