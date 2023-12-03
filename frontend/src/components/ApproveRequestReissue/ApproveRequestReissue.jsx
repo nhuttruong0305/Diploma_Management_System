@@ -17,6 +17,38 @@ export default function ApproveRequestReissue(){
     const user = useSelector((state) => state.auth.login?.currentUser);
     const allDiplomaName = useSelector((state) => state.diplomaName.diplomaNames?.allDiplomaName);
 
+    //Xử lý phần đếm count
+    const [count1, setCount1] = useState(0);
+    const [count2, setCount2] = useState(0);
+    const [count3, setCount3] = useState(0);
+
+    const processCount = async () => {
+        try{
+            const res = await axios.get(`http://localhost:8000/v1/request_for_reissue/get_all_request_for_reissue?requestForReissue_id=&status=`);
+
+            let resultCount1 = 0;
+            let resultCount2 = 0;
+            let resultCount3 = 0;
+
+            res.data.forEach((currentValue)=>{
+                if(currentValue.status == "Đã gửi yêu cầu"){
+                    resultCount1++;
+                }
+                if(currentValue.status != "Đã gửi yêu cầu" && currentValue.status != "Không duyệt" && currentValue.mscb_approve == user.mssv_cb){
+                    resultCount2++;
+                }
+                if(currentValue.status == "Không duyệt" && currentValue.mscb_approve == user.mssv_cb){
+                    resultCount3++;
+                }
+            })
+            setCount1(resultCount1)
+            setCount2(resultCount2)
+            setCount3(resultCount3)
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     //State chứa all user account
     const [allUserAccount, setAllUserAccount] = useState([]);
 
@@ -98,7 +130,8 @@ export default function ApproveRequestReissue(){
     useEffect(()=>{
         getAllManagementUnit();
         getAllDiplomaName(dispatch);
-        getAllUserAccount()
+        getAllUserAccount();
+        processCount();
     }, [])
 
     useEffect(()=>{
@@ -695,6 +728,57 @@ export default function ApproveRequestReissue(){
                                 />
                             </div>
                         </div>
+
+                        {/* Thêm 3 ô cho người dùng biết: còn bao nhiêu yc chưa xử lý, bạn đã duyệt bao nhiêu yc, bạn đã k duyệt bao nhiêu yêu cầu */}
+                        <div className="row p-4">
+                            <div className="col-4" style={{ padding: '10px'}}>
+                                <div style={{backgroundColor: '#21acdd', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                    <div className="row" style={{padding: '10px'}}>
+                                        <div className="col-7">
+                                            <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count1}</div>
+                                            <div style={{fontSize: '20px', fontWeight: 'bold'}}>Yêu cầu chưa xử lý</div>
+                                        </div>
+                                        <div className="col-5">
+                                            <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                <i className="fa-brands fa-usps"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-4" style={{ padding: '10px'}}>
+                                <div style={{backgroundColor: '#63c5de', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                    <div className="row" style={{padding: '10px'}}>
+                                        <div className="col-7">
+                                            <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count2}</div>
+                                            <div style={{fontSize: '20px', fontWeight: 'bold'}}>Yêu cầu bạn đã duyệt</div>
+                                        </div>
+                                        <div className="col-5">
+                                            <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                <i className="fa-solid fa-check-double"></i>
+                                            </div>
+                                        </div>
+                                    </div>  
+                                </div>
+                            </div>
+                            <div className="col-4" style={{ padding: '10px'}}>
+                                <div style={{backgroundColor: '#fd6b6b', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                    <div className="row" style={{padding: '10px'}}>
+                                        <div className="col-7">
+                                            <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count3}</div>
+                                            <div style={{fontSize: '20px', fontWeight: 'bold'}}>Yêu cầu bạn không duyệt</div>
+                                        </div>
+                                        <div className="col-5">
+                                            <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                <i className="fa-solid fa-ban"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div className='title-list-yc-xin-cap-phoi'>
                             DANH SÁCH CÁC YÊU CẦU XIN CẤP LẠI PHÔI
                         </div>
@@ -708,9 +792,14 @@ export default function ApproveRequestReissue(){
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên loại phôi</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng tái cấp</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên cán bộ tạo yêu cầu</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Người tạo yêu cầu</th>
+                                            
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Thời gian tạo</th>
+
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Người duyệt</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Thời gian duyệt</th>
+
+
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Lý do</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số seri phôi tái cấp</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
@@ -727,12 +816,18 @@ export default function ApproveRequestReissue(){
                                                         ten_loai_phoi = diplomaName.diploma_name_name;
                                                     }
                                                 })
+                                                let nguoi_duyet = '';
+                                                allUserAccount?.forEach((user)=>{
+                                                    if(user.mssv_cb == currentValue.mscb_approve){
+                                                        nguoi_duyet = user.fullname;
+                                                    }
+                                                })
                                                 return(
                                                     <tr key={index}>
                                                         <td>#{currentValue.requestForReissue_id}</td>
                                                         <td>{ten_loai_phoi}</td>
                                                         <td>{currentValue.numberOfEmbryos}</td>
-                                                        <td style={{fontWeight: 'bold', color: 'red'}}>
+                                                        <td>
                                                             <Tooltip
                                                                 // options
                                                                 theme='dark'
@@ -746,12 +841,20 @@ export default function ApproveRequestReissue(){
                                                                 arrow={true}
                                                                 position="top"
                                                             >
-                                                                {currentValue.status}
+                                                                <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                    {currentValue.status}
+                                                                </div>
                                                             </Tooltip>
                                                         </td>
-                                                        <td>{currentValue.fullname_create}</td>
-                                                        <td>{currentValue.mscb_create}</td>
+                                                        <td>{currentValue.fullname_create} / {currentValue.mscb_create}</td>
+                                                        
                                                         <td>{handleDateToDMY(currentValue.time_create)}</td>
+                                                        <td>
+                                                            {currentValue.mscb_approve == "" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb_approve}`)}
+                                                        </td>
+                                                        <td>
+                                                            {currentValue.time_approve == "" ? ("") : (handleDateToDMY(currentValue.time_approve))}
+                                                        </td>
                                                         <td>{currentValue.reason}</td>
                                                         <td>{
                                                             <Tooltip    

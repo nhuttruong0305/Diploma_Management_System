@@ -533,6 +533,7 @@ export default function Statistical() {
     //Hàm tìm YCCP theo nhiều DK
     const handleSearchYCCP_NHIEUDK = async () => {
         try {
+            setPage(1);
             if(startDate_YCCP != "" || endDate_YCCP != ""){
                 if(startDate_YCCP == "" || endDate_YCCP == ""){
                     noti.current.showToast();
@@ -564,6 +565,7 @@ export default function Statistical() {
                     setAllRequestIssuance_YCCP(res.data);
                 }
             } else if (searchRequestType.value == "Yêu cầu cấp lại phôi") {
+                setPage_YCCL(1);
                 const res = await axios.get(`http://localhost:8000/v1/request_for_reissue/tim_kiem_yc_cap_lai_theo_nhieu_dk?management_unit_id=${selectedMU_YCCP.value}&diploma_name_id=${selectedDiplomaName_YCCP.value}&status=${selectedStatus_YCCP.value}&from=${startDate_YCCP}&to=${endDate_YCCP}`);
                 for (let i = 0; i < res.data.length; i++) {
                     for (let j = 0; j < allUserAccount.length; j++) {
@@ -708,7 +710,7 @@ export default function Statistical() {
     //Hàm tìm phiếu xuất kho theo nhiều điều kiện
     const handleTimPhieuXKNhieuDk = async () => {
         try {
-
+            setPage_XK(1)
             if(startDateDBill != "" || endDateDBill != ""){
                 if(startDateDBill == "" || endDateDBill == ""){
                     noti.current.showToast();
@@ -1053,11 +1055,13 @@ export default function Statistical() {
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Mã phiếu</th>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Đơn vị yêu cầu</th>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Tên loại phôi</th>
-                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">Đợt thi/Đợt cấp văn bằng (D/M/Y)</th>
+                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">Đợt thi/Đợt cấp bằng (D/M/Y)</th>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Số lượng phôi</th>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Cán bộ tạo yêu cầu</th>
-                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">MSCB</th>
-                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">Thời gian tạo</th>
+                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">Ngày tạo</th>
+                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">Người duyệt</th>
+                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">Ngày duyệt</th>
+
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Trạng thái</th>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Xem chi tiết</th>
                                                 </tr>
@@ -1085,16 +1089,28 @@ export default function Statistical() {
                                                                 })
                                                             }
                                                         })
+                                                        let nguoi_duyet = '';
+                                                        allUserAccount.forEach((user)=>{
+                                                            if(currentValue.mscb_approve == user.mssv_cb){
+                                                                nguoi_duyet = user.fullname
+                                                            }
+                                                        })
                                                         return (
                                                             <tr key={index}>
                                                                 <td>#{currentValue.embryoIssuanceRequest_id}</td>
-                                                                <td>{don_vi_yc}</td>
+                                                                <td style={{width: '250px'}}>{don_vi_yc}</td>
                                                                 <td style={{ width: '300px' }}>{ten_loai_phoi}</td>
-                                                                <td>{handleDateToDMY(currentValue.examination)}</td>
-                                                                <td>{currentValue.numberOfEmbryos}</td>
-                                                                <td>{currentValue.fullname_create}</td>
-                                                                <td>{currentValue.mscb}</td>
+                                                                <td style={{width: '200px'}}>{handleDateToDMY(currentValue.examination)}</td>
+                                                                <td style={{width: '150px'}}>{currentValue.numberOfEmbryos}</td>
+                                                                <td>
+                                                                    {currentValue.fullname_create} / {currentValue.mscb}</td>
                                                                 <td>{handleDateToDMY(currentValue.time)}</td>
+                                                                <td>
+                                                                    {currentValue.mscb_approve == "" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb_approve}`)}
+                                                                </td>
+                                                                <td>
+                                                                    {currentValue.time_approve == "" ? ("") : (handleDateToDMY(currentValue.time_approve))}
+                                                                </td>
                                                                 <td>
                                                                     <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
                                                                         {currentValue.status}
@@ -1154,7 +1170,7 @@ export default function Statistical() {
                                 ) : (
                                     <>
                                         {/* Table yêu cầu cấp lại */}
-                                        <table className='table table-striped table-hover table-bordered' style={{ width: '1900px', border: '2px solid #fed25c', textAlign: 'center' }} >
+                                        <table className='table table-striped table-hover table-bordered' style={{ width: '2100px', border: '2px solid #fed25c', textAlign: 'center' }} >
                                             <thead>
                                                 <tr>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Mã phiếu</th>
@@ -1162,8 +1178,11 @@ export default function Statistical() {
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Tên loại phôi</th>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Số lượng phôi</th>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Cán bộ tạo yêu cầu</th>
-                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">MSCB</th>
-                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">Thời gian tạo</th>
+                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">Ngày tạo</th>
+                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">Người duyệt</th>
+                                                    <th style={{ backgroundColor: '#fed25c' }} scope="col">Ngày duyệt</th>
+
+
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Lý do tái cấp</th>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Seri tái cấp</th>
                                                     <th style={{ backgroundColor: '#fed25c' }} scope="col">Trạng thái</th>
@@ -1186,15 +1205,27 @@ export default function Statistical() {
 
                                                             }
                                                         })
+                                                        let nguoi_duyet = '';
+                                                        allUserAccount?.forEach((user)=>{
+                                                            if(currentValue.mscb_approve == user.mssv_cb){
+                                                                nguoi_duyet = user.fullname;
+                                                            }
+                                                        })
                                                         return (
                                                             <tr key={index}>
                                                                 <td>#{currentValue.requestForReissue_id}</td>
-                                                                <td>{don_vi_yc}</td>
+                                                                <td style={{width: '250px'}}>{don_vi_yc}</td>
                                                                 <td style={{ width: '300px' }}>{ten_loai_phoi}</td>
-                                                                <td>{currentValue.numberOfEmbryos}</td>
-                                                                <td>{currentValue.fullname_create}</td>
-                                                                <td>{currentValue.mscb_create}</td>
+                                                                <td style={{width: '130px'}}>{currentValue.numberOfEmbryos}</td>
+                                                                <td>{currentValue.fullname_create} / {currentValue.mscb_create}</td>
+                                                                
                                                                 <td>{handleDateToDMY(currentValue.time_create)}</td>
+                                                                <td>
+                                                                    {currentValue.mscb_approve == "" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb_approve}`)}
+                                                                </td>
+                                                                <td>
+                                                                    {currentValue.time_approve == "" ? ("") : (handleDateToDMY(currentValue.time_approve))}
+                                                                </td>
                                                                 <td>{currentValue.reason}</td>
                                                                 <td>
                                                                     {
@@ -1396,7 +1427,6 @@ export default function Statistical() {
                                     <tr>
                                         <th style={{ backgroundColor: '#fed25c' }} scope="col">Mã phiếu</th>
                                         <th style={{ backgroundColor: '#fed25c' }} scope="col">Người tạo</th>
-                                        <th style={{ backgroundColor: '#fed25c' }} scope="col">MSCB</th>
                                         <th style={{ backgroundColor: '#fed25c' }} scope="col">Ngày tạo phiếu (D/M/Y)</th>
                                         <th style={{ backgroundColor: '#fed25c' }} scope="col">Tên người nhận</th>
                                         <th style={{ backgroundColor: '#fed25c' }} scope="col">Địa chỉ/bộ phận nhận</th>
@@ -1428,8 +1458,7 @@ export default function Statistical() {
                                             return (
                                                 <tr key={index}>
                                                     <td>#{currentValue.delivery_bill}</td>
-                                                    <td>{currentValue.fullname_create}</td>
-                                                    <td>{currentValue.mscb}</td>
+                                                    <td>{currentValue.fullname_create} / {currentValue.mscb}</td>
                                                     <td>{handleDateToDMY(currentValue.delivery_bill_creation_time)}</td>
                                                     <td>{currentValue.fullname_of_consignee}</td>
                                                     <td>{bo_phan_nhan}</td>

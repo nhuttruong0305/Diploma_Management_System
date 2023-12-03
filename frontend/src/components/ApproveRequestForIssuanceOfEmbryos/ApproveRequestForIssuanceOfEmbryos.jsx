@@ -95,7 +95,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     //State lưu options của select có id = select-diploma-name-ARFIOE
     const [optionsSelectDiplomaNameARFIOE, setOptionsSelectDiplomaNameARFIOE] = useState([]);
     //State lưu giá trị của select có id = select-diploma-name-ARFIOE
-    const [selectedSelectDiplomaNameARFIOE, setSelectedSelectDiplomaNameARFIOE] = useState({value:"", label:"Tất cả tên văn bằng"});
+    const [selectedSelectDiplomaNameARFIOE, setSelectedSelectDiplomaNameARFIOE] = useState({value:"", label:"Tất cả loại phôi"});
     const handleChangeSelectDiplomaNameARFIOE = (selectedOption) => {
         setSelectedSelectDiplomaNameARFIOE(selectedOption);
     }
@@ -113,14 +113,14 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     }
 
     useEffect(()=>{
-        setSelectedSelectDiplomaNameARFIOE({value:"", label:"Tất cả tên văn bằng"});
+        setSelectedSelectDiplomaNameARFIOE({value:"", label:"Tất cả loại phôi"});
         if(selectedMUARFIOE != ""){
             getAllDiplomaNameByMU(selectedMUARFIOE.value);
         }
     }, [selectedMUARFIOE])
 
     useEffect(()=>{
-        let resultOption = [{value:"", label:"Tất cả tên văn bằng"}];
+        let resultOption = [{value:"", label:"Tất cả loại phôi"}];
         allDiplomaNameByMU?.forEach((currentValue) => {
             const newOption = {value: currentValue.diploma_name_id, label: currentValue.diploma_name_name};
             resultOption = [...resultOption, newOption];
@@ -130,10 +130,36 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
     
     //State chứa all yêu cầu xin cấp phôi trong db
     const [allRequestForIssuanceOfEmbryos, setAllRequestForIssuanceOfEmbryos] = useState([]);
+
+    //Xử lý phần đếm count
+    const [count1, setCount1] = useState(0);
+    const [count2, setCount2] = useState(0);
+    const [count3, setCount3] = useState(0);
+
     //Hàm call api lấy all yêu cầu cấp phôi trong db
     const getAllRequestForIssuanceOfEmbryos = async () => {
         try{
             const result = await axios.get("http://localhost:8000/v1/embryo_issuance_request/get_all_yccp");
+            
+            let resultCount1 = 0;
+            let resultCount2 = 0;
+            let resultCount3 = 0;
+
+            result.data.forEach((currentValue)=>{
+                if(currentValue.status == "Đã gửi yêu cầu"){
+                    resultCount1++;
+                }
+                if(currentValue.status != "Đã gửi yêu cầu" && currentValue.status != "Không duyệt" && currentValue.mscb_approve == user.mssv_cb){
+                    resultCount2++;
+                }
+                if(currentValue.status == "Không duyệt" && currentValue.mscb_approve == user.mssv_cb){
+                    resultCount3++;
+                }
+            })
+            setCount1(resultCount1);
+            setCount2(resultCount2);
+            setCount3(resultCount3);
+            
             setAllRequestForIssuanceOfEmbryos(result.data);
             setAllRequestForIssuanceOfEmbryosShow(result.data);
         }catch(error){
@@ -772,7 +798,7 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                 <div className="col-md-6">
                                     <Select
                                         id='select-diploma-name-ARFIOE'
-                                        placeholder="Chọn tên văn bằng"
+                                        placeholder="Chọn tên loại phôi"
                                         value={selectedSelectDiplomaNameARFIOE}
                                         onChange={handleChangeSelectDiplomaNameARFIOE}
                                         options={optionsSelectDiplomaNameARFIOE}
@@ -808,20 +834,70 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                     />
                                 </div>
                             </div>
+                            {/* Thêm 3 ô cho người dùng biết: còn bao nhiêu yc chưa xử lý, bạn đã duyệt bao nhiêu yc, bạn đã k duyệt bao nhiêu yêu cầu */}
+                            <div className="row p-4">
+                                <div className="col-4" style={{ padding: '10px'}}>
+                                    <div style={{backgroundColor: '#21acdd', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                        <div className="row" style={{padding: '10px'}}>
+                                            <div className="col-7">
+                                                <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count1}</div>
+                                                <div style={{fontSize: '20px', fontWeight: 'bold'}}>Yêu cầu chưa xử lý</div>
+                                            </div>
+                                            <div className="col-5">
+                                                <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                    <i className="fa-brands fa-usps"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-4" style={{ padding: '10px'}}>
+                                    <div style={{backgroundColor: '#63c5de', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                        <div className="row" style={{padding: '10px'}}>
+                                            <div className="col-7">
+                                                <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count2}</div>
+                                                <div style={{fontSize: '20px', fontWeight: 'bold'}}>Yêu cầu bạn đã duyệt</div>
+                                            </div>
+                                            <div className="col-5">
+                                                <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                    <i className="fa-solid fa-check-double"></i>
+                                                </div>
+                                            </div>
+                                        </div>  
+                                    </div>
+                                </div>
+                                <div className="col-4" style={{ padding: '10px'}}>
+                                    <div style={{backgroundColor: '#fd6b6b', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                        <div className="row" style={{padding: '10px'}}>
+                                            <div className="col-7">
+                                                <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count3}</div>
+                                                <div style={{fontSize: '20px', fontWeight: 'bold'}}>Yêu cầu bạn không duyệt</div>
+                                            </div>
+                                            <div className="col-5">
+                                                <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                    <i className="fa-solid fa-ban"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div className='title-list-yc-xin-cap-phoi'>
                                 DANH SÁCH CÁC YÊU CẦU XIN CẤP PHÔI
                             </div>
                             <div className="row p-5">
                                 <div id='contain-yc-xin-cap-phoi-ARFIOE'>
-                                    <table className='table table-striped table-hover table-bordered' style={{width: '1700px', border: '2px solid #fed25c'}}>
+                                    <table className='table table-striped table-hover table-bordered' style={{width: '2200px', border: '2px solid #fed25c'}}>
                                         <thead>
                                             <tr>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>
-                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Loại phôi</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Đợt thi/Đợt cấp văn bằng (D/M/Y)</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng phôi</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Cán bộ tạo yêu cầu</th>
-                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày tạo</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Người duyệt</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày duyệt</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
@@ -850,9 +926,13 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
 
                                                     //Lấy ra tên cán bộ tạo yêu cầu
                                                     let ten_can_bo_tao_yc = '';
+                                                    let nguoi_duyet = "";
                                                     allUserAccount?.forEach((user) => {
                                                         if(user.mssv_cb == currentValue.mscb){
                                                             ten_can_bo_tao_yc = user.fullname;
+                                                        }
+                                                        if(user.mssv_cb == currentValue.mscb_approve){
+                                                            nguoi_duyet = user.fullname;
                                                         }
                                                     })
 
@@ -862,24 +942,27 @@ export default function ApproveRequestForIssuanceOfEmbryos(){
                                                             <td>{ten_van_bang}</td>
                                                             <td>{handleDateToDMY(currentValue.examination)}</td>
                                                             <td>{currentValue.numberOfEmbryos}</td>
-                                                            <td>{ten_can_bo_tao_yc}</td>
-                                                            <td>{currentValue.mscb}</td>
-
-                                                            <td style={{color:"red", fontWeight: 'bold'}}>
+                                                            <td>{ten_can_bo_tao_yc} / {currentValue.mscb}</td>
+                                                            <td>{handleDateToDMY(currentValue.time)}</td>
+                                                            <td>{currentValue.status == "Đã gửi yêu cầu" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb_approve}`)}</td>
+                                                            <td>{currentValue.time_approve == "" ? ("") : (handleDateToDMY(currentValue.time_approve))}</td>
+                                                            <td >
                                                                 <Tooltip
                                                                     // options
                                                                     theme='dark'
                                                                     html={(
                                                                         <div>
-                                                                        <strong>
-                                                                            {currentValue.comment}
-                                                                        </strong>
+                                                                            <strong>
+                                                                                {currentValue.comment}
+                                                                            </strong>
                                                                         </div>
                                                                     )}
                                                                     arrow={true}
                                                                     position="top"
                                                                 >
-                                                                    {currentValue.status}
+                                                                    <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                        {currentValue.status}
+                                                                    </div>
                                                                 </Tooltip>
                                                             </td>
                                                             <td>
