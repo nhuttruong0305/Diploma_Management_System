@@ -127,9 +127,13 @@ export default function CreateRequestReissue(){
     const noti7 = useRef();
 
     const handleDateToDMY = (date) => {
-        let splitDate = date.split("-");
-        const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
-        return result;
+        if(date == undefined){
+            return ""
+        }else{
+            let splitDate = date.split("-");
+            const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
+            return result;
+        }
     }
 
     const handleSeri = (seriNumber) => {
@@ -496,6 +500,8 @@ export default function CreateRequestReissue(){
         }
     }
     
+    //Nhật ký nhận phôi
+    const [embryoReceiptDiary, setEmbryoReceiptDiary] = useState({});
     
     return(
         <>
@@ -726,6 +732,7 @@ export default function CreateRequestReissue(){
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số seri phôi tái cấp</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Nhật ký nhận phôi</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xóa</th>
                                         </tr>
                                     </thead>
@@ -739,9 +746,13 @@ export default function CreateRequestReissue(){
                                                     }
                                                 })
                                                 let nguoi_duyet = '';
+                                                let nguoi_nhan = ''
                                                 allUserAccount?.forEach((user)=>{
                                                     if(user.mssv_cb == currentValue.mscb_approve){
                                                         nguoi_duyet = user.fullname;
+                                                    }
+                                                    if(user.mssv_cb == currentValue.mscb_diary_creator){
+                                                        nguoi_nhan = user.fullname;
                                                     }
                                                 })
                                                 return(
@@ -871,6 +882,31 @@ export default function CreateRequestReissue(){
                                                         </td>
                                                         <td>
                                                             {
+                                                                //nút xem nhật ký nhận phôi
+                                                                currentValue.status == "Đã nhận phôi" ? (
+                                                                    <i 
+                                                                        className="fa-solid fa-book"
+                                                                        style={{ backgroundColor: "#1fb5ed", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                        data-bs-toggle="modal" data-bs-target="#modalDiaryReissue"
+                                                                        onClick={(e)=>{
+                                                                            setEmbryoReceiptDiary({
+                                                                                nguoi_nhan: nguoi_nhan,
+                                                                                embryo_receipt_diary: currentValue.embryo_receipt_diary,
+                                                                                mscb_diary_creator: currentValue.mscb_diary_creator,
+                                                                                time_diary_creator: currentValue.time_diary_creator
+                                                                            })
+                                                                        }}
+                                                                    ></i>
+                                                                ) : (
+                                                                    <i 
+                                                                        className="fa-solid fa-book"
+                                                                        style={{ backgroundColor: "grey", width: '32px', padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                    ></i>
+                                                                )
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            {
                                                                 //nút xóa yêu cầu
                                                                 currentValue.status == "Đã gửi yêu cầu" ? (
                                                                     <i 
@@ -896,6 +932,47 @@ export default function CreateRequestReissue(){
                                     </tbody>
                                 </table>
                             </div>
+                            
+                            {/* Modal nhật ký nhận phôi */}
+                            <div className="modal fade" id="modalDiaryReissue" tabindex="-1" aria-labelledby="modalDiaryReissueLabel" aria-hidden="true">
+                                <div className="modal-dialog modal-dialog-centered">
+                                    <div className="modal-content">
+                                    <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
+                                        <h1 className="modal-title fs-5" id="modalDiaryReissueLabel">Nhật ký nhận phôi</h1>
+                                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div className="modal-body">
+                                        <div className="row">
+                                            <div className="col-9">
+                                                <div className="form-floating">
+                                                    <textarea 
+                                                        className="form-control" 
+                                                        value={embryoReceiptDiary.embryo_receipt_diary}
+                                                        onChange={(e)=>{
+                                                            setEmbryoReceiptDiary(e.target.value);
+                                                        }}
+                                                        disabled
+                                                        placeholder="Leave a comment here" 
+                                                        id="diaryReceiveReissueTextarea" style={{height: "100px"}}></textarea>
+                                                    <label htmlFor="diaryReceiveReissueTextarea"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-3">
+                                            <span style={{fontStyle: 'italic', marginRight: '13px'}}>Người nhận</span><span style={{fontWeight: 'bold', border: '2px solid grey', padding: '5px', borderRadius: '5px'}}>{embryoReceiptDiary.nguoi_nhan} / {embryoReceiptDiary.mscb_diary_creator}</span>
+                                        </div>
+                                        <div className="mt-3">
+                                            <span style={{fontStyle: 'italic', marginRight: '20px'}}>Ngày nhận</span><span style={{fontWeight: 'bold', border: '2px solid grey', padding: '5px 14px 5px 5px', borderRadius: '5px'}}>{handleDateToDMY(embryoReceiptDiary.time_diary_creator)}</span>
+                                        </div>
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
 
                             {/* Modal xóa yc xin cấp lại phôi */}
                             <div className="modal fade" id="deleteRequestReissue" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="deleteRequestReissueLabel" aria-hidden="true">

@@ -311,6 +311,7 @@ export default function DiplomaStatistics() {
     const noti = useRef();
     //Hàm tìm kiếm tổng hợp văn bằng
     const TKTH_VB = async () => {
+        setPage(1);
         try {
             if(startDate_TKTH != "" || endDate_TKTH != ""){
                 if(startDate_TKTH == "" || endDate_TKTH == ""){
