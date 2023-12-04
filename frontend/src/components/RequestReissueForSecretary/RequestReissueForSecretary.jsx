@@ -552,8 +552,7 @@ export default function RequestReissueForSecretary(){
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng tái cấp</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên cán bộ tạo yêu cầu</th>
-                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
-                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Thời gian tạo</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày tạo</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Lý do</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số seri tái cấp</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
@@ -578,7 +577,7 @@ export default function RequestReissueForSecretary(){
                                                             <td>#{currentValue.requestForReissue_id}</td>
                                                             <td>{ten_loai_phoi}</td>
                                                             <td>{currentValue.numberOfEmbryos}</td>
-                                                            <td style={{color:"red", fontWeight: 'bold'}}>
+                                                            <td>
                                                                 <Tooltip    
                                                                     // options
                                                                     theme='dark'
@@ -592,11 +591,12 @@ export default function RequestReissueForSecretary(){
                                                                     arrow={true}
                                                                     position="top"
                                                                 >
-                                                                    {currentValue.status}
+                                                                    <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                        {currentValue.status}
+                                                                    </div>
                                                                 </Tooltip>
                                                             </td>
-                                                            <td>{currentValue.fullname_create}</td>
-                                                            <td>{currentValue.mscb_create}</td>
+                                                            <td>{currentValue.fullname_create} / {currentValue.mscb_create}</td>
                                                             <td>{handleDateToDMY(currentValue.time_create)}</td>
                                                             <td>{currentValue.reason}</td>
                                                             <td>{

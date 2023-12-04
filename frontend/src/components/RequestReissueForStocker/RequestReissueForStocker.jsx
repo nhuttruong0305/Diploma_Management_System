@@ -102,7 +102,35 @@ export default function RequestReissueForStocker(){
         getAllManagementUnit();
         getAllDiplomaName(dispatch);
         getAllUserAccount()
+        processCount()
     }, [])
+
+    //Xử lý count
+    const [count1, setCount1] = useState(0);
+    const [count2, setCount2] = useState(0);
+
+    const processCount = async () =>{
+        try {
+            const res = await axios.get(`http://localhost:8000/v1/request_for_reissue/get_all_request_for_reissue?requestForReissue_id=&status=`);
+            
+            let resultCount1 = 0;
+            let resultCount2 = 0;
+
+            res.data.forEach((currentValue) => {
+                if(currentValue.status != "Đã gửi yêu cầu" && currentValue.status != "Đã duyệt yêu cầu" && currentValue.status != "Không duyệt"){
+                    if(currentValue.status == "Đã gửi thủ kho"){
+                        resultCount1++;
+                    }else{
+                        resultCount2++;
+                    }
+                }
+            })
+            setCount1(resultCount1)
+            setCount2(resultCount2)
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(()=>{
         let resultOption = [{value:"", label:"Tất cả đơn vị quản lý"}];
@@ -710,7 +738,39 @@ export default function RequestReissueForStocker(){
                                 />
                             </div>
                         </div>
-
+                        {/* Thêm 2 ô cho người dùng biết*/}
+                        <div className="row p-4">
+                                <div className="col-4 offset-2" style={{ padding: '10px'}}>
+                                    <div style={{backgroundColor: '#21acdd', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                        <div className="row" style={{padding: '10px'}}>
+                                            <div className="col-7">
+                                                <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count1}</div>
+                                                <div style={{fontSize: '20px', fontWeight: 'bold'}}>Yêu cầu chưa xử lý</div>
+                                            </div>
+                                            <div className="col-5">
+                                                <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                    <i className="fa-brands fa-usps"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-4" style={{ padding: '10px'}}>
+                                    <div style={{backgroundColor: '#63c5de', height: '130px', borderRadius: '5px', color: 'white'}}>
+                                        <div className="row" style={{padding: '10px'}}>
+                                            <div className="col-7">
+                                                <div style={{fontSize: '30px', fontWeight: 'bold'}}>{count2}</div>
+                                                <div style={{fontSize: '20px', fontWeight: 'bold'}}>Yêu cầu đã in phôi</div>
+                                            </div>
+                                            <div className="col-5">
+                                                <div style={{marginTop: '20px', fontSize: '60px', textAlign: 'center'}}>
+                                                    <i className="fa-solid fa-check-double"></i>
+                                                </div>
+                                            </div>
+                                        </div>  
+                                    </div>
+                                </div>
+                            </div> 
                         <div className="row mt-3">
                             <p className='title-list-yc-xin-cap-phoi'>DANH SÁCH CÁC YÊU CẦU XIN CẤP LẠI PHÔI CẦN XỬ LÝ</p>
                         </div>
@@ -725,8 +785,9 @@ export default function RequestReissueForStocker(){
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng tái cấp</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên cán bộ tạo yêu cầu</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
-                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Thời gian tạo</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày tạo</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Người duyệt</th>
+                                            <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày duyệt</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Lý do</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số seri tái cấp</th>
                                             <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
@@ -752,12 +813,18 @@ export default function RequestReissueForStocker(){
                                                         don_vi_quan_ly = management_unit.management_unit_name;
                                                     }
                                                 })
+                                                let nguoi_duyet = '';
+                                                allUserAccount.forEach((user)=>{
+                                                    if(user.mssv_cb == currentValue.mscb_approve){
+                                                        nguoi_duyet = user.fullname;
+                                                    }
+                                                })
                                                 return(
                                                     <tr key={index}>
                                                         <td>#{currentValue.requestForReissue_id}</td>
                                                         <td>{ten_loai_phoi}</td>
                                                         <td>{currentValue.numberOfEmbryos}</td>
-                                                        <td style={{color:"red", fontWeight: 'bold'}}>
+                                                        <td>
                                                             <Tooltip    
                                                                 // options
                                                                 theme='dark'
@@ -771,12 +838,19 @@ export default function RequestReissueForStocker(){
                                                                 arrow={true}
                                                                 position="top"
                                                             >
-                                                                {currentValue.status}
+                                                                <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                    {currentValue.status}
+                                                                </div>
                                                             </Tooltip>
                                                         </td>
-                                                        <td>{currentValue.fullname_create}</td>
-                                                        <td>{currentValue.mscb_create}</td>
+                                                        <td>{currentValue.fullname_create} / {currentValue.mscb_create}</td>
                                                         <td>{handleDateToDMY(currentValue.time_create)}</td>
+                                                        <td>
+                                                            {currentValue.mscb_approve == "" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb_approve}`)}
+                                                        </td>
+                                                        <td>
+                                                            {handleDateToDMY(currentValue.time_approve)}
+                                                        </td>
                                                         <td>{currentValue.reason}</td>
                                                         <td>{
                                                             <Tooltip    

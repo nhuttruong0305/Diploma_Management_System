@@ -90,7 +90,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
     //State lưu các tên văn bằng theo đơn vị quản lý được chọn tại select có id = select-MU-MRFEIFS
     const [allDiplomaNameByMU, setAllDiplomaNameByMU] = useState([]);
     const [optionsOfselectDiplomaNameMRFEIFS, setOptionsOfselectDiplomaNameMRFEIFS] = useState([]);
-    const [selectedSelectDiplomaNameMRFEIFS, setSelectedSelectDiplomaNameMRFEIFS] = useState({value:'', label: "Tất cả tên văn bằng"});
+    const [selectedSelectDiplomaNameMRFEIFS, setSelectedSelectDiplomaNameMRFEIFS] = useState({value:'', label: "Tất cả loại phôi"});
     const handleChangeSelectDiplomaNameMRFEIFS = (selectedOption) => {
         setSelectedSelectDiplomaNameMRFEIFS(selectedOption)
     }
@@ -112,7 +112,7 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
     }, [selectedSelectMU_MRFEIFS])    
     
     useEffect(()=>{
-        let resultOption = [{value: "", label: "Tất cả tên văn bằng"}];
+        let resultOption = [{value: "", label: "Tất cả loại phôi"}];
         allDiplomaNameByMU?.forEach((currentValue)=>{
             const newOption = {value: currentValue.diploma_name_id, label: currentValue.diploma_name_name}
             resultOption = [...resultOption, newOption]
@@ -637,11 +637,11 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                             <thead>
                                                 <tr>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>
-                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên loại phôi</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng phôi</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Cán bộ tạo yêu cầu</th>
-                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">MSCB</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày tạo</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">
@@ -690,9 +690,9 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                                 <td>{ten_van_bang}</td>
                                                                 <td>{handleDateToDMY(currentValue.examination)}</td>
                                                                 <td>{currentValue.numberOfEmbryos}</td>
-                                                                <td>{ten_can_bo_tao_yc}</td>
-                                                                <td>{currentValue.mscb}</td>
-                                                                <td style={{color:"red", fontWeight: 'bold'}}>
+                                                                <td>{ten_can_bo_tao_yc} / {currentValue.mscb}</td>
+                                                                <td>{handleDateToDMY(currentValue.time)}</td>
+                                                                <td>
                                                                     <Tooltip    
                                                                         // options
                                                                         theme='dark'
@@ -706,7 +706,9 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                                         arrow={true}
                                                                         position="top"
                                                                     >
-                                                                        {currentValue.status}
+                                                                        <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                            {currentValue.status}
+                                                                        </div>
                                                                     </Tooltip>
                                                                 </td>
                                                                 <td>

@@ -446,7 +446,11 @@ export default function ManagementOfDamagedEmbryos() {
                                                         }</td>
                                                         <td>{currentValue.reason}</td>
                                                         <td>{handleDateToDMY(currentValue.time_create)}</td>
-                                                        <td>{currentValue.status}</td>
+                                                        <td>
+                                                            <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                {currentValue.status}
+                                                            </div>
+                                                        </td>
 
                                                         <td>{
                                                             currentValue.status == "Đã hủy" ? (
