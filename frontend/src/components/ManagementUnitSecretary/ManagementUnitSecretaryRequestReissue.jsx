@@ -74,6 +74,28 @@ export default function ManagementUnitSecretaryRequestReissue() {
 
     const [allRequestReissue, setAllRequestReissue] = useState([]);
 
+    //Xử lý count
+    const [count1, setSCount1] = useState(0);
+
+    const processCount = async (allDiplomaNameByMU) => {
+        try{
+            let result = [];
+            for (let i = 0; i < allDiplomaNameByMU.length; i++) {
+                const res = await axios.get(`http://localhost:8000/v1/request_for_reissue/get_all_request_for_reissue_by_list_diploma_name_id/${allDiplomaNameByMU[i].diploma_name_id}?status=&requestForReissue_id=`);
+                result = [...result, ...res.data];
+            }
+            let resultCount1 = 0;
+            result.forEach((currentValue)=>{
+                if(currentValue.status == "Đã dán tem"){
+                    resultCount1++;
+                }
+            })
+            setSCount1(resultCount1);
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     //Hàm lấy ra các yc xin cấp lại phôi dựa theo danh sách các diploma_name của đơn vị quản lý, mã phiếu và trạng thái. Loại phôi và người tạo sẽ xử lý tại frontend
     const getAllRequestForReissueByListMU_ID_Status = async (allDiplomaNameByMU, inputMaPhieuSearch, statusYC) => {
         try {
@@ -104,6 +126,7 @@ export default function ManagementUnitSecretaryRequestReissue() {
     }
     const [inputMaPhieuSearch, setInputMaPhieuSearch] = useState("");
     useEffect(() => {
+        processCount(allDiplomaNameByMU);
         let resultOption = [{ value: "", label: "Tất cả loại phôi" }];
         allDiplomaNameByMU?.forEach((currentValue) => {
             const newOption = { value: currentValue.diploma_name_id, label: currentValue.diploma_name_name };
@@ -423,6 +446,12 @@ export default function ManagementUnitSecretaryRequestReissue() {
                                     <p className='title-list-yc-xin-cap-phoi'>CÁC YÊU CẦU CẤP LẠI PHÔI ĐÃ ĐƯỢC XỬ LÝ VÀ GỬI VỀ</p>
                                 </div>
                                 <div className="row mt-3 p-3">
+                                    <div>
+                                        <div className="oval">
+                                            Có {count1} yêu cầu cần cập nhật nhật ký nhận phôi
+                                        </div>
+                                        <div className="triangle2"></div>
+                                    </div>
                                     <div className="contain-table-receive-request-issuance">
                                         <table className='table table-striped table-hover table-bordered' style={{ width: '1700px', border: '2px solid #fed25c', textAlign: 'center' }}>
                                             <thead>

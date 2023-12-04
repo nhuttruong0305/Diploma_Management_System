@@ -59,6 +59,9 @@ export default function ManagementUnitSecretary() {
 
     const [allRequestIssuance, setAllRequestIssuance] = useState([]);
 
+    //Xử lý count
+    const [count1, setCount1] = useState(0);
+
     const getAllRequestIssuance = async (allDiplomaNameByMU) => {
         try {
             let result = [];
@@ -67,11 +70,16 @@ export default function ManagementUnitSecretary() {
                 result = [...result, ...res.data];
             }
             let finalResult = [];
+            let resultCount1 = 0;
             result.forEach((currentValue) => {
                 if (currentValue.status == "Đã dán tem" || currentValue.status == "Đã nhận phôi") {
                     finalResult = [...finalResult, currentValue];
                 }
+                if(currentValue.status == "Đã dán tem"){
+                    resultCount1++;
+                }
             })
+            setCount1(resultCount1);
             setAllRequestIssuance(finalResult);
         } catch (error) {
             console.log(error)
@@ -604,6 +612,12 @@ export default function ManagementUnitSecretary() {
                                     <p className='title-list-yc-xin-cap-phoi'>CÁC YÊU CẦU CẤP PHÔI ĐÃ ĐƯỢC XỬ LÝ VÀ GỬI VỀ</p>
                                 </div>
                                 <div className="row mt-3 p-3">
+                                    <div>
+                                        <div className="oval">
+                                            Có {count1} yêu cầu cần cập nhật nhật ký nhận phôi
+                                        </div>
+                                        <div className="triangle2"></div>
+                                    </div>
                                     <div className="contain-table-receive-request-issuance">
                                         <table className='table table-striped table-hover table-bordered' style={{ width: '1700px', border: '2px solid #fed25c', textAlign: 'center' }}>
                                             <thead>
