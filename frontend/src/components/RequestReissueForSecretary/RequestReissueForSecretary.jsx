@@ -553,6 +553,8 @@ export default function RequestReissueForSecretary(){
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Tên cán bộ tạo yêu cầu</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày tạo</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Người duyệt</th>
+                                                <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày duyệt</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Lý do</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số seri tái cấp</th>
                                                 <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
@@ -570,6 +572,12 @@ export default function RequestReissueForSecretary(){
                                                     allDiplomaName?.forEach((diplomaName) => {
                                                         if(diplomaName.diploma_name_id == currentValue.diploma_name_id){
                                                             ten_loai_phoi = diplomaName.diploma_name_name;
+                                                        }
+                                                    })
+                                                    let nguoi_duyet = "";
+                                                    allUserAccount?.forEach((user)=>{
+                                                        if(currentValue.mscb_approve == user.mssv_cb) {
+                                                            nguoi_duyet = user.fullname;
                                                         }
                                                     })
                                                     return(
@@ -598,6 +606,12 @@ export default function RequestReissueForSecretary(){
                                                             </td>
                                                             <td>{currentValue.fullname_create} / {currentValue.mscb_create}</td>
                                                             <td>{handleDateToDMY(currentValue.time_create)}</td>
+                                                            <td>
+                                                                {currentValue.mscb_approve == "" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb_approve}`)}
+                                                            </td>
+                                                            <td>
+                                                                {currentValue.time_approve == "" ? ("") : (handleDateToDMY(currentValue.time_approve))}
+                                                            </td>
                                                             <td>{currentValue.reason}</td>
                                                             <td>{
                                                                 <Tooltip    

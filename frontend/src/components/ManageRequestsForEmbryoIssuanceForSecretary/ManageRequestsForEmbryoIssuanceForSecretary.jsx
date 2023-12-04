@@ -642,6 +642,8 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Số lượng phôi</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Cán bộ tạo yêu cầu</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày tạo</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Người duyệt</th>
+                                                    <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Ngày duyệt</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                                     <th style={{textAlign: 'center', backgroundColor: '#fed25c'}} scope="col">
@@ -672,9 +674,13 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                         })
                                                         //Lấy ra tên cán bộ
                                                         let ten_can_bo_tao_yc;
+                                                        let nguoi_duyet = '';
                                                         allUserAccount?.forEach((user)=>{
                                                             if(currentValue.mscb == user.mssv_cb){
                                                                 ten_can_bo_tao_yc = user.fullname;
+                                                            }
+                                                            if(currentValue.mscb_approve == user.mssv_cb){
+                                                                nguoi_duyet = user.fullname;
                                                             }
                                                         })
                                                         //Lấy ra tên đơn vị quản lý
@@ -692,6 +698,12 @@ export default function ManageRequestsForEmbryoIssuanceForSecretary(){
                                                                 <td>{currentValue.numberOfEmbryos}</td>
                                                                 <td>{ten_can_bo_tao_yc} / {currentValue.mscb}</td>
                                                                 <td>{handleDateToDMY(currentValue.time)}</td>
+                                                                <td>
+                                                                    {currentValue.mscb_approve == "" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb_approve}`)}
+                                                                </td>
+                                                                <td>
+                                                                    {currentValue.time_approve == "" ? ("") :(handleDateToDMY(currentValue.time_approve))}
+                                                                </td>
                                                                 <td>
                                                                     <Tooltip    
                                                                         // options

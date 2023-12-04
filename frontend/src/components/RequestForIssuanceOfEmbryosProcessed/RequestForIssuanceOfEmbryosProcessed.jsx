@@ -92,7 +92,7 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
     //State chứa dữ liệu cho options và selected của select có id = select-diploma-name-RFIOEP
     const [allDiplomaNameByMU, setAllDiplomaNameByMU] = useState([]);
     const [optionsOfSelectDiplomaName, setOptionsOfSelectDiplomaName] = useState([])
-    const [selectedOfSelectDiplomaName, setSelectedOfSelectDiplomaName] = useState({value:'', label: "Tất cả tên văn bằng"});
+    const [selectedOfSelectDiplomaName, setSelectedOfSelectDiplomaName] = useState({value:'', label: "Tất cả loại phôi"});
     const handleChangeselectedOfSelectDiplomaName = (selectedOption) => {
         setSelectedOfSelectDiplomaName(selectedOption);
     } 
@@ -114,7 +114,7 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
     }, [selectedOfSelectMU])
 
     useEffect(()=>{
-        let resultOption = [{value: "", label: "Tất cả tên văn bằng"}];
+        let resultOption = [{value: "", label: "Tất cả loại phôi"}];
         allDiplomaNameByMU?.forEach((currentValue)=>{
             const newOption = {value: currentValue.diploma_name_id, label: currentValue.diploma_name_name}
             resultOption = [...resultOption, newOption]
@@ -658,15 +658,17 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                 </div>
                                 <div className="row mt-3 p-3">
                                     <div id="contain-yccp-da-in">
-                                        <table className='table table-striped table-hover table-bordered' style={{width: '1800px', textAlign: 'center', border: '2px solid #fed25c'}}>
+                                        <table className='table table-striped table-hover table-bordered' style={{width: '2100px', textAlign: 'center', border: '2px solid #fed25c'}}>
                                             <thead>
                                                 <tr>
                                                     <th style={{backgroundColor: '#fed25c'}} scope="col">Mã phiếu</th>
-                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Tên loại phôi</th>
                                                     <th style={{backgroundColor: '#fed25c'}} scope="col">Đợt thi/Đợt cấp văn bằng</th>
                                                     <th style={{backgroundColor: '#fed25c'}} scope="col">Số lượng phôi</th>
                                                     <th style={{backgroundColor: '#fed25c'}} scope="col">Cán bộ tạo yêu cầu</th>
-                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">MSCB</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày tạo</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Người duyệt</th>
+                                                    <th style={{backgroundColor: '#fed25c'}} scope="col">Ngày duyệt</th>
                                                     <th style={{backgroundColor: '#fed25c'}} scope="col">Trạng thái</th>
                                                     <th style={{backgroundColor: '#fed25c'}} scope="col">Xem chi tiết</th>
                                                     <th style={{backgroundColor: '#fed25c'}} scope="col">Xem phiếu xuất kho</th>
@@ -698,9 +700,13 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
 
                                                         //Lấy tên cán bộ
                                                         let ten_can_bo_tao_yc;
+                                                        let nguoi_duyet = ''
                                                         allUserAccount?.forEach((user)=>{
                                                             if(user.mssv_cb == currentValue.mscb){
                                                                 ten_can_bo_tao_yc = user.fullname;
+                                                            }
+                                                            if(user.mssv_cb == currentValue.mscb_approve){
+                                                                nguoi_duyet = user.fullname
                                                             }
                                                         })
                                                         //Lấy ra tên đơn vị quản lý
@@ -716,9 +722,15 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                                                 <td>{ten_van_bang}</td>
                                                                 <td>{handleDateToDMY(currentValue.examination)}</td>
                                                                 <td>{currentValue.numberOfEmbryos}</td>
-                                                                <td>{ten_can_bo_tao_yc}</td>
-                                                                <td>{currentValue.mscb}</td>
-                                                                <td style={{color:"red", fontWeight: 'bold'}}>
+                                                                <td>{ten_can_bo_tao_yc} / {currentValue.mscb}</td>
+                                                                <td>{handleDateToDMY(currentValue.time)}</td>
+                                                                <td>
+                                                                    {currentValue.mscb_approve == "" ? ("") : (`${nguoi_duyet} / ${currentValue.mscb_approve}`)}
+                                                                </td>
+                                                                <td>
+                                                                    {currentValue.time_approve == "" ? ("") : (handleDateToDMY(currentValue.time_approve))}
+                                                                </td>
+                                                                <td>
                                                                     <Tooltip
                                                                         // options
                                                                         theme='dark'
@@ -732,7 +744,9 @@ export default function RequestForIssuanceOfEmbryosProcessed(){
                                                                         arrow={true}
                                                                         position="top"
                                                                     >
-                                                                        {currentValue.status}
+                                                                        <div style={{ backgroundColor: 'red', padding: '1px', borderRadius: '5px', fontWeight: 'bold', fontSize: '14px', color: 'white' }}>
+                                                                            {currentValue.status}
+                                                                        </div>
                                                                     </Tooltip>
                                                                 </td>
                                                                 <td>
