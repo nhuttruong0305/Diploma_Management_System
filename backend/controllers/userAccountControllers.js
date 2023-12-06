@@ -279,6 +279,18 @@ const userAccountControllers = {
             return res.status(500).json(error);
         }
     }
+    ,voHieuHoaTaiKhoan: async (req, res) => {
+        try {
+            const options = {returnDocument: "after"};
+            const updateDoc = {
+                isEffective: false
+            };
+            const voHieuHoa = await UserAccountModel.findByIdAndUpdate(req.params._id, updateDoc, options);            
+            return res.status(200).json(voHieuHoa);
+        } catch (err) {
+            return res.status(500).json(err);
+        }
+    }
 }
 
 module.exports = userAccountControllers;

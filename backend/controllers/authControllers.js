@@ -83,6 +83,10 @@ const authControllers = {
                 return res.status(404).json("Sai mật khẩu");
             }
 
+            if(!user.isEffective){
+                return res.status(404).json("Tài khoản đã bị vô hiệu hóa");
+            }
+
             if(user && validPassword){
                 const accessToken = jwt.sign(
                     {

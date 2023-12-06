@@ -624,6 +624,23 @@ export default function UserAccountManagement() {
         }
     }, [dsTrungCCCD])
 
+    //Xử lý việc vô hiệu hóa tài khoản
+    const [id_TK_VHH, setId_TK_VHH] = useState("");
+    const noti6 = useRef();
+
+    const voHieuHoa = async () => {
+        try{
+            const res = await axios.put(`http://localhost:8000/v1/user_account/vo_hieu_hoa/${id_TK_VHH}`);
+            noti6.current.showToast();
+            setTimeout(async() => {
+                await searchUserAccountByName(inputSearch, inputMSSV_CB, inputPosition);
+            }, 200);
+        }catch(error){
+            console.log(error);
+        }
+    }
+    console.log(id_TK_VHH); 
+
     return (
         <>
             <Header />
@@ -793,6 +810,7 @@ export default function UserAccountManagement() {
                                                 <th scope="col" style={{backgroundColor: '#fed25c'}}>Loại tài khoản</th>
                                                 <th scope="col" style={{backgroundColor: '#fed25c'}}>Chức vụ</th>
                                                 <th scope="col" style={{backgroundColor: '#fed25c'}}>Xem chi tiết</th>
+                                                <th scope="col" style={{backgroundColor: '#fed25c'}}>Vô hiệu hóa</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -881,6 +899,20 @@ export default function UserAccountManagement() {
                                                                     }}
                                                                 ></i>
                                                             </td>
+                                                            <td>
+                                                                {
+                                                                    currentValue.isEffective == true ? (
+                                                                        <i 
+                                                                            className="fa-solid fa-ban"
+                                                                            style={{backgroundColor: "red", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                            data-bs-toggle="modal" data-bs-target="#modalVHH"
+                                                                            onClick={(e)=>{
+                                                                                setId_TK_VHH(currentValue._id)
+                                                                            }}
+                                                                        ></i>
+                                                                    ) : ("")
+                                                                }
+                                                            </td>
                                                         </tr>
                                                     )
                                                 })
@@ -889,6 +921,29 @@ export default function UserAccountManagement() {
                                     </table>
                                 </div>
 
+                                {/* Modal vô hiệu hóa tài khoản */}
+                                <div className="modal fade" id="modalVHH" tabIndex="-1" aria-labelledby="modalVHHLabel" aria-hidden="true">
+                                    <div className="modal-dialog modal-dialog-centered">
+                                        <div className="modal-content">
+                                        <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
+                                            <h1 className="modal-title fs-5" id="modalVHHLabel"></h1>
+                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div className="modal-body">
+                                            <h5>Bạn có chắc muốn vô hiệu hóa tài khoản này</h5>
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                            <button type="button" className="btn" 
+                                                style={{backgroundColor:'#1b95a2'}}
+                                                onClick={(e)=>{
+                                                    voHieuHoa()
+                                                }}
+                                            >Xác nhận</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 {/* Modal hiển thị thông tin user */}
                                 <div className="modal fade" id="showInforUserModal" tabIndex="-1" aria-labelledby="showInforUserModalLabel" aria-hidden="true">
                                     <div className="modal-dialog modal-lg modal-dialog-centered">
@@ -1771,6 +1826,11 @@ export default function UserAccountManagement() {
                     message={`Số CCCD có STT ${dsTrungCCCD} trong file excel đã tồn tại`}
                     type="warning"
                     ref={noti5}
+                />
+                <Toast
+                    message="Vô hiệu hóa tài khoản thành công"
+                    type="success"
+                    ref={noti6}
                 />
             </div>
             <Footer/>

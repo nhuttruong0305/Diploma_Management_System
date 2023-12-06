@@ -16,4 +16,5 @@ router.put("/edit_user_account_info/:_id", userAccountControllers.editUserAccoun
 router.put("/change_password/:_id", userAccountControllers.changePassword);
 //Lấy tất cả các tài khoản có chức vụ Tổ trưởng
 router.get("/get_all_user_leader", userAccountControllers.getAllUserLeader);
+router.put("/vo_hieu_hoa/:_id", userAccountControllers.voHieuHoaTaiKhoan);
 module.exports = router;
