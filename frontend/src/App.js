@@ -34,6 +34,7 @@ import RequestReissueProcessed from './components/RequestReissueProcessed/Reques
 import ManagementUnitSecretary from './components/ManagementUnitSecretary/ManagementUnitSecretary';
 import ManagementUnitSecretaryRequestReissue from './components/ManagementUnitSecretary/ManagementUnitSecretaryRequestReissue';
 import DiplomaStatistics from './components/DiplomaStatistics/DiplomaStatistics';
+import NoMatch from './components/NoMatch/NoMatch';
 //Bảo vệ route của System administrator
 const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
@@ -407,6 +408,11 @@ function App() {
         path: '/diploma_statistics',
         element:
           <DiplomaStatistics/>
+      },
+      {
+        path: '*',
+        element:
+          <NoMatch/>
       }  
     ])
     return element;
