@@ -32,11 +32,11 @@ export default function Login(){
         }
     }, [msg])
 
-    useEffect(()=>{
-        if(user){
-            navigate("/");
-        }
-    },[])
+    // useEffect(()=>{
+    //     if(user){
+    //         navigate("/");
+    //     }
+    // },[])
 
     return(
         <>

@@ -93,6 +93,14 @@ const userSchema = new mongoose.Schema(
         listOfDiplomaNameReview:{
             type: Array,
             default: []
+        },
+        isEffective:{
+            type: Boolean,
+            default: true
+        },
+        changedPassword:{
+            type: Boolean,
+            default: false
         }
     },
     {timestamps: true}

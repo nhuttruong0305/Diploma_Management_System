@@ -39,14 +39,18 @@ const ProtectedRouteSystemAdministrator = ({ isAuthenticated, role, children }) 
   return isAuthenticated && role == 'System administrator' ? children : <Navigate to="/"/>;
 };
 
-//Bảo vệ route của Diploma importer
-const ProtectedRouteDiplomaImporter = ({ isAuthenticated, role, children }) => {
-  return isAuthenticated && role == 'Diploma importer' ? children : <Navigate to="/"/>;
+//Bảo vệ route của Diploma importer (ĐÃ ĐÚNG)
+const ProtectedRouteDiplomaImporter = ({ isAuthenticated, role, children, changedPassword }) => {
+  return isAuthenticated && role == 'Diploma importer' && changedPassword == true ? children 
+                                      : changedPassword == false && isAuthenticated && role == 'Diploma importer' ? <Navigate to="/change-password"/> 
+                                      : <Navigate to="/"/>;
 }
 
-//Bảo vệ route của Diploma reviewer
-const ProtectedRouteDiplomaReviewer = ({ isAuthenticated, role, children }) => {
-  return isAuthenticated && role == 'Diploma reviewer' ? children : <Navigate to="/"/>;
+//Bảo vệ route của Diploma reviewer (ĐÃ ĐÚNG)
+const ProtectedRouteDiplomaReviewer = ({ isAuthenticated, role, children, changedPassword }) => {
+  return isAuthenticated && role == 'Diploma reviewer' && changedPassword == true ? children 
+                                      : changedPassword == false && isAuthenticated && role == 'Diploma reviewer' ? <Navigate to="/change-password"/> 
+                                      : <Navigate to="/"/>;
 }
 
 //Bảo vệ route của UserAccountInfo chỉ cho phép người dùng ngoại trừ admin vào trang này
@@ -54,24 +58,32 @@ const ProtectedRouteUserAccountInfo = ({ isAuthenticated, role, children }) => {
   return isAuthenticated && role != 'System administrator' ? children : <Navigate to="/"/>;
 }
 
-//Bảo vệ route chỉ cho phép tài khoản có quyền Center Director_Head of Department mới vào dc các trang này
-const ProtectedRouteCenterDirectorHeadOfDepartment = ({ isAuthenticated, role, children }) => {
-  return isAuthenticated && role == 'Center Director_Head of Department' ? children : <Navigate to="/"/>;
+//Bảo vệ route chỉ cho phép tài khoản có quyền Center Director_Head of Department mới vào dc các trang này (ĐÃ ĐÚNG)
+const ProtectedRouteCenterDirectorHeadOfDepartment = ({ isAuthenticated, role, children, changedPassword }) => {
+  return isAuthenticated && role == 'Center Director_Head of Department' && changedPassword == true ? children 
+                                      : changedPassword == false && isAuthenticated && role == 'Center Director_Head of Department' ? <Navigate to="/change-password"/> 
+                                      : <Navigate to="/"/>;
 }
 
-//Bảo vệ route chỉ cho phép tài khoản có quyền Leader mới vào được trang này
-const ProtectedRouteLeader = ({ isAuthenticated, role, children }) => {
-  return isAuthenticated && role == 'Leader' ? children : <Navigate to="/"/>;
+//Bảo vệ route chỉ cho phép tài khoản có quyền Leader mới vào được trang này (ĐÃ ĐÚNG)
+const ProtectedRouteLeader = ({ isAuthenticated, role, children, changedPassword }) => {
+  return isAuthenticated && role == 'Leader' && changedPassword == true ? children 
+                                      : changedPassword == false && isAuthenticated && role == 'Leader' ? <Navigate to="/change-password"/> 
+                                      : <Navigate to="/"/>;
 }
 
-//Bảo vệ route chỉ cho phép tài khoản có quyền Secretary mới vào được trang này
-const ProtectedSecretary = ({ isAuthenticated, role, children }) => {
-  return isAuthenticated && role == 'Secretary' ? children : <Navigate to="/"/>;
+//Bảo vệ route chỉ cho phép tài khoản có quyền Secretary mới vào được trang này (ĐÃ ĐÚNG)
+const ProtectedSecretary = ({ isAuthenticated, role, children, changedPassword }) => {
+  return isAuthenticated && role == 'Secretary' && changedPassword == true ? children 
+                                      : changedPassword == false && isAuthenticated && role == 'Secretary' ? <Navigate to="/change-password"/> 
+                                      : <Navigate to="/"/>;
 }
 
-//Bảo vệ route chỉ cho phép tài khoản có quyền Stocker mới vào được trang này
-const ProtectedStocker = ({ isAuthenticated, role, children }) => {
-  return isAuthenticated && role == 'Stocker' ? children : <Navigate to="/"/>;
+//Bảo vệ route chỉ cho phép tài khoản có quyền Stocker mới vào được trang này (ĐÃ ĐÚNG)
+const ProtectedStocker = ({ isAuthenticated, role, children, changedPassword }) => {
+  return isAuthenticated && role == 'Stocker' && changedPassword == true ? children 
+                                      : changedPassword == false && isAuthenticated && role == 'Stocker' ? <Navigate to="/change-password"/> 
+                                      : <Navigate to="/"/>;
 }
 
 function App() {
@@ -154,6 +166,7 @@ function App() {
           <ProtectedRouteDiplomaImporter
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword = {user?.changedPassword}
           >
             <DiplomaIssuance/>
           </ProtectedRouteDiplomaImporter>
@@ -165,6 +178,7 @@ function App() {
           <ProtectedRouteDiplomaImporter
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword = {user?.changedPassword}
           >
             <ImportDiploma/>
           </ProtectedRouteDiplomaImporter>
@@ -176,6 +190,7 @@ function App() {
           <ProtectedRouteDiplomaReviewer
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword = {user?.changedPassword}
           >
             <DiplomaReview/>
           </ProtectedRouteDiplomaReviewer>
@@ -187,6 +202,7 @@ function App() {
           <ProtectedRouteCenterDirectorHeadOfDepartment
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <DiplomaDiary/>
           </ProtectedRouteCenterDirectorHeadOfDepartment>
@@ -220,6 +236,7 @@ function App() {
           <ProtectedRouteCenterDirectorHeadOfDepartment
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <RequestsForDiplomaDrafts/>
           </ProtectedRouteCenterDirectorHeadOfDepartment>
@@ -231,6 +248,7 @@ function App() {
           <ProtectedRouteLeader
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <ApproveRequestForIssuanceOfEmbryos/>
           </ProtectedRouteLeader>
@@ -242,6 +260,7 @@ function App() {
           <ProtectedSecretary
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <ManageRequestsForEmbryoIssuanceForSecretary/>
           </ProtectedSecretary>
@@ -258,6 +277,7 @@ function App() {
           <ProtectedStocker
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <ManageRequestsForEmbryoIssuanceForStocker/>
           </ProtectedStocker>
@@ -269,6 +289,7 @@ function App() {
           <ProtectedSecretary
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <RequestForIssuanceOfEmbryosProcessed/>
           </ProtectedSecretary>
@@ -280,6 +301,7 @@ function App() {
           <ProtectedStocker
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <UnitPriceManagement/>
           </ProtectedStocker>
@@ -291,6 +313,7 @@ function App() {
           <ProtectedStocker
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <ManagementOfDamagedEmbryos/>
           </ProtectedStocker>
@@ -302,6 +325,7 @@ function App() {
           <ProtectedRouteCenterDirectorHeadOfDepartment
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <CreateRequestReissue/>
           </ProtectedRouteCenterDirectorHeadOfDepartment>
@@ -313,6 +337,7 @@ function App() {
           <ProtectedRouteLeader
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <ApproveRequestReissue/>
           </ProtectedRouteLeader>
@@ -324,6 +349,7 @@ function App() {
           <ProtectedSecretary
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <RequestReissueForSecretary/>
           </ProtectedSecretary>
@@ -335,6 +361,7 @@ function App() {
           <ProtectedStocker
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <RequestReissueForStocker/>
           </ProtectedStocker>
@@ -346,6 +373,7 @@ function App() {
           <ProtectedSecretary
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <RequestReissueProcessed/>
           </ProtectedSecretary>
@@ -357,6 +385,7 @@ function App() {
           <ProtectedSecretary
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <ManagementUnitSecretary/>
           </ProtectedSecretary>
@@ -368,6 +397,7 @@ function App() {
           <ProtectedSecretary
             isAuthenticated = {!user ? false : true}
             role = {user?.role[0]}
+            changedPassword={user?.changedPassword}
           >
             <ManagementUnitSecretaryRequestReissue/>
           </ProtectedSecretary>

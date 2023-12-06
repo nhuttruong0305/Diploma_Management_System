@@ -1,6 +1,6 @@
 #btn_back_to_top{
     position: fixed;
-    display: none;
+    /* display: none; */
     bottom: 60px;
     right: 40px;
     width: 50px;

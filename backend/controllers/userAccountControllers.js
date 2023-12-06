@@ -259,6 +259,7 @@ const userAccountControllers = {
                 const options = {returnDocument: "after"};
                 const updateDoc = {
                     password: hashed,
+                    changedPassword: true
                 };
                 const changePassword = await UserAccountModel.findByIdAndUpdate(req.params._id, updateDoc, options);
                 return res.status(200).json(changePassword);

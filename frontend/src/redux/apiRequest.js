@@ -98,7 +98,11 @@ export const LoginUser = async(user, dispatch, navigate) => {
     try{
         const res = await axios.post("http://localhost:8000/v1/auth/login", user);
         dispatch(loginSuccess(res.data));
-        navigate("/");
+        if(res.data.changedPassword == false){
+            navigate("/change-password");
+        }else{
+            navigate("/");
+        }
     }catch(err){
         dispatch(loginFailed(err.response.data));
     }

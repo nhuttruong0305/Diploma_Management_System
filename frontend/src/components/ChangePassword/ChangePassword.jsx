@@ -85,6 +85,9 @@ export default function ChangePassword(){
                             </div>
                             <div className="col-md-9">
                                 <div className="card p-3">
+                                    <div className="oval2">
+                                        Hãy đổi mật khẩu trong lần đầu đăng nhập
+                                    </div>
                                     <p id='title-CP'>ĐỔI MẬT KHẨU</p>
                                     <div className='row mt-3'>
                                         <div className="col-2">
@@ -164,7 +167,7 @@ export default function ChangePassword(){
                 <div className="modal fade" id="showQuestionModal" tabIndex="-1" aria-labelledby="showQuestionModalLabel" aria-hidden="true">
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
-                        <div className="modal-header">
+                        <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                             <h1 className="modal-title fs-5" id="showQuestionModalLabel"></h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
