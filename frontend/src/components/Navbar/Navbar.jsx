@@ -248,7 +248,7 @@ export default function Navbar() {
                                     <Link className="nav-link nav-link-navbar" to="/manage_requests_for_diploma_drafts" id='quan-ly-yc-cap-phoi'>Quản lý yêu cầu xin cấp phôi văn bằng</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
-                                    <Link className="nav-link nav-link-navbar" to="/create_request_reissue" id='tao-yc-cap-lai-phoi'>Tạo yêu cầu xin cấp lại phôi</Link>
+                                    <Link className="nav-link nav-link-navbar" to="/create_request_reissue" id='tao-yc-cap-lai-phoi'>Quản lý yêu cầu xin cấp lại phôi</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/diploma_statistics" id='thong-ke-van-bang'>Thống kê văn bằng</Link>
@@ -291,7 +291,7 @@ export default function Navbar() {
                                     <Link className="nav-link nav-link-navbar" to="/" id='trang-chu7'>Tra cứu</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
-                                    <Link className="nav-link nav-link-navbar" to="/manage_requests_for_embryo_issuance_for_secretary" id='quan-ly-yc-cap-phoi-cho-thu-ky'>Quản lý yêu cầu xin cấp phôi văn bằng</Link>
+                                    <Link className="nav-link nav-link-navbar" to="/manage_requests_for_embryo_issuance_for_secretary" id='quan-ly-yc-cap-phoi-cho-thu-ky'>Xử lý yêu cầu xin cấp phôi văn bằng</Link>
                                 </li>
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/request_reissue_for_secretary" id='xu-ly-yeu-cau-cap-lai-phoi'>Xử lý yêu cầu cấp lại phôi</Link>
