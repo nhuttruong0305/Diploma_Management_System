@@ -28,7 +28,13 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
     const getAllManagementUnit = async () => {
         try{
             const res = await axios.get("http://localhost:8000/v1/management_unit/get_all_management_unit");
-            setManagementUnit(res.data);
+            let result = [];
+            res.data.forEach((currentValue)=>{
+                if(currentValue.management_unit_id != 13){
+                    result = [...result, currentValue];
+                }
+            })
+            setManagementUnit(result);
             return res.data;
         }catch(error){
             console.log(error);
@@ -115,15 +121,21 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
         }, 200)
     }
 
+    function handleDateToDMY(date){
+        const splitDate = date.split("-");
+        const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
+        return result;
+    }
     return(
         <>
-            <table className='table mt-3'>
+            <table style={{border: '2px solid #fed25c'}} className='table table-striped table-hover table-bordered mt-3'>
                 <thead>
-                    <tr>
-                        <th scope="col"></th>
-                        <th scope="col">Tên văn bằng</th>
-                        <th scope="col">Tên đơn vị</th>
-                        <th scope="col">Từ ngày</th>
+                    <tr style={{textAlign: 'center'}}>
+                        <th style={{backgroundColor: '#fed25c'}} scope="col">STT</th>
+                        <th style={{backgroundColor: '#fed25c', width: '35%'}} scope="col">Tên văn bằng</th>
+                        <th style={{backgroundColor: '#fed25c'}} scope="col">Tên đơn vị</th>
+                        <th style={{backgroundColor: '#fed25c'}} scope="col">Từ ngày</th>
+                        <th style={{backgroundColor: '#fed25c'}} scope="col">Phân quyền</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -137,7 +149,7 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
                             })
 
                             return(
-                                <tr key={index}>
+                                <tr key={index} style={{textAlign: 'center'}}>
                                     <th scope="row">{index + 1}</th>
                                     <td>{dataValue.diploma_name_name}</td>
                                     <td>
@@ -146,7 +158,9 @@ export default function TableShowDiplomaName({data, inputSearch, status}){
                                         }
 
                                     </td>
-                                    <td>{dataValue.from}</td>
+                                    <td>
+                                        {dataValue.from == "" ? ("") : (handleDateToDMY(dataValue.from))}
+                                    </td>
                                     <td>
                                         <i 
                                             className="fa-solid fa-eye"

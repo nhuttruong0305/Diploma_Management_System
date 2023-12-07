@@ -17,8 +17,13 @@ export default function DiplomaNameManagementHistory(){
     const getAllManagementUnit = async () => {
         try{
             const res = await axios.get("http://localhost:8000/v1/management_unit/get_all_management_unit");
-            setAllMU(res.data);
-            return res.data;
+            let result = [];
+            res.data.forEach((currentValue)=>{
+                if(currentValue.management_unit_id != 13){
+                    result = [...result, currentValue]
+                }
+            })
+            setAllMU(result);
         }catch(error){
             console.log(error);
         }
@@ -33,6 +38,12 @@ export default function DiplomaNameManagementHistory(){
     useEffect(()=>{ 
         searchDiplomaNameForDNMH(dispatch, inputSearch, inputMU);
     }, [inputSearch, inputMU]);
+
+    function handleDateToDMY(date){
+        const splitDate = date.split("-");
+        const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
+        return result;
+    }
 
     return(
         <>
@@ -100,14 +111,14 @@ export default function DiplomaNameManagementHistory(){
                                         />
                                     </div>
                                 </div>
-                                <table className='table mt-3'>
+                                <table style={{border: '2px solid #fed25c'}} className='table table-striped table-hover table-bordered mt-3'>
                                     <thead>
-                                        <tr>
-                                            <th scope="col"></th>
-                                            <th scope="col">Đơn vị quản lý</th>
-                                            <th scope="col">Tên văn bằng</th>
-                                            <th scope="col">Từ ngày</th>
-                                            <th scope="col">Đến ngày</th>
+                                        <tr style={{textAlign: 'center'}}>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">STT</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Đơn vị quản lý</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Từ ngày</th>
+                                            <th style={{backgroundColor: '#fed25c'}} scope="col">Đến ngày</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -120,37 +131,22 @@ export default function DiplomaNameManagementHistory(){
                                                     }
                                                 })
                                                 return(
-                                                    <tr key={index}>
+                                                    <tr style={{textAlign: 'center'}} key={index}>
                                                         <th scope="row">{index + 1}</th>
                                                         <td>{nameOFMU}</td>
                                                         <td>
                                                             {diploma.diploma_name_name}
                                                         </td>
                                                         <td>
-                                                            {diploma.from}
+                                                            {handleDateToDMY(diploma.from)}
                                                         </td>
                                                         <td>
-                                                            {diploma.to}
+                                                            {handleDateToDMY(diploma.to)}
                                                         </td>
                                                     </tr>
                                                 )
                                             })
                                         }
-                                        
-                                        
-                                        {/* <tr>
-                                            <th scope="row">1</th>
-                                            <td>Trường Kinh tế</td>
-                                            <td>
-                                                Chứng chỉ A tin học
-                                            </td>
-                                            <td>
-                                                10-11-2023
-                                            </td>
-                                            <td>
-                                                20-12-2023
-                                            </td>
-                                        </tr> */}
                                     </tbody>
                                 </table>
                             </div>

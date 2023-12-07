@@ -221,14 +221,14 @@ export default function DiplomaName(){
                                     </div>
                                 </div>
                                 <div id='contain-table-diplomaName-DN'>
-                                    <table className='table mt-3'>
+                                    <table style={{border: '2px solid #fed25c'}} className='table table-striped table-hover table-bordered mt-3'>
                                         <thead>
-                                            <tr>
-                                                <th scope="col"></th>
-                                                <th scope="col">Tên văn bằng</th>
-                                                <th scope="col">Loại văn bằng</th>
-                                                <th scope="col"></th>
-                                                <th scope="col"></th>
+                                            <tr style={{textAlign: 'center'}}>
+                                                <th style={{backgroundColor: '#fed25c'}} scope="col">STT</th>
+                                                <th style={{backgroundColor: '#fed25c'}} scope="col">Tên văn bằng</th>
+                                                <th style={{backgroundColor: '#fed25c'}} scope="col">Loại văn bằng</th>
+                                                <th style={{backgroundColor: '#fed25c'}} scope="col">Sửa</th>
+                                                <th style={{backgroundColor: '#fed25c'}} scope="col">Xóa</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -241,11 +241,11 @@ export default function DiplomaName(){
                                                         }
                                                     })
                                                     return(
-                                                        <tr key={index}>
+                                                        <tr style={{textAlign: 'center'}} key={index}>
                                                             <th scope='row'>{index + 1}</th>
-                                                            <td>{currentValue.diploma_name_name}</td>
-                                                            <td>{nameOfDiplomaType}</td>
-                                                            <td>
+                                                            <td style={{width: '50%'}}>{currentValue.diploma_name_name}</td>
+                                                            <td >{nameOfDiplomaType}</td>
+                                                            <td >
                                                                 <i
                                                                     onClick={(e) => {
                                                                         setDiplomaNameEditInput(currentValue.diploma_name_name);

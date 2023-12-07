@@ -107,56 +107,56 @@ export default function DiplomaType(){
                                         />
                                     </div>
                                 </div>
-
-                                <table className='table mt-3'>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col"></th>
-                                            <th scope="col">Tên loại văn bằng</th>
-                                            <th scope="col" style={{width: '50px'}}></th>
-                                            <th scope="col" style={{width: '50px'}}></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                            {
-                                                allDiplomaType?.map((currentValue, index) => {
-                                                    return(
-                                                        <tr key={index}>
-                                                            <th scope="row">{index + 1}</th>
-                                                            <td>{currentValue.diploma_type_name}</td>
-                                                            <td>
-                                                                <i onClick={(e) => {
-                                                                    set_IddiplomaNameEdit(currentValue._id);
-                                                                    setDiplomaNameEdit(currentValue.diploma_type_name);
-                                                                }} 
-                                                                    type='button' 
-                                                                    data-bs-toggle="modal" 
-                                                                    data-bs-target="#modalEditDiplomaType" 
-                                                                    className="fa-solid fa-eye"
-                                                                    style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
-                                                                >
-                                                                </i>
-                                                            </td>
-                                                            <td>
-                                                                <button
-                                                                    className='btn'
-                                                                    style={{backgroundColor:'red', width:'32px', height: '30px'}}
-                                                                    onClick={(e)=>{
-                                                                        handleDeleteDiplomaType(currentValue._id)
-                                                                    }}
-                                                                >
-                                                                    <i
-                                                                        className="fa-solid fa-trash text-center d-block"
-                                                                        style={{marginLeft: '-4px', color: 'white'}}
-                                                                    ></i></button>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                })   
-                                            } 
-                                    </tbody>
-                                </table>
-
+                                <div>
+                                    <table style={{border: '2px solid #fed25c'}} className='table table-striped table-hover table-bordered mt-3'>
+                                        <thead>
+                                            <tr style={{textAlign: 'center'}}>
+                                                <th scope="col" style={{ backgroundColor: '#fed25c',width: '80px'}}>STT</th>
+                                                <th scope="col" style={{ backgroundColor: '#fed25c'}}>Tên loại văn bằng</th>
+                                                <th scope="col" style={{ backgroundColor: '#fed25c',width: '100px'}}>Sửa</th>
+                                                <th scope="col" style={{ backgroundColor: '#fed25c',width: '100px'}}>Xóa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                {
+                                                    allDiplomaType?.map((currentValue, index) => {
+                                                        return(
+                                                            <tr key={index}>
+                                                                <th scope="row" style={{textAlign: 'center'}}>{index + 1}</th>
+                                                                <td>{currentValue.diploma_type_name}</td>
+                                                                <td style={{textAlign: 'center'}}>
+                                                                    <i onClick={(e) => {
+                                                                        set_IddiplomaNameEdit(currentValue._id);
+                                                                        setDiplomaNameEdit(currentValue.diploma_type_name);
+                                                                    }} 
+                                                                        type='button' 
+                                                                        data-bs-toggle="modal" 
+                                                                        data-bs-target="#modalEditDiplomaType" 
+                                                                        className="fa-solid fa-eye"
+                                                                        style={{backgroundColor: "#1b95a2", padding: '7px', borderRadius: '5px', color: 'white'}}
+                                                                    >
+                                                                    </i>
+                                                                </td>
+                                                                <td style={{textAlign: 'center'}}>
+                                                                    <button
+                                                                        className='btn'
+                                                                        style={{backgroundColor:'red', width:'32px', height: '30px'}}
+                                                                        onClick={(e)=>{
+                                                                            handleDeleteDiplomaType(currentValue._id)
+                                                                        }}
+                                                                    >
+                                                                        <i
+                                                                            className="fa-solid fa-trash text-center d-block"
+                                                                            style={{marginLeft: '-4px', color: 'white'}}
+                                                                        ></i></button>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    })   
+                                                } 
+                                        </tbody>
+                                    </table>
+                                </div>
                                 {/* Phần modal để chỉnh sửa thông tin loại văn bằng */}
                                 <div className="modal fade" id="modalEditDiplomaType" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="modalEditDiplomaTypeLabel" aria-hidden="true">
                                     <div className="modal-dialog modal-dialog-centered">
