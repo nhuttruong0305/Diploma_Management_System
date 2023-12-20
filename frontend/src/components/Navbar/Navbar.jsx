@@ -342,9 +342,6 @@ export default function Navbar() {
                                 <li className="nav-item nav-item-navbar">
                                     <Link className="nav-link nav-link-navbar" to="/" id='trang-chu4'>Tra cứu</Link>
                                 </li>
-                                <li className="nav-item nav-item-navbar">
-                                    <a className="nav-link nav-link-navbar" href="#">Hướng dẫn sử dụng</a>
-                                </li>
                             </ul>
                         )}
                     </div>

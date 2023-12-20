@@ -163,7 +163,7 @@ export default function UserAccountInfo(){
                 <div className="modal fade" id="EditUserAccountModal" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="EditUserAccountModalLabel" aria-hidden="true">
                     <div className="modal-dialog modal-lg modal-dialog-centered">
                         <div className="modal-content">
-                        <div className="modal-header">
+                        <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                             <h1 className="modal-title fs-5" id="EditUserAccountModalLabel">Chỉnh sửa thông tin tài khoản</h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>

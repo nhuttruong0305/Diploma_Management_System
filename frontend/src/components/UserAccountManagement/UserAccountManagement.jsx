@@ -639,7 +639,11 @@ export default function UserAccountManagement() {
             console.log(error);
         }
     }
-    console.log(id_TK_VHH); 
+    function handleDateToDMY(date){
+        const splitDate = date.split("-");
+        const result = `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
+        return result;
+    }
 
     return (
         <>
@@ -1017,7 +1021,7 @@ export default function UserAccountManagement() {
                                                         type="text" 
                                                         readOnly={true}
                                                         className='form-control'
-                                                        value={dateOfBirthShowModal}
+                                                        value={handleDateToDMY(dateOfBirthShowModal)}
                                                     />
                                                 </div>
                                             </div>

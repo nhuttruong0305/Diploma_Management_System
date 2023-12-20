@@ -706,7 +706,7 @@ export default function RequestReissueForSecretary(){
                                 <div className="modal fade" id="modalUpdateRequestReissueForSecretary" tabIndex="-1" aria-labelledby="modalUpdateRequestReissueForSecretaryLabel" aria-hidden="true">
                                     <div className="modal-dialog modal-dialog-centered">
                                         <div className="modal-content">
-                                        <div className="modal-header">
+                                        <div className="modal-header" style={{backgroundColor: '#feefbf'}}>
                                             <h1 className="modal-title fs-5" id="modalUpdateRequestReissueForSecretaryLabel"></h1>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>

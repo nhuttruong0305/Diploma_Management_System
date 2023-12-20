@@ -437,7 +437,7 @@ export default function HomePage() {
                                             type="text" 
                                             readOnly={true} 
                                             className='form-control'  
-                                            value={dateofbirthShowModal} 
+                                            value={handleDateToDMY(dateofbirthShowModal)} 
                                         /> 
                                     </div>
                                 </div>
@@ -491,7 +491,7 @@ export default function HomePage() {
                                             type="text" 
                                             readOnly={true} 
                                             className='form-control'  
-                                            value={signDayShowModal} 
+                                            value={handleDateToDMY(signDayShowModal)} 
                                         /> 
                                     </div>
                                 </div>
@@ -680,7 +680,7 @@ export default function HomePage() {
                                                     type="text" 
                                                     readOnly={true} 
                                                     className='form-control'  
-                                                    value={testDayShowModal} 
+                                                    value={handleDateToDMY(testDayShowModal)} 
                                                 /> 
                                             </div>
                                         </div>

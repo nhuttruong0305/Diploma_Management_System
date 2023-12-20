@@ -42,7 +42,9 @@ export default function DiplomaType(){
         await addDiplomaType(newDiploma , dispatch, user.accessToken);
         noti.current.showToast();
         // await getAllDiplomaType(dispatch);
-        searchDiplomaType(dispatch, inputSearch);
+        setTimeout(async () => {
+            await searchDiplomaType(dispatch, inputSearch);
+        }, 200);
     }
     
     //Hàm submit để edit thông tin loại văn bằng
@@ -53,7 +55,9 @@ export default function DiplomaType(){
         }, dispatch, user.accessToken, _iddiplomaNameEdit);
         noti.current.showToast();
         // await getAllDiplomaType(dispatch);
-        searchDiplomaType(dispatch, inputSearch);
+        setTimeout(async () => {
+            await searchDiplomaType(dispatch, inputSearch);
+        }, 200);
     }
 
     //Hàm xóa diploma Type
@@ -64,7 +68,9 @@ export default function DiplomaType(){
     const handleDeleteDiplomaType = async (_id) => {
         await deleteDiplomaType(dispatch, user.accessToken, _id);
         noti2.current.showToast();
-        searchDiplomaType(dispatch, inputSearch);
+        setTimeout(async() => {
+            await searchDiplomaType(dispatch, inputSearch);
+        }, 200);
     }
 
     return(

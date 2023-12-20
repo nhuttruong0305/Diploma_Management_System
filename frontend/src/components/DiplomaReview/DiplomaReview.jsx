@@ -627,7 +627,7 @@ export default function DiplomaReview(){
                                             Ngày sinh
                                         </div>
                                         <div className="col-8 fw-bold">
-                                            {dateofbirthModalReview}
+                                            {handleDateToDMY(dateofbirthModalReview)}
                                         </div>
                                     </div>
                                     <div className="row mt-2 inForDiploma-DR">
@@ -651,7 +651,7 @@ export default function DiplomaReview(){
                                             Ngày ký
                                         </div>
                                         <div className="col-8 fw-bold">
-                                            {signDayModalReview}
+                                            {handleDateToDMY(signDayModalReview)}
                                         </div>
                                     </div>
                                     <div className="row mt-2 inForDiploma-DR">
@@ -756,7 +756,7 @@ export default function DiplomaReview(){
                                                     Ngày thi
                                                 </div>
                                                 <div className="col-8 fw-bold">
-                                                    {testDayModalReview}
+                                                    {handleDateToDMY(testDayModalReview)}
                                                 </div>
                                             </div>
                                         ) : ("")
@@ -836,7 +836,8 @@ export default function DiplomaReview(){
                                                         <>
                                                             <div className='ms-2'>
                                                                 <button 
-                                                                    className="btn btn-primary"
+                                                                    className="btn"
+                                                                    style={{backgroundColor: '#1b95a2'}}
                                                                     onClick={(e)=>{
                                                                         handleReview();
                                                                     }}
