@@ -25,6 +25,7 @@ In addition to the common function of all user groups, which is to look up diplo
  - User authorization
  - Manage the process of importing/approving diplomas
  - Manage the process of issuing blank diplomas
+ - Create statistics
 
 
 ## Demo
@@ -52,6 +53,11 @@ In addition to the common function of all user groups, which is to look up diplo
 
  - Page for managing requests for issuance of blank diplomas:
 ![image](https://github.com/B1910015LeNhutTruong/Diploma_Management_System/assets/84178256/8bb50765-7e45-4e31-8b4d-bcfe45497b2e)
+
+ - Diploma statistics page:
+![image](https://github.com/B1910015LeNhutTruong/Diploma_Management_System/assets/84178256/b4fd1c3f-fd33-48ab-8b7d-7deb3b42ef58)
+
+
 
 
 
